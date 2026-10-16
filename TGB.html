@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KhaiLife — Quản Lý Cá Nhân</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 9999px; }
+        .cal-cell { min-height: 92px; }
+        @media (max-width: 640px) { .cal-cell { min-height: 74px; } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen font-sans text-sm antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Toast -->
+    <div id="toastBox" class="fixed bottom-4 right-4 z-50 flex flex-col gap-1.5 pointer-events-none"></div>
+
+    <!-- Compact Header -->
+    <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200/80 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between gap-2">
+            <!-- Logo -->
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm">
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                </div>
+                <span class="font-bold text-base tracking-tight">KhaiLife</span>
+                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">265D150073</span>
+            </div>
+
+            <!-- Inline KPI Pills -->
+            <div class="hidden md:flex items-center gap-2 text-xs">
+                <div class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 flex items-center gap-2">
+                    <span class="text-slate-400">Việc:</span>
+                    <span id="kpiTasks" class="font-bold text-indigo-600 dark:text-indigo-400">0/0</span>
+                </div>
+                <div class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 flex items-center gap-2">
+                    <span class="text-slate-400">Số dư:</span>
+                    <span id="kpiBalance" class="font-bold text-emerald-600 dark:text-emerald-400">0 ₫</span>
+                </div>
+                <div class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 flex items-center gap-2">
+                    <span class="text-slate-400">Đã học:</span>
+                    <span id="kpiStudy" class="font-bold text-amber-600 dark:text-amber-400">0p</span>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="flex items-center gap-1.5">
+                <label for="excelUpload" class="cursor-pointer px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                    <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+                    <span>Nhập Excel</span>
+                </label>
+                <input type="file" id="excelUpload" accept=".xlsx,.xls,.csv" class="hidden" onchange="handleExcelUpload(event)">
+
+                <button onclick="resetSample()" title="Khôi phục mặc định" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                </button>
+                <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition">
+                    <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 py-4 space-y-4">
+
+        <!-- TOP 3 COLUMNS: TASKS | FINANCE | STUDY -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+            <!-- 1. NHIỆM VỤ -->
+            <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[390px]">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
+                        <i data-lucide="check-square" class="w-4 h-4 text-indigo-500"></i>
+                        <span>Nhiệm vụ</span>
+                    </div>
+                    <div class="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg text-[11px] font-medium">
+                        <button onclick="setTaskFilter('all')" id="tf-all" class="px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 text-indigo-600 shadow-sm">Tất cả</button>
+                        <button onclick="setTaskFilter('pending')" id="tf-pending" class="px-2 py-0.5 rounded-md text-slate-500">Chưa xong</button>
+                        <button onclick="setTaskFilter('done')" id="tf-done" class="px-2 py-0.5 rounded-md text-slate-500">Xong</button>
+                    </div>
+                </div>
+
+                <!-- Add Task -->
+                <form id="taskForm" class="flex gap-1.5 mb-3">
+                    <input type="text" id="taskInput" required placeholder="Thêm việc cần làm..."
+                        class="flex-1 px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <select id="taskPrio" class="px-2 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <option value="Cao">Cao</option>
+                        <option value="TB" selected>TB</option>
+                        <option value="Thấp">Thấp</option>
+                    </select>
+                    <button type="submit" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                    </button>
+                </form>
+
+                <!-- Task List -->
+                <div id="taskList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
+            </section>
+
+            <!-- 2. THU - CHI -->
+            <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[390px]">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
+                        <i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i>
+                        <span>Thu - Chi</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="text-emerald-600 dark:text-emerald-400 font-semibold">+<span id="sumInc">0</span></span>
+                        <span class="text-slate-300 dark:text-slate-700">|</span>
+                        <span class="text-rose-600 dark:text-rose-400 font-semibold">-<span id="sumExp">0</span></span>
+                    </div>
+                </div>
+
+                <!-- Add Transaction -->
+                <form id="finForm" class="space-y-2 mb-3">
+                    <div class="flex gap-1.5">
+                        <div class="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl text-xs font-semibold shrink-0">
+                            <button type="button" onclick="setFinType('expense')" id="btnExp" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white">Chi</button>
+                            <button type="button" onclick="setFinType('income')" id="btnInc" class="px-2.5 py-1 rounded-lg text-slate-500">Thu</button>
+                        </div>
+                        <input type="text" id="finDesc" required placeholder="Khoản thu/chi..."
+                            class="flex-1 min-w-0 px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div class="flex gap-1.5 items-center">
+                        <input type="number" id="finAmount" required min="1000" step="500" placeholder="Số tiền (VNĐ)"
+                            class="flex-1 px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <button type="button" onclick="setAmt(25000)" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] hover:bg-slate-200">25k</button>
+                        <button type="button" onclick="setAmt(50000)" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] hover:bg-slate-200">50k</button>
+                        <button type="button" onclick="setAmt(100000)" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] hover:bg-slate-200">100k</button>
+                        <button type="submit" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Finance List -->
+                <div id="finList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
+            </section>
+
+            <!-- 3. HỌC TẬP & POMODORO -->
+            <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[390px]">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
+                        <i data-lucide="timer" class="w-4 h-4 text-amber-500"></i>
+                        <span>Học tập</span>
+                    </div>
+                    <div class="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg text-[11px] font-semibold">
+                        <button onclick="setPreset(25)" id="p25" class="px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 text-amber-600 shadow-sm">25p</button>
+                        <button onclick="setPreset(50)" id="p50" class="px-2 py-0.5 rounded-md text-slate-500">50p</button>
+                    </div>
+                </div>
+
+                <!-- Compact Timer Bar -->
+                <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-900 text-white mb-3">
+                    <span id="timerClock" class="text-2xl font-mono font-bold text-amber-400 tracking-wider">25:00</span>
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="toggleTimer()" id="btnTimer" class="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold transition">Bắt đầu</button>
+                        <button onclick="resetTimer()" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></button>
+                        <button onclick="saveTimerSession()" title="Lưu phiên" class="p-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white"><i data-lucide="save" class="w-3.5 h-3.5"></i></button>
+                    </div>
+                </div>
+
+                <!-- Quick Log Form -->
+                <form id="studyForm" class="flex gap-1.5 mb-3">
+                    <input type="text" id="studySubj" required list="subjSuggestions" placeholder="Môn học..."
+                        class="flex-1 min-w-0 px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <datalist id="subjSuggestions">
+                        <option value="Cơ sở dữ liệu (INT304)">
+                        <option value="Lập trình cơ bản (INT342)">
+                        <option value="Toán rời rạc (INT349)">
+                        <option value="Đồ họa ứng dụng 1 (INT358)">
+                    </datalist>
+                    <input type="number" id="studyMins" required min="1" max="600" placeholder="Phút"
+                        class="w-16 px-2.5 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <button type="submit" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs transition">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                    </button>
+                </form>
+
+                <!-- Study Log List -->
+                <div id="studyList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
+            </section>
+
+        </div>
+
+        <!-- BOTTOM SECTION: LỊCH THÁNG TKB (PHÒNG HỌC MẶC ĐỊNH EXCEL) -->
+        <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4">
+            <!-- Toolbar -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex flex-wrap items-center gap-2">
+                    <i data-lucide="calendar" class="w-4 h-4 text-indigo-500"></i>
+                    <h2 class="font-bold text-slate-900 dark:text-white">Lịch Tháng TKB</h2>
+
+                    <!-- Month Switcher -->
+                    <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl p-0.5 ml-1">
+                        <button onclick="changeMonth(-1)" class="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-900 transition"><i data-lucide="chevron-left" class="w-3.5 h-3.5"></i></button>
+                        <span id="monthLabel" class="px-2.5 text-xs font-bold min-w-[90px] text-center">10 / 2026</span>
+                        <button onclick="changeMonth(1)" class="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-900 transition"><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
+                    </div>
+
+                    <button onclick="goToToday()" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition shadow-sm flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping"></span>
+                        <span>Hôm nay (<span id="liveTodayText">--/--</span>)</span>
+                    </button>
+
+                    <!-- Quick Semester Months -->
+                    <div class="hidden sm:flex items-center gap-1">
+                        <button onclick="setMonth(2026, 9)" id="m-2026-9" class="px-2 py-1 rounded-lg text-xs font-semibold">T10/26</button>
+                        <button onclick="setMonth(2026, 10)" id="m-2026-10" class="px-2 py-1 rounded-lg text-xs font-semibold">T11/26</button>
+                        <button onclick="setMonth(2026, 11)" id="m-2026-11" class="px-2 py-1 rounded-lg text-xs font-semibold">T12/26</button>
+                        <button onclick="setMonth(2027, 0)" id="m-2027-0" class="px-2 py-1 rounded-lg text-xs font-semibold">T01/27</button>
+                    </div>
+                </div>
+
+                <!-- Right Controls -->
+                <div class="flex items-center gap-2">
+                    <span class="hidden lg:inline-flex items-center gap-1.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-1 rounded-lg">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Tự động đổi ngày lúc 00:00
+                    </span>
+                    <select id="subjFilter" onchange="renderCalendar()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-medium border-0 focus:ring-2 focus:ring-indigo-500">
+                        <option value="ALL">Tất cả môn</option>
+                    </select>
+                    <button onclick="toggleRawTable()" id="btnRawTable" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-medium transition">
+                        Bảng Excel
+                    </button>
+                </div>
+            </div>
+
+            <!-- Calendar + Day Detail Grid -->
+            <div id="calView" class="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
+                <!-- 7-Column Calendar -->
+                <div class="xl:col-span-9 overflow-x-auto">
+                    <div class="min-w-[600px]">
+                        <div class="grid grid-cols-7 gap-1 mb-1 text-center text-[11px] font-bold text-slate-400">
+                            <div class="py-1">T2</div>
+                            <div class="py-1">T3</div>
+                            <div class="py-1">T4</div>
+                            <div class="py-1">T5</div>
+                            <div class="py-1">T6</div>
+                            <div class="py-1 text-amber-500">T7</div>
+                            <div class="py-1 text-rose-500">CN</div>
+                        </div>
+                        <div id="calGrid" class="grid grid-cols-7 gap-1"></div>
+                    </div>
+                </div>
+
+                <!-- Selected Day Panel -->
+                <div class="xl:col-span-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3.5 border border-slate-200/70 dark:border-slate-800 flex flex-col gap-3">
+                    <div class="flex flex-wrap items-center justify-between gap-1.5 pb-2.5 border-b border-slate-200/70 dark:border-slate-700">
+                        <div class="flex items-center gap-1.5">
+                            <span id="dayTitle" class="font-bold text-xs text-slate-800 dark:text-slate-100">--/--/----</span>
+                            <span id="dayTodayBadge" class="hidden text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-indigo-600 text-white">HÔM NAY</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button onclick="restoreHiddenOnDay()" id="btnRestoreDay" class="hidden px-2 py-1 rounded-lg bg-amber-500/15 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25 text-[11px] font-semibold transition" title="Khôi phục lịch mặc định đã ẩn trong ngày này">
+                                Khôi phục
+                            </button>
+                            <button onclick="addDayToTasks()" class="px-2 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-semibold transition">
+                                +Nhiệm vụ
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick-Add Schedule Form for Selected Day -->
+                    <form id="addDayScheduleForm" class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800 space-y-2 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1">
+                                <i data-lucide="calendar-plus" class="w-3.5 h-3.5 text-indigo-500"></i>
+                                Thêm lịch vào ngày này
+                            </span>
+                            <!-- Color Tag Selector -->
+                            <div class="flex items-center gap-1" id="schedColorPicker">
+                                <button type="button" onclick="setSchedColor('indigo')" data-color="indigo" class="w-3.5 h-3.5 rounded-full bg-indigo-500 ring-2 ring-offset-1 ring-indigo-500 dark:ring-offset-slate-900"></button>
+                                <button type="button" onclick="setSchedColor('emerald')" data-color="emerald" class="w-3.5 h-3.5 rounded-full bg-emerald-500 opacity-60 hover:opacity-100"></button>
+                                <button type="button" onclick="setSchedColor('amber')" data-color="amber" class="w-3.5 h-3.5 rounded-full bg-amber-500 opacity-60 hover:opacity-100"></button>
+                                <button type="button" onclick="setSchedColor('purple')" data-color="purple" class="w-3.5 h-3.5 rounded-full bg-purple-500 opacity-60 hover:opacity-100"></button>
+                                <button type="button" onclick="setSchedColor('rose')" data-color="rose" class="w-3.5 h-3.5 rounded-full bg-rose-500 opacity-60 hover:opacity-100"></button>
+                            </div>
+                        </div>
+
+                        <input type="text" id="schedName" required list="schedSubjList" placeholder="Tên môn / Lịch hẹn (VD: Học bù...)"
+                            class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <datalist id="schedSubjList">
+                            <option value="Cơ sở dữ liệu">
+                            <option value="Lập trình cơ bản">
+                            <option value="Toán rời rạc">
+                            <option value="Đồ họa ứng dụng 1">
+                            <option value="Học bù">
+                            <option value="Thi kết thúc học phần">
+                            <option value="Tự học / Nhóm">
+                        </datalist>
+
+                        <div class="grid grid-cols-2 gap-1.5">
+                            <input type="text" id="schedPeriod" placeholder="Tiết/Giờ (VD: 1-5)" value="1-5"
+                                class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input type="text" id="schedRoom" placeholder="Phòng (VD: B45)"
+                                class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <button type="submit" class="w-full py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition flex items-center justify-center gap-1 shadow-sm">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                            <span>Thêm lịch ngày này</span>
+                        </button>
+                    </form>
+
+                    <!-- Day Sessions List -->
+                    <div id="daySessions" class="space-y-2 max-h-[320px] overflow-y-auto pr-0.5"></div>
+                </div>
+            </div>
+
+            <!-- Raw Excel Table View (Hidden by default) -->
+            <div id="rawTableView" class="hidden overflow-x-auto pt-1">
+                <table class="w-full text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-left">
+                            <th class="p-2 rounded-l-lg">Mã MH</th>
+                            <th class="p-2">Môn học</th>
+                            <th class="p-2 text-center">Thứ</th>
+                            <th class="p-2 text-center">Tiết</th>
+                            <th class="p-2 text-center">Phòng</th>
+                            <th class="p-2">Giảng viên</th>
+                            <th class="p-2 rounded-r-lg">Thời gian</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rawTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /* ==========================================================================
+           1. DỮ LIỆU MẶC ĐỊNH TỪ FILE Export_TKB.xlsx (16 DÒNG CHUẨN)
+           ========================================================================== */
+        const STORAGE_KEY = 'lifesync_minimal_v4';
+        const CUSTOM_EVENTS_KEY = 'ls_custom_events_v1';
+        const HIDDEN_EXCEL_KEY = 'ls_hidden_excel_instances_v1';
+        const THEME_KEY = 'lifesync_theme';
+
+        const PERIOD_TIME = {
+            1: ['07:00', '07:50'], 2: ['07:55', '08:45'], 3: ['08:50', '09:40'],
+            4: ['09:50', '10:40'], 5: ['10:45', '11:35'], 6: ['13:00', '13:50'],
+            7: ['13:55', '14:45'], 8: ['14:50', '15:40'], 9: ['15:50', '16:40'],
+            10: ['16:45', '17:35'], 11: ['17:45', '18:35'], 12: ['18:40', '19:30'],
+            13: ['19:35', '20:25'], 14: ['20:30', '21:20'], 15: ['21:25', '22:15']
+        };
+
+        const DEFAULT_EXCEL_ROWS = [
+            { code: 'INT304', name: 'Cơ sở dữ liệu', day: 4, start: 6, count: 5, room: 'B45', gv: 'N.T.T.Hương', range: '04/11/26 đến 11/11/26' },
+            { code: 'INT304', name: 'Cơ sở dữ liệu', day: 4, start: 6, count: 5, room: 'B45', gv: 'N.T.T.Hương', range: '25/11/26 đến 06/01/27' },
+            { code: 'INT304', name: 'Cơ sở dữ liệu', day: 4, start: 13, count: 1, room: 'A22', gv: 'N.T.T.Hương', range: '04/11/26 đến 11/11/26' },
+            { code: 'INT304', name: 'Cơ sở dữ liệu', day: 4, start: 13, count: 1, room: 'A22', gv: 'N.T.T.Hương', range: '25/11/26 đến 06/01/27' },
+
+            { code: 'INT342', name: 'Lập trình cơ bản', day: 5, start: 6, count: 5, room: 'NDH216', gv: 'N.T.Kiên', range: '05/11/26 đến 12/11/26' },
+            { code: 'INT342', name: 'Lập trình cơ bản', day: 5, start: 6, count: 5, room: 'NDH216', gv: 'N.T.Kiên', range: '26/11/26 đến 07/01/27' },
+            { code: 'INT342', name: 'Lập trình cơ bản', day: 5, start: 13, count: 1, room: 'A41', gv: 'N.T.Kiên', range: '05/11/26 đến 12/11/26' },
+            { code: 'INT342', name: 'Lập trình cơ bản', day: 5, start: 13, count: 1, room: 'A41', gv: 'N.T.Kiên', range: '26/11/26 đến 07/01/27' },
+
+            { code: 'INT349', name: 'Toán rời rạc', day: 3, start: 6, count: 5, room: 'A44', gv: 'N.H.Cường', range: '03/11/26 đến 10/11/26' },
+            { code: 'INT349', name: 'Toán rời rạc', day: 3, start: 6, count: 5, room: 'A44', gv: 'N.H.Cường', range: '01/12/26 đến 12/01/27' },
+            { code: 'INT349', name: 'Toán rời rạc', day: 3, start: 13, count: 1, room: 'A21', gv: 'N.H.Cường', range: '03/11/26 đến 10/11/26' },
+            { code: 'INT349', name: 'Toán rời rạc', day: 3, start: 13, count: 1, room: 'A21', gv: 'N.H.Cường', range: '01/12/26 đến 12/01/27' },
+
+            { code: 'INT358', name: 'Đồ họa ứng dụng 1', day: 2, start: 6, count: 5, room: 'NDH214', gv: 'N.K.Trung', range: '02/11/26 đến 09/11/26' },
+            { code: 'INT358', name: 'Đồ họa ứng dụng 1', day: 2, start: 6, count: 5, room: 'NDH214', gv: 'N.K.Trung', range: '23/11/26 đến 04/01/27' },
+            { code: 'INT358', name: 'Đồ họa ứng dụng 1', day: 2, start: 13, count: 1, room: 'B41', gv: 'N.K.Trung', range: '02/11/26 đến 09/11/26' },
+            { code: 'INT358', name: 'Đồ họa ứng dụng 1', day: 2, start: 13, count: 1, room: 'B41', gv: 'N.K.Trung', range: '23/11/26 đến 04/01/27' }
+        ];
+
+        const DEFAULT_STATE = {
+            tasks: [
+                { id: 1, title: 'Ôn tập Đồ họa ứng dụng 1', prio: 'Cao', done: false },
+                { id: 2, title: 'Làm bài tập Cơ sở dữ liệu', prio: 'TB', done: true }
+            ],
+            finance: [
+                { id: 1, desc: 'Trợ cấp tháng', amount: 2500000, type: 'income' },
+                { id: 2, desc: 'Ăn trưa & Cà phê', amount: 65000, type: 'expense' }
+            ],
+            study: [
+                { id: 1, subj: 'Cơ sở dữ liệu (INT304)', mins: 50 },
+                { id: 2, subj: 'Toán rời rạc (INT349)', mins: 25 }
+            ],
+            tkbRows: JSON.parse(JSON.stringify(DEFAULT_EXCEL_ROWS))
+        };
+
+        let state = {};
+        let customEvents = {};
+        let hiddenExcelInstances = {};
+        let expandedDays = [];
+        let taskFilter = 'all';
+        let finType = 'expense';
+        let selectedSchedColor = 'indigo';
+
+        const initNow = new Date();
+        let calYear = initNow.getFullYear();
+        let calMonth = initNow.getMonth();
+        let selectedDate = '';
+        let lastKnownTodayISO = '';
+
+        // Timer state
+        let timerInt = null;
+        let timerRunning = false;
+        let presetMins = 25;
+        let secsLeft = 25 * 60;
+        let elapsedSecs = 0;
+
+        /* ==========================================================================
+           2. TIỆN ÍCH & LƯU TRỮ
+           ========================================================================== */
+        function esc(s) {
+            return String(s || '').replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+        }
+
+        function fmtVND(n) {
+            return new Intl.NumberFormat('vi-VN').format(Number(n) || 0) + ' ₫';
+        }
+
+        function toast(msg) {
+            const box = document.getElementById('toastBox');
+            const el = document.createElement('div');
+            el.className = 'px-3 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-semibold shadow-lg transition-all';
+            el.textContent = msg;
+            box.appendChild(el);
+            setTimeout(() => el.remove(), 2200);
+        }
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                state = raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(DEFAULT_STATE));
+                if (!state.tkbRows || !state.tkbRows.length) {
+                    state.tkbRows = JSON.parse(JSON.stringify(DEFAULT_EXCEL_ROWS));
+                }
+                delete state.pinnedToday;
+            } catch {
+                state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+            }
+            try {
+                const rawCustom = localStorage.getItem(CUSTOM_EVENTS_KEY);
+                customEvents = rawCustom ? JSON.parse(rawCustom) : {};
+            } catch {
+                customEvents = {};
+            }
+            try {
+                const rawHidden = localStorage.getItem(HIDDEN_EXCEL_KEY);
+                hiddenExcelInstances = rawHidden ? JSON.parse(rawHidden) : {};
+            } catch {
+                hiddenExcelInstances = {};
+            }
+            const realToday = getTodayISO();
+            lastKnownTodayISO = realToday;
+            selectedDate = realToday;
+            const [y, m] = realToday.split('-').map(Number);
+            calYear = y;
+            calMonth = m - 1;
+            buildCalendarSessions();
+        }
+
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            localStorage.setItem(CUSTOM_EVENTS_KEY, JSON.stringify(customEvents));
+            localStorage.setItem(HIDDEN_EXCEL_KEY, JSON.stringify(hiddenExcelInstances));
+            buildCalendarSessions();
+            renderAll();
+        }
+
+        function resetSample() {
+            state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+            customEvents = {};
+            hiddenExcelInstances = {};
+            const realToday = getTodayISO();
+            const [y, m] = realToday.split('-').map(Number);
+            calYear = y;
+            calMonth = m - 1;
+            selectedDate = realToday;
+            saveState();
+            toast('Đã khôi phục dữ liệu gốc');
+        }
+
+        /* ==========================================================================
+           3. NHIỆM VỤ
+           ========================================================================== */
+        document.getElementById('taskForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const input = document.getElementById('taskInput');
+            const prio = document.getElementById('taskPrio').value;
+            if (!input.value.trim()) return;
+            state.tasks.unshift({ id: Date.now(), title: input.value.trim(), prio, done: false });
+            input.value = '';
+            saveState();
+        });
+
+        function toggleTask(id) {
+            const t = state.tasks.find(x => x.id === id);
+            if (t) { t.done = !t.done; saveState(); }
+        }
+
+        function delTask(id) {
+            state.tasks = state.tasks.filter(x => x.id !== id);
+            saveState();
+        }
+
+        function setTaskFilter(f) {
+            taskFilter = f;
+            ['all', 'pending', 'done'].forEach(k => {
+                document.getElementById('tf-' + k).className = k === f
+                    ? 'px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 text-indigo-600 shadow-sm'
+                    : 'px-2 py-0.5 rounded-md text-slate-500';
+            });
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const doneCount = state.tasks.filter(t => t.done).length;
+            document.getElementById('kpiTasks').textContent = `${doneCount}/${state.tasks.length}`;
+
+            const list = state.tasks.filter(t => {
+                if (taskFilter === 'pending') return !t.done;
+                if (taskFilter === 'done') return t.done;
+                return true;
+            });
+
+            const prioStyle = {
+                'Cao': 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300',
+                'TB': 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
+                'Thấp': 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+            };
+
+            const box = document.getElementById('taskList');
+            if (!list.length) {
+                box.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">Trống</p>`;
+                return;
+            }
+
+            box.innerHTML = list.map(t => `
+                <div class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-800">
+                    <div onclick="toggleTask(${t.id})" class="flex items-center gap-2 min-w-0 flex-1 cursor-pointer">
+                        <input type="checkbox" ${t.done ? 'checked' : ''} class="rounded text-indigo-600 pointer-events-none">
+                        <span class="text-xs truncate ${t.done ? 'line-through text-slate-400' : 'font-medium'}">${esc(t.title)}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${prioStyle[t.prio] || prioStyle.TB}">${t.prio}</span>
+                        <button onclick="delTask(${t.id})" class="text-slate-400 hover:text-rose-500">×</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* ==========================================================================
+           4. THU - CHI
+           ========================================================================== */
+        function setFinType(type) {
+            finType = type;
+            document.getElementById('btnExp').className = type === 'expense' ? 'px-2.5 py-1 rounded-lg bg-rose-600 text-white' : 'px-2.5 py-1 rounded-lg text-slate-500';
+            document.getElementById('btnInc').className = type === 'income' ? 'px-2.5 py-1 rounded-lg bg-emerald-600 text-white' : 'px-2.5 py-1 rounded-lg text-slate-500';
+        }
+
+        function setAmt(val) {
+            document.getElementById('finAmount').value = val;
+        }
+
+        document.getElementById('finForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const desc = document.getElementById('finDesc').value.trim();
+            const amount = Number(document.getElementById('finAmount').value);
+            if (!desc || amount <= 0) return;
+            state.finance.unshift({ id: Date.now(), desc, amount, type: finType });
+            document.getElementById('finDesc').value = '';
+            document.getElementById('finAmount').value = '';
+            saveState();
+        });
+
+        function delFin(id) {
+            state.finance = state.finance.filter(x => x.id !== id);
+            saveState();
+        }
+
+        function renderFinance() {
+            const inc = state.finance.filter(x => x.type === 'income').reduce((s, x) => s + Number(x.amount), 0);
+            const exp = state.finance.filter(x => x.type === 'expense').reduce((s, x) => s + Number(x.amount), 0);
+            document.getElementById('sumInc').textContent = fmtVND(inc);
+            document.getElementById('sumExp').textContent = fmtVND(exp);
+            document.getElementById('kpiBalance').textContent = fmtVND(inc - exp);
+
+            const box = document.getElementById('finList');
+            if (!state.finance.length) {
+                box.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">Trống</p>`;
+                return;
+            }
+
+            box.innerHTML = state.finance.map(f => `
+                <div class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-800">
+                    <span class="text-xs font-medium truncate">${esc(f.desc)}</span>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="text-xs font-bold ${f.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
+                            ${f.type === 'income' ? '+' : '-'}${fmtVND(f.amount)}
+                        </span>
+                        <button onclick="delFin(${f.id})" class="text-slate-400 hover:text-rose-500">×</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* ==========================================================================
+           5. HỌC TẬP & BẤM GIỜ
+           ========================================================================== */
+        function fmtClock(s) {
+            return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+        }
+
+        function setPreset(m) {
+            pauseTimer();
+            presetMins = m;
+            secsLeft = m * 60;
+            elapsedSecs = 0;
+            document.getElementById('timerClock').textContent = fmtClock(secsLeft);
+            document.getElementById('p25').className = m === 25 ? 'px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 text-amber-600 shadow-sm' : 'px-2 py-0.5 rounded-md text-slate-500';
+            document.getElementById('p50').className = m === 50 ? 'px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 text-amber-600 shadow-sm' : 'px-2 py-0.5 rounded-md text-slate-500';
+        }
+
+        function toggleTimer() {
+            if (timerRunning) {
+                pauseTimer();
+            } else {
+                timerRunning = true;
+                document.getElementById('btnTimer').textContent = 'Dừng';
+                timerInt = setInterval(() => {
+                    elapsedSecs++;
+                    if (secsLeft > 0) {
+                        secsLeft--;
+                        document.getElementById('timerClock').textContent = fmtClock(secsLeft);
+                    } else {
+                        pauseTimer();
+                        toast('Đã hoàn thành phiên học!');
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            timerRunning = false;
+            clearInterval(timerInt);
+            document.getElementById('btnTimer').textContent = 'Bắt đầu';
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            elapsedSecs = 0;
+            secsLeft = presetMins * 60;
+            document.getElementById('timerClock').textContent = fmtClock(secsLeft);
+        }
+
+        function saveTimerSession() {
+            pauseTimer();
+            const mins = Math.max(1, Math.round(elapsedSecs / 60));
+            if (elapsedSecs < 5) { toast('Chưa đủ thời gian lưu'); return; }
+            const subj = document.getElementById('studySubj').value.trim() || 'Tự học';
+            state.study.unshift({ id: Date.now(), subj, mins });
+            resetTimer();
+            saveState();
+            toast(`Đã lưu ${mins}p học ${subj}`);
+        }
+
+        document.getElementById('studyForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const subj = document.getElementById('studySubj').value.trim();
+            const mins = Number(document.getElementById('studyMins').value);
+            if (!subj || mins <= 0) return;
+            state.study.unshift({ id: Date.now(), subj, mins });
+            document.getElementById('studySubj').value = '';
+            document.getElementById('studyMins').value = '';
+            saveState();
+        });
+
+        function delStudy(id) {
+            state.study = state.study.filter(x => x.id !== id);
+            saveState();
+        }
+
+        function renderStudy() {
+            const total = state.study.reduce((s, x) => s + Number(x.mins), 0);
+            document.getElementById('kpiStudy').textContent = `${total}p`;
+
+            const box = document.getElementById('studyList');
+            if (!state.study.length) {
+                box.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">Trống</p>`;
+                return;
+            }
+
+            box.innerHTML = state.study.map(s => `
+                <div class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-800">
+                    <span class="text-xs font-medium truncate">${esc(s.subj)}</span>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="text-xs font-bold text-amber-600 dark:text-amber-400">${s.mins}p</span>
+                        <button onclick="delStudy(${s.id})" class="text-slate-400 hover:text-rose-500">×</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* ==========================================================================
+           6. LỊCH THÁNG TKB & IMPORT EXCEL (PHÒNG MẶC ĐỊNH EXCEL)
+           ========================================================================== */
+        function parseDateVN(str) {
+            const m = String(str || '').trim().match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+            if (!m) return null;
+            let y = parseInt(m[3], 10);
+            if (y < 100) y += 2000;
+            return new Date(y, parseInt(m[2], 10) - 1, parseInt(m[1], 10));
+        }
+
+        function toKey(d) {
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        function fmtKeyVN(k) {
+            const [y, m, d] = k.split('-');
+            return `${d}/${m}/${y}`;
+        }
+
+        function getTodayISO() {
+            return toKey(new Date());
+        }
+
+        function goToToday() {
+            const todayISO = getTodayISO();
+            const [y, m] = todayISO.split('-').map(Number);
+            calYear = y;
+            calMonth = m - 1;
+            selectedDate = todayISO;
+            renderCalendar();
+        }
+
+        function checkAutoNewDay() {
+            const currentToday = getTodayISO();
+            if (lastKnownTodayISO && currentToday !== lastKnownTodayISO) {
+                const wasOnOldToday = (selectedDate === lastKnownTodayISO);
+                lastKnownTodayISO = currentToday;
+                const [y, m] = currentToday.split('-').map(Number);
+                calYear = y;
+                calMonth = m - 1;
+                if (wasOnOldToday) selectedDate = currentToday;
+                renderCalendar();
+                toast(`Đã bước sang ngày mới: ${fmtKeyVN(currentToday)}`);
+            }
+        }
+
+        function buildCalendarSessions() {
+            const list = [];
+            state.tkbRows.forEach(r => {
+                const parts = String(r.range || '').split(/\s*(?:đến|->|-|to)\s*/i);
+                const startD = parseDateVN(parts[0]);
+                const endD = parts[1] ? parseDateVN(parts[1]) : startD;
+                if (!startD || !endD) return;
+
+                const cur = new Date(startD.getTime());
+                let guard = 0;
+                while (cur <= endD && guard < 300) {
+                    guard++;
+                    const hvuDay = cur.getDay() === 0 ? 8 : cur.getDay() + 1;
+                    if (hvuDay === Number(r.day)) {
+                        const dateKey = toKey(cur);
+                        const instanceKey = `${r.code}_${r.start}_${r.room}`;
+                        const hiddenForDate = hiddenExcelInstances[dateKey] || [];
+                        if (!hiddenForDate.includes(instanceKey)) {
+                            const endP = Number(r.start) + Number(r.count) - 1;
+                            const tStart = (PERIOD_TIME[r.start] || ['07:00'])[0];
+                            const tEnd = (PERIOD_TIME[endP] || ['17:35'])[1];
+                            list.push({
+                                id: instanceKey,
+                                isCustom: false,
+                                dateKey,
+                                year: cur.getFullYear(),
+                                month: cur.getMonth(),
+                                code: r.code,
+                                name: r.name,
+                                day: r.day,
+                                start: Number(r.start),
+                                count: Number(r.count),
+                                periodLabel: r.count > 1 ? `T${r.start}-${endP}` : `T${r.start}`,
+                                timeStr: `${tStart}-${tEnd}`,
+                                room: r.room,
+                                gv: r.gv
+                            });
+                        }
+                    }
+                    cur.setDate(cur.getDate() + 1);
+                }
+            });
+
+            // Merge custom user-added schedule events per day
+            Object.entries(customEvents).forEach(([dateKey, items]) => {
+                if (!Array.isArray(items)) return;
+                const [y, m] = dateKey.split('-').map(Number);
+                items.forEach(item => {
+                    list.push({
+                        id: item.id,
+                        isCustom: true,
+                        dateKey,
+                        year: y,
+                        month: (m || 1) - 1,
+                        code: item.code || 'CUSTOM',
+                        name: item.name,
+                        start: item.start || 1,
+                        periodLabel: item.periodLabel || 'T1-5',
+                        timeStr: item.timeStr || 'Lịch tự thêm',
+                        room: item.room || 'Tự chọn',
+                        gv: item.gv || 'Cá nhân',
+                        color: item.color || 'indigo'
+                    });
+                });
+            });
+
+            list.sort((a, b) => a.dateKey.localeCompare(b.dateKey) || a.start - b.start);
+            expandedDays = list;
+
+            // Populate Subject Filter
+            const sel = document.getElementById('subjFilter');
+            if (sel) {
+                const curVal = sel.value;
+                const map = new Map();
+                list.forEach(x => map.set(x.code, x.code === 'CUSTOM' ? 'Lịch tự thêm' : x.name));
+                sel.innerHTML = `<option value="ALL">Tất cả môn (${map.size})</option>` +
+                    [...map.entries()].map(([c, n]) => `<option value="${esc(c)}">${esc(n)}</option>`).join('');
+                if ([...map.keys()].includes(curVal)) sel.value = curVal;
+            }
+        }
+
+        function getSubjColor(code, customColor) {
+            const palette = {
+                'indigo': 'bg-indigo-50 dark:bg-indigo-950/70 text-indigo-900 dark:text-indigo-200 border-indigo-200 dark:border-indigo-800',
+                'emerald': 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800',
+                'amber': 'bg-amber-50 dark:bg-amber-950/70 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800',
+                'purple': 'bg-purple-50 dark:bg-purple-950/70 text-purple-900 dark:text-purple-200 border-purple-200 dark:border-purple-800',
+                'rose': 'bg-rose-50 dark:bg-rose-950/70 text-rose-900 dark:text-rose-200 border-rose-200 dark:border-rose-800'
+            };
+            if (customColor && palette[customColor]) return palette[customColor];
+            const byCode = {
+                'INT304': palette.indigo,
+                'INT342': palette.emerald,
+                'INT349': palette.amber,
+                'INT358': palette.rose
+            };
+            return byCode[code] || palette.indigo;
+        }
+
+        function setSchedColor(c) {
+            selectedSchedColor = c;
+            document.querySelectorAll('#schedColorPicker button').forEach(btn => {
+                const isMatch = btn.getAttribute('data-color') === c;
+                btn.className = `w-3.5 h-3.5 rounded-full bg-${btn.getAttribute('data-color')}-500 transition ${
+                    isMatch ? `ring-2 ring-offset-1 ring-${c}-500 dark:ring-offset-slate-900 opacity-100` : 'opacity-50 hover:opacity-100'
+                }`;
+            });
+        }
+
+        function parseCustomPeriodInput(rawPeriod) {
+            const str = String(rawPeriod || '').trim() || '1-5';
+            const rangeMatch = str.match(/^t?\s*(\d{1,2})\s*-\s*(\d{1,2})$/i);
+            if (rangeMatch) {
+                const pStart = Number(rangeMatch[1]);
+                const pEnd = Number(rangeMatch[2]);
+                const tStart = (PERIOD_TIME[pStart] || ['07:00'])[0];
+                const tEnd = (PERIOD_TIME[pEnd] || ['11:35'])[1];
+                return { start: pStart, periodLabel: `T${pStart}-${pEnd}`, timeStr: `${tStart}-${tEnd}` };
+            }
+            const singleMatch = str.match(/^t?\s*(\d{1,2})$/i);
+            if (singleMatch) {
+                const pStart = Number(singleMatch[1]);
+                const tStart = (PERIOD_TIME[pStart] || ['07:00'])[0];
+                const tEnd = (PERIOD_TIME[pStart] || ['07:50'])[1];
+                return { start: pStart, periodLabel: `T${pStart}`, timeStr: `${tStart}-${tEnd}` };
+            }
+            return { start: 1, periodLabel: str, timeStr: 'Lịch cá nhân' };
+        }
+
+        document.getElementById('addDayScheduleForm').addEventListener('submit', e => {
+            e.preventDefault();
+            if (!selectedDate) selectedDate = getTodayISO();
+            const nameInput = document.getElementById('schedName');
+            const periodInput = document.getElementById('schedPeriod');
+            const roomInput = document.getElementById('schedRoom');
+
+            const name = nameInput.value.trim();
+            if (!name) return;
+            const room = roomInput.value.trim() || 'Tự chọn';
+            const parsedP = parseCustomPeriodInput(periodInput.value);
+
+            if (!customEvents[selectedDate]) customEvents[selectedDate] = [];
+            customEvents[selectedDate].push({
+                id: 'cust_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                code: 'CUSTOM',
+                name,
+                start: parsedP.start,
+                periodLabel: parsedP.periodLabel,
+                timeStr: parsedP.timeStr,
+                room,
+                gv: 'Tự thêm',
+                color: selectedSchedColor
+            });
+
+            nameInput.value = '';
+            roomInput.value = '';
+            saveState();
+            toast(`Đã thêm "${name}" vào ngày ${fmtKeyVN(selectedDate)}`);
+        });
+
+        function removeScheduleItem(dateKey, itemId, isCustom, ev) {
+            if (ev) ev.stopPropagation();
+            if (isCustom) {
+                if (customEvents[dateKey]) {
+                    customEvents[dateKey] = customEvents[dateKey].filter(x => x.id !== itemId);
+                    if (!customEvents[dateKey].length) delete customEvents[dateKey];
+                }
+                saveState();
+                toast('Đã xóa lịch tự thêm');
+            } else {
+                if (!hiddenExcelInstances[dateKey]) hiddenExcelInstances[dateKey] = [];
+                if (!hiddenExcelInstances[dateKey].includes(itemId)) {
+                    hiddenExcelInstances[dateKey].push(itemId);
+                }
+                saveState();
+                toast('Đã ẩn buổi học này (Bấm "Khôi phục" để hiện lại)');
+            }
+        }
+
+        function restoreHiddenOnDay() {
+            if (hiddenExcelInstances[selectedDate]) {
+                delete hiddenExcelInstances[selectedDate];
+                saveState();
+                toast(`Đã khôi phục lịch gốc ngày ${fmtKeyVN(selectedDate)}`);
+            }
+        }
+
+        function quickAddForDate(k, ev) {
+            if (ev) ev.stopPropagation();
+            selectedDate = k;
+            renderCalendar();
+            const input = document.getElementById('schedName');
+            if (input) {
+                input.focus();
+                input.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function changeMonth(delta) {
+            calMonth += delta;
+            if (calMonth > 11) { calMonth = 0; calYear++; }
+            if (calMonth < 0) { calMonth = 11; calYear--; }
+            renderCalendar();
+        }
+
+        function setMonth(y, m) {
+            calYear = y;
+            calMonth = m;
+            const first = expandedDays.find(x => x.year === y && x.month === m);
+            if (first) selectedDate = first.dateKey;
+            renderCalendar();
+        }
+
+        function pickDate(k) {
+            selectedDate = k;
+            renderCalendar();
+        }
+
+        function toggleRawTable() {
+            const cal = document.getElementById('calView');
+            const raw = document.getElementById('rawTableView');
+            const btn = document.getElementById('btnRawTable');
+            const isHidden = raw.classList.contains('hidden');
+            if (isHidden) {
+                raw.classList.remove('hidden');
+                cal.classList.add('hidden');
+                btn.textContent = 'Lịch Tháng';
+            } else {
+                raw.classList.add('hidden');
+                cal.classList.remove('hidden');
+                btn.textContent = 'Bảng Excel';
+            }
+        }
+
+        function renderCalendar() {
+            const todayISO = getTodayISO();
+            lastKnownTodayISO = todayISO;
+            const [, tm, td] = todayISO.split('-');
+            const liveEl = document.getElementById('liveTodayText');
+            if (liveEl) liveEl.textContent = `${td}/${tm}`;
+
+            document.getElementById('monthLabel').textContent = `${String(calMonth + 1).padStart(2, '0')} / ${calYear}`;
+
+            ['2026-9', '2026-10', '2026-11', '2027-0'].forEach(id => {
+                const btn = document.getElementById('m-' + id);
+                if (!btn) return;
+                btn.className = id === `${calYear}-${calMonth}`
+                    ? 'px-2 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white'
+                    : 'px-2 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-500';
+            });
+
+            const filterCode = document.getElementById('subjFilter').value || 'ALL';
+            const filtered = expandedDays.filter(x => filterCode === 'ALL' || x.code === filterCode);
+
+            const firstDay = new Date(calYear, calMonth, 1);
+            const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+            const offset = (firstDay.getDay() + 6) % 7;
+
+            let html = '';
+            for (let i = 0; i < offset; i++) {
+                html += `<div class="cal-cell rounded-xl bg-slate-50/50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/40"></div>`;
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const k = toKey(new Date(calYear, calMonth, d));
+                const sessions = filtered.filter(x => x.dateKey === k);
+                const isSel = k === selectedDate;
+                const isToday = k === todayISO;
+
+                if (isToday) {
+                    html += `
+                        <div onclick="pickDate('${k}')" style="background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);" class="group cal-cell cursor-pointer rounded-xl p-1.5 border border-indigo-600 text-white shadow-md shadow-indigo-500/25 transition flex flex-col ${
+                            isSel ? 'ring-2 ring-offset-1 ring-indigo-600 dark:ring-offset-slate-900' : ''
+                        }">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[11px] font-extrabold text-white">${d}</span>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-white/25 text-white leading-none">HÔM NAY</span>
+                                    <button type="button" onclick="quickAddForDate('${k}', event)" title="Thêm lịch ngày này" class="w-4 h-4 rounded bg-white/20 hover:bg-white/40 text-white text-[11px] font-bold flex items-center justify-center leading-none">+</button>
+                                </div>
+                            </div>
+                            <div class="space-y-1 flex-1">
+                                ${sessions.map(s => `
+                                    <div class="px-1.5 py-1 rounded-lg border text-[10px] leading-tight bg-white/95 text-slate-900 border-white shadow-sm">
+                                        <div class="font-bold truncate text-indigo-950">${esc(s.name)}</div>
+                                        <div class="flex items-center justify-between mt-0.5">
+                                            <span class="font-semibold text-slate-600">${esc(s.periodLabel)}</span>
+                                            <span class="font-extrabold px-1 rounded bg-indigo-100 text-indigo-700">${esc(s.room)}</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div onclick="pickDate('${k}')" class="group cal-cell cursor-pointer rounded-xl p-1.5 border transition flex flex-col ${
+                            isSel
+                                ? 'ring-2 ring-indigo-600 bg-indigo-50/40 dark:bg-indigo-950/30 border-indigo-400'
+                                : 'bg-white dark:bg-slate-900 border-slate-200/70 dark:border-slate-800 hover:border-indigo-300'
+                        }">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[11px] font-bold ${isSel ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'}">${d}</span>
+                                <button type="button" onclick="quickAddForDate('${k}', event)" title="Thêm lịch vào ngày ${d}" class="opacity-0 group-hover:opacity-100 focus:opacity-100 w-4 h-4 rounded bg-indigo-100 dark:bg-indigo-900/70 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-600 hover:text-white text-[11px] font-bold flex items-center justify-center leading-none transition">+</button>
+                            </div>
+                            <div class="space-y-1 flex-1">
+                                ${sessions.map(s => `
+                                    <div class="px-1.5 py-1 rounded-lg border text-[10px] leading-tight ${getSubjColor(s.code, s.color)}">
+                                        <div class="font-bold truncate">${esc(s.name)}</div>
+                                        <div class="flex items-center justify-between mt-0.5 opacity-90">
+                                            <span>${esc(s.periodLabel)}</span>
+                                            <span class="font-extrabold px-1 rounded bg-white/80 dark:bg-slate-900/80">${esc(s.room)}</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            document.getElementById('calGrid').innerHTML = html;
+
+            // Render Selected Day Panel
+            document.getElementById('dayTitle').textContent = `Ngày ${fmtKeyVN(selectedDate)}`;
+            const isSelToday = selectedDate === todayISO;
+            document.getElementById('dayTodayBadge').classList.toggle('hidden', !isSelToday);
+
+            const hasHidden = (hiddenExcelInstances[selectedDate] || []).length > 0;
+            const restoreBtn = document.getElementById('btnRestoreDay');
+            if (restoreBtn) restoreBtn.classList.toggle('hidden', !hasHidden);
+
+            const dayList = expandedDays.filter(x => x.dateKey === selectedDate);
+            const dayBox = document.getElementById('daySessions');
+
+            if (!dayList.length) {
+                dayBox.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Chưa có lịch học trong ngày này. Bạn có thể điền form bên trên để thêm lịch mới.</p>`;
+            } else {
+                dayBox.innerHTML = dayList.map(s => `
+                    <div class="p-2.5 rounded-xl border ${getSubjColor(s.code, s.color)} space-y-1.5 relative">
+                        <div class="flex items-center justify-between gap-1">
+                            <span class="font-bold text-xs truncate">${esc(s.name)}</span>
+                            <div class="flex items-center gap-1 shrink-0">
+                                <span class="px-2 py-0.5 rounded-md bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-[11px] font-extrabold">
+                                    Phòng ${esc(s.room)}
+                                </span>
+                                <button type="button" onclick="removeScheduleItem('${s.dateKey}', '${esc(s.id)}', ${s.isCustom}, event)" title="${s.isCustom ? 'Xóa lịch này' : 'Báo nghỉ / Ẩn buổi học này'}" class="w-5 h-5 rounded-md bg-white/70 hover:bg-rose-500 hover:text-white dark:bg-slate-900/70 text-slate-500 text-xs font-bold flex items-center justify-center transition">
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] opacity-80">
+                            <span>${esc(s.periodLabel)} (${esc(s.timeStr)})</span>
+                            <span>${s.isCustom ? '✨ Lịch tự thêm' : 'GV: ' + esc(s.gv)}</span>
+                        </div>
+                        <button onclick="studyThis('${esc(s.name)} (${esc(s.code)})')" class="w-full py-1 rounded-lg bg-white/80 hover:bg-white dark:bg-slate-900/80 text-[11px] font-semibold transition">
+                            Bấm giờ học
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            // Render Raw Excel Table
+            document.getElementById('rawTableBody').innerHTML = state.tkbRows.map(r => `
+                <tr>
+                    <td class="p-2 font-mono font-semibold text-indigo-600 dark:text-indigo-400">${esc(r.code)}</td>
+                    <td class="p-2 font-medium">${esc(r.name)}</td>
+                    <td class="p-2 text-center">Thứ ${r.day}</td>
+                    <td class="p-2 text-center">T${r.start} (${r.count}t)</td>
+                    <td class="p-2 text-center"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-bold">${esc(r.room)}</span></td>
+                    <td class="p-2">${esc(r.gv)}</td>
+                    <td class="p-2 font-mono text-slate-500">${esc(r.range)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function studyThis(subjName) {
+            document.getElementById('studySubj').value = subjName;
+            if (!timerRunning) toggleTimer();
+            toast(`Đang bấm giờ: ${subjName}`);
+        }
+
+        function addDayToTasks() {
+            const dayList = expandedDays.filter(x => x.dateKey === selectedDate);
+            if (!dayList.length) { toast('Không có ca học trong ngày này'); return; }
+            dayList.forEach(s => {
+                const title = `${s.name} - Phòng ${s.room} (${s.periodLabel})`;
+                if (!state.tasks.some(t => t.title === title)) {
+                    state.tasks.unshift({ id: Date.now() + Math.random(), title, prio: 'Cao', done: false });
+                }
+            });
+            saveState();
+            toast('Đã thêm vào Nhiệm vụ');
+        }
+
+        // Direct Excel Upload (.xlsx)
+        function handleExcelUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                try {
+                    const wb = XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
+                    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: '' });
+                    const parsed = [];
+                    let map = { code: 0, name: 1, day: 5, start: 6, count: 7, room: 8, gv: 9, range: 10 };
+
+                    rows.forEach(r => {
+                        if (!Array.isArray(r) || r.length < 5) return;
+                        const line = r.join(' ').toLowerCase();
+                        if (line.includes('mã mh') || line.includes('tên môn')) {
+                            r.forEach((c, idx) => {
+                                const s = String(c).toLowerCase();
+                                if (s.includes('mã mh')) map.code = idx;
+                                else if (s.includes('tên môn')) map.name = idx;
+                                else if (s === 'thứ') map.day = idx;
+                                else if (s.includes('tiết bắt đầu') || s.includes('tiết bđ')) map.start = idx;
+                                else if (s.includes('số tiết')) map.count = idx;
+                                else if (s.includes('phòng')) map.room = idx;
+                                else if (s.includes('giảng viên')) map.gv = idx;
+                                else if (s.includes('thời gian')) map.range = idx;
+                            });
+                            return;
+                        }
+                        const name = String(r[map.name] || '').trim();
+                        const range = String(r[map.range] || '').trim();
+                        if (!name || !parseDateVN(range)) return;
+                        parsed.push({
+                            code: String(r[map.code] || 'HVU').trim(),
+                            name,
+                            day: Number(String(r[map.day]).replace(/\D/g, '')) || 2,
+                            start: Number(r[map.start]) || 1,
+                            count: Number(r[map.count]) || 1,
+                            room: String(r[map.room] || '').trim(),
+                            gv: String(r[map.gv] || '').trim(),
+                            range
+                        });
+                    });
+
+                    if (!parsed.length) { toast('File Excel không hợp lệ'); return; }
+                    state.tkbRows = parsed;
+                    saveState();
+                    if (expandedDays.length) {
+                        calYear = expandedDays[0].year;
+                        calMonth = expandedDays[0].month;
+                        selectedDate = expandedDays[0].dateKey;
+                        renderCalendar();
+                    }
+                    toast(`Đã nạp ${parsed.length} dòng từ Excel`);
+                } catch {
+                    toast('Lỗi đọc file Excel');
+                }
+                e.target.value = '';
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        /* ==========================================================================
+           7. GIAO DIỆN SÁNG / TỐI & KHỞI TẠO
+           ========================================================================== */
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark');
+            localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+        }
+
+        function renderAll() {
+            renderTasks();
+            renderFinance();
+            renderStudy();
+            renderCalendar();
+            lucide.createIcons();
+        }
+
+        window.onload = () => {
+            if (localStorage.getItem(THEME_KEY) === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+            loadState();
+            renderAll();
+
+            // Tự động kiểm tra bước sang ngày mới mỗi 15 giây & khi quay lại tab
+            setInterval(checkAutoNewDay, 15000);
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) checkAutoNewDay();
+            });
+            window.addEventListener('focus', checkAutoNewDay);
+        };
+    </script>
+</body>
+</html>
