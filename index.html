@@ -134,13 +134,107 @@
     <div id="toastBox" class="fixed bottom-4 right-4 z-50 flex flex-col gap-1.5 pointer-events-none"></div>
 
     <!-- ==========================================================================
+         MODAL CẤU HÌNH ĐỒNG BỘ GITHUB (GIT SYNC)
+         ========================================================================== -->
+    <div id="gitSyncModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center">
+                        <i data-lucide="git-branch" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white">Đồng bộ dữ liệu lên GitHub</h3>
+                        <p class="text-[11px] text-slate-400">Tự động lưu & đồng bộ giữa Điện thoại và Máy tính</p>
+                    </div>
+                </div>
+                <button onclick="closeGitModal()" class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <form id="gitConfigForm" class="p-5 space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                        1. GitHub Personal Access Token (PAT) <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="password" id="gitTokenInput" required placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                        class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono">
+                    <p class="text-[10px] text-slate-400 mt-1">Token cần quyền <b>repo</b> (Classic) hoặc <b>Contents: Read & Write</b>.</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                            2. Kho chứa (username/repo) <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="text" id="gitRepoInput" required placeholder="VD: khai2007/khailife"
+                            class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                            Nhánh (Branch)
+                        </label>
+                        <input type="text" id="gitBranchInput" placeholder="Mặc định"
+                            class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                        3. Tên file dữ liệu trên Git
+                    </label>
+                    <input type="text" id="gitPathInput" value="khailife-data.json" required
+                        class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono">
+                </div>
+
+                <label class="flex items-center justify-between p-3 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900 cursor-pointer">
+                    <div>
+                        <div class="text-xs font-bold text-indigo-950 dark:text-indigo-200">Tự động đẩy lên Git khi có thay đổi</div>
+                        <div class="text-[10px] text-indigo-600/80 dark:text-indigo-400">Mọi thao tác lưu trên máy sẽ tự động commit lên GitHub</div>
+                    </div>
+                    <input type="checkbox" id="gitAutoSyncInput" checked class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
+                </label>
+
+                <div id="gitModalStatusText" class="text-[11px] font-medium text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 px-3 py-2 rounded-xl">
+                    Trạng thái: Chưa cấu hình kết nối Git.
+                </div>
+
+                <!-- Các nút thao tác Git -->
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <button type="button" onclick="gitPushData(true)" class="py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                        <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i>
+                        <span>Đẩy lên Git (Push)</span>
+                    </button>
+                    <button type="button" onclick="gitPullData(true)" class="py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                        <i data-lucide="download-cloud" class="w-3.5 h-3.5"></i>
+                        <span>Tải từ Git về (Pull)</span>
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <button type="button" onclick="disconnectGitConfig()" class="px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition mr-auto">
+                        Ngắt kết nối
+                    </button>
+                    <button type="button" onclick="closeGitModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold">
+                        Đóng
+                    </button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm transition">
+                        Lưu cấu hình
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
          SIDEBAR MỤC LỤC (MỞ KHI BẤM VÀO NÚT LOGO GÓC TRÁI)
          ========================================================================== -->
     <div id="menuBackdrop" onclick="closeAppMenu()" class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-[2px] hidden opacity-0 transition-opacity duration-200"></div>
 
     <aside id="appSidebar" class="fixed top-0 left-0 bottom-0 z-50 w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-2xl transform -translate-x-full transition-transform duration-200 flex flex-col justify-between">
         <div>
-            <!-- Sidebar Header (Có hiển thị ảnh Logo của bạn) -->
+            <!-- Sidebar Header -->
             <div class="h-14 px-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
                 <div class="flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm overflow-hidden border border-indigo-500/30">
@@ -202,8 +296,16 @@
                     <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-[#0072e3] dark:bg-blue-950 dark:text-blue-300">Chơi ngay</span>
                 </button>
 
-                <!-- 3. Cài đặt nhanh Ảnh Logo cho Web & iPhone -->
-                <div class="pt-3 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Cá nhân hóa</div>
+                <!-- 3. Đồng bộ Git & Cá nhân hóa -->
+                <div class="pt-3 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Đồng bộ & Cá nhân hóa</div>
+                <button onclick="closeAppMenu(); openGitModal();" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50/80 hover:bg-emerald-100 dark:bg-emerald-950/50 transition">
+                    <span class="flex items-center gap-2.5">
+                        <i data-lucide="git-branch" class="w-4 h-4"></i>
+                        <span>Cấu hình Đồng bộ Git</span>
+                    </span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-200/70 dark:bg-emerald-900">Auto</span>
+                </button>
+
                 <label for="logoUploadInput" class="cursor-pointer w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-indigo-600 dark:text-indigo-300 bg-indigo-50/70 hover:bg-indigo-100/80 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 transition">
                     <span class="flex items-center gap-2.5">
                         <i data-lucide="image-plus" class="w-4 h-4"></i>
@@ -216,7 +318,7 @@
         <!-- Sidebar Footer -->
         <div class="p-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
             <span>Bấm biểu tượng góc trái để mở</span>
-            <span class="font-semibold text-indigo-500">v2.7</span>
+            <span class="font-semibold text-indigo-500">v3.0 GitSync</span>
         </div>
     </aside>
 
@@ -224,7 +326,7 @@
     <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200/80 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between gap-2">
             <!-- Nút Mục lục + Logo Ảnh của bạn -->
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-2">
                 <button onclick="toggleAppMenu()" title="Mở Mục lục & Trò chơi Sudoku" class="relative group w-9 h-9 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 flex items-center justify-center text-white shadow-sm ring-2 ring-indigo-500/30 hover:ring-indigo-500 transition cursor-pointer overflow-hidden">
                     <img id="headerLogoImg" src="logo.jpg" alt="Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('headerFallbackIcon').style.display='flex';">
                     <span id="headerFallbackIcon" style="display:none;" class="w-full h-full items-center justify-center">
@@ -233,12 +335,12 @@
                     <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-white dark:ring-slate-900"></span>
                 </button>
                 <span onclick="toggleAppMenu()" class="font-bold text-base tracking-tight cursor-pointer hover:text-indigo-600 transition">KhaiLife</span>
-                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">265D150073</span>
+                <span class="hidden sm:inline text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">265D150073</span>
 
-                <!-- Nút chọn ảnh của bạn làm Logo Web & Icon Màn hình chính iPhone -->
-                <label for="logoUploadInput" title="Chọn ảnh của bạn làm Logo App & Icon Màn hình chính iPhone" class="cursor-pointer px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950 dark:hover:bg-indigo-900 text-indigo-600 dark:text-indigo-300 text-[11px] font-bold transition flex items-center gap-1 shadow-sm border border-indigo-200/60 dark:border-indigo-800">
+                <!-- Nút chọn ảnh Logo -->
+                <label for="logoUploadInput" title="Chọn ảnh của bạn làm Logo App & Icon Màn hình chính iPhone" class="cursor-pointer px-2 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950 dark:hover:bg-indigo-900 text-indigo-600 dark:text-indigo-300 text-[11px] font-bold transition flex items-center gap-1 border border-indigo-200/60 dark:border-indigo-800">
                     <i data-lucide="camera" class="w-3.5 h-3.5"></i>
-                    <span>Chọn ảnh Logo</span>
+                    <span class="hidden sm:inline">Ảnh Logo</span>
                 </label>
                 <input type="file" id="logoUploadInput" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
             </div>
@@ -255,8 +357,14 @@
                 </div>
             </div>
 
-            <!-- Quick Actions -->
+            <!-- Quick Actions (Nút Đồng bộ Git + Khôi phục + Giao diện) -->
             <div class="flex items-center gap-1.5">
+                <button onclick="openGitModal()" id="headerGitBtn" title="Cấu hình & Trạng thái Đồng bộ GitHub" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition flex items-center gap-1.5 border border-slate-200/80 dark:border-slate-700">
+                    <span id="gitStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                    <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
+                    <span id="gitHeaderLabel">Git Sync</span>
+                </button>
+
                 <button onclick="resetSample()" title="Khôi phục về bản dữ liệu đã lưu" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition">
                     <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                 </button>
@@ -372,7 +480,7 @@
                         </label>
                         <input type="file" id="excelUpload" accept=".xlsx,.xls,.csv" class="hidden" onchange="handleExcelUpload(event)">
 
-                        <button type="button" onclick="saveImportedBackup()" id="btnSaveBackup" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm" title="Lưu khóa toàn bộ dữ liệu vừa nhập để khi bấm Khôi phục không bị mất">
+                        <button type="button" onclick="saveImportedBackup()" id="btnSaveBackup" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm" title="Lưu khóa toàn bộ dữ liệu vừa nhập & đẩy lên Git">
                             <i data-lucide="save" class="w-3.5 h-3.5"></i>
                             <span id="saveBackupText">Lưu dữ liệu vừa nhập</span>
                         </button>
@@ -723,7 +831,7 @@
 
     <script>
         /* ==========================================================================
-           0. XỬ LÝ LOGO WEB & ICON MÀN HÌNH CHÍNH IPHONE (LƯU TRỰC TIẾP TRONG TRÌNH DUYỆT)
+           0. XỬ LÝ LOGO WEB & ICON MÀN HÌNH CHÍNH IPHONE
            ========================================================================== */
         const APP_LOGO_KEY = 'khailife_custom_app_logo_v1';
 
@@ -759,7 +867,6 @@
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    // Cắt vuông chính giữa chuẩn kích thước Apple Touch Icon (180x180)
                     const canvas = document.createElement('canvas');
                     const size = 180;
                     canvas.width = size;
@@ -775,12 +882,295 @@
 
                     localStorage.setItem(APP_LOGO_KEY, dataUrl);
                     applySavedAppLogo();
-                    toast('Đã đặt ảnh của bạn làm Logo Web & Icon Màn hình chính iPhone!');
+                    scheduleGitAutoPush('Cập nhật ảnh Logo');
+                    toast('Đã đặt ảnh của bạn làm Logo Web & Icon iPhone!');
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
             event.target.value = '';
+        }
+
+        /* ==========================================================================
+           0.5. HỆ THỐNG ĐỒNG BỘ GITHUB TỰ ĐỘNG 2 CHIỀU (GIT SYNC API)
+           ========================================================================== */
+        const GIT_CONFIG_KEY = 'khailife_git_sync_config_v1';
+        let gitAutoPushTimer = null;
+        let isGitSyncing = false;
+
+        function detectDefaultGitHubRepo() {
+            const host = window.location.hostname;
+            const pathParts = window.location.pathname.split('/').filter(Boolean);
+            if (host.endsWith('.github.io')) {
+                const owner = host.replace('.github.io', '');
+                const repo = pathParts[0] || `${owner}.github.io`;
+                return `${owner}/${repo}`;
+            }
+            return '';
+        }
+
+        function getGitConfig() {
+            try {
+                const raw = localStorage.getItem(GIT_CONFIG_KEY);
+                if (raw) return JSON.parse(raw);
+            } catch {}
+            return {
+                token: '',
+                repo: detectDefaultGitHubRepo(),
+                branch: '',
+                path: 'khailife-data.json',
+                autoSync: true
+            };
+        }
+
+        function isGitConfigured() {
+            const cfg = getGitConfig();
+            return Boolean(cfg.token && cfg.repo && cfg.repo.includes('/'));
+        }
+
+        function setGitUIStatus(statusType, text) {
+            const dot = document.getElementById('gitStatusDot');
+            const label = document.getElementById('gitHeaderLabel');
+            const modalText = document.getElementById('gitModalStatusText');
+
+            if (dot) {
+                if (statusType === 'ok') dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+                else if (statusType === 'syncing') dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-ping';
+                else if (statusType === 'error') dot.className = 'w-2 h-2 rounded-full bg-rose-500';
+                else dot.className = 'w-2 h-2 rounded-full bg-slate-400';
+            }
+            if (label) {
+                if (statusType === 'ok') label.textContent = 'Đã đồng bộ Git';
+                else if (statusType === 'syncing') label.textContent = 'Đang lưu Git...';
+                else if (statusType === 'error') label.textContent = 'Lỗi Git';
+                else label.textContent = 'Git Sync';
+            }
+            if (modalText && text) {
+                modalText.textContent = text;
+            }
+        }
+
+        function openGitModal() {
+            const cfg = getGitConfig();
+            document.getElementById('gitTokenInput').value = cfg.token || '';
+            document.getElementById('gitRepoInput').value = cfg.repo || detectDefaultGitHubRepo();
+            document.getElementById('gitBranchInput').value = cfg.branch || '';
+            document.getElementById('gitPathInput').value = cfg.path || 'khailife-data.json';
+            document.getElementById('gitAutoSyncInput').checked = cfg.autoSync !== false;
+
+            const modal = document.getElementById('gitSyncModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeGitModal() {
+            const modal = document.getElementById('gitSyncModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function disconnectGitConfig() {
+            localStorage.removeItem(GIT_CONFIG_KEY);
+            setGitUIStatus('idle', 'Đã ngắt kết nối GitHub.');
+            toast('Đã xóa cấu hình kết nối Git');
+            closeGitModal();
+        }
+
+        document.getElementById('gitConfigForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const cfg = {
+                token: document.getElementById('gitTokenInput').value.trim(),
+                repo: document.getElementById('gitRepoInput').value.trim().replace(/^https?:\/\/github\.com\//i, '').replace(/\.git$/i, ''),
+                branch: document.getElementById('gitBranchInput').value.trim(),
+                path: document.getElementById('gitPathInput').value.trim() || 'khailife-data.json',
+                autoSync: document.getElementById('gitAutoSyncInput').checked
+            };
+            localStorage.setItem(GIT_CONFIG_KEY, JSON.stringify(cfg));
+            toast('Đã lưu cấu hình Git! Đang đồng bộ...');
+            await gitPushData(true);
+            closeGitModal();
+        });
+
+        function utf8ToBase64(str) {
+            const bytes = new TextEncoder().encode(str);
+            let bin = '';
+            for (let i = 0; i < bytes.length; i++) {
+                bin += String.fromCharCode(bytes[i]);
+            }
+            return btoa(bin);
+        }
+
+        function base64ToUtf8(b64) {
+            const clean = String(b64 || '').replace(/\s/g, '');
+            const bin = atob(clean);
+            const bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) {
+                bytes[i] = bin.charCodeAt(i);
+            }
+            return new TextDecoder().decode(bytes);
+        }
+
+        // Đẩy toàn bộ dữ liệu hiện tại lên GitHub Repository
+        async function gitPushData(manual = false, reason = 'Cập nhật dữ liệu KhaiLife') {
+            if (!isGitConfigured()) {
+                if (manual) toast('Vui lòng nhập Token và tên Repo trước!');
+                return false;
+            }
+            if (isGitSyncing) return false;
+            isGitSyncing = true;
+
+            const cfg = getGitConfig();
+            setGitUIStatus('syncing', 'Đang đẩy dữ liệu lên GitHub...');
+
+            try {
+                const baseUrl = `https://api.github.com/repos/${cfg.repo}/contents/${encodeURIComponent(cfg.path).replace(/%2F/g, '/')}`;
+                const getUrl = cfg.branch ? `${baseUrl}?ref=${encodeURIComponent(cfg.branch)}&t=${Date.now()}` : `${baseUrl}?t=${Date.now()}`;
+
+                const headers = {
+                    'Authorization': `Bearer ${cfg.token}`,
+                    'Accept': 'application/vnd.github+json',
+                    'X-GitHub-Api-Version': '2022-11-28'
+                };
+
+                // 1. Kiểm tra xem file đã tồn tại trên Git chưa để lấy mã SHA
+                let existingSha = null;
+                const getRes = await fetch(getUrl, { headers, cache: 'no-store' });
+                if (getRes.ok) {
+                    const fileMeta = await getRes.json();
+                    existingSha = fileMeta.sha;
+                } else if (getRes.status !== 404) {
+                    throw new Error(`Mã lỗi GitHub: ${getRes.status}`);
+                }
+
+                // 2. Đóng gói toàn bộ dữ liệu ứng dụng
+                const nowStr = new Date().toLocaleString('vi-VN');
+                const payload = {
+                    updatedAt: Date.now(),
+                    updatedAtText: nowStr,
+                    state: state,
+                    customEvents: customEvents,
+                    savedBackup: getSavedBackup(),
+                    sudoku: sdkState,
+                    appLogo: localStorage.getItem(APP_LOGO_KEY) || null
+                };
+
+                const bodyObj = {
+                    message: `${reason} (${nowStr})`,
+                    content: utf8ToBase64(JSON.stringify(payload, null, 2))
+                };
+                if (existingSha) bodyObj.sha = existingSha;
+                if (cfg.branch) bodyObj.branch = cfg.branch;
+
+                const putRes = await fetch(baseUrl, {
+                    method: 'PUT',
+                    headers: { ...headers, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyObj)
+                });
+
+                if (!putRes.ok) {
+                    const errData = await putRes.json().catch(() => ({}));
+                    throw new Error(errData.message || `HTTP ${putRes.status}`);
+                }
+
+                setGitUIStatus('ok', `Đã đồng bộ lên Git lúc ${nowStr}`);
+                if (manual) toast('Đã đẩy toàn bộ dữ liệu lên Git thành công!');
+                isGitSyncing = false;
+                return true;
+            } catch (err) {
+                console.error('Git Push Error:', err);
+                setGitUIStatus('error', `Lỗi đồng bộ Git: ${err.message}`);
+                if (manual) toast(`Lỗi đẩy lên Git: ${err.message}`);
+                isGitSyncing = false;
+                return false;
+            }
+        }
+
+        // Tải dữ liệu từ GitHub Repository về máy
+        async function gitPullData(manual = false) {
+            if (!isGitConfigured()) {
+                if (manual) toast('Vui lòng nhập Token và tên Repo trước!');
+                return false;
+            }
+            if (isGitSyncing) return false;
+            isGitSyncing = true;
+
+            const cfg = getGitConfig();
+            setGitUIStatus('syncing', 'Đang tải dữ liệu từ GitHub...');
+
+            try {
+                const baseUrl = `https://api.github.com/repos/${cfg.repo}/contents/${encodeURIComponent(cfg.path).replace(/%2F/g, '/')}`;
+                const getUrl = cfg.branch ? `${baseUrl}?ref=${encodeURIComponent(cfg.branch)}&t=${Date.now()}` : `${baseUrl}?t=${Date.now()}`;
+
+                const res = await fetch(getUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${cfg.token}`,
+                        'Accept': 'application/vnd.github+json',
+                        'X-GitHub-Api-Version': '2022-11-28'
+                    },
+                    cache: 'no-store'
+                });
+
+                if (res.status === 404) {
+                    isGitSyncing = false;
+                    // Nếu trên Git chưa có file dữ liệu thì tự động tạo mới bằng dữ liệu hiện tại
+                    return await gitPushData(manual, 'Khởi tạo dữ liệu KhaiLife trên Git');
+                }
+
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+
+                const data = await res.json();
+                const jsonStr = base64ToUtf8(data.content);
+                const payload = JSON.parse(jsonStr);
+
+                if (payload.state) {
+                    state = payload.state;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                }
+                if (payload.customEvents) {
+                    customEvents = payload.customEvents;
+                    localStorage.setItem(CUSTOM_EVENTS_KEY, JSON.stringify(customEvents));
+                }
+                if (payload.savedBackup) {
+                    localStorage.setItem(SAVED_BACKUP_KEY, JSON.stringify(payload.savedBackup));
+                }
+                if (payload.sudoku && Array.isArray(payload.sudoku.solution)) {
+                    sdkState = payload.sudoku;
+                    localStorage.setItem(SUDOKU_SAVE_KEY, JSON.stringify(sdkState));
+                }
+                if (payload.appLogo) {
+                    localStorage.setItem(APP_LOGO_KEY, payload.appLogo);
+                    applySavedAppLogo();
+                }
+
+                buildCalendarSessions();
+                updateBackupBadgeUI();
+                renderAll();
+                if (activeMainSection === 'sudoku') renderSudokuAll();
+
+                setGitUIStatus('ok', `Đã đồng bộ từ Git (${payload.updatedAtText || 'Mới nhất'})`);
+                if (manual) toast('Đã tải dữ liệu mới nhất từ Git về máy!');
+                isGitSyncing = false;
+                return true;
+            } catch (err) {
+                console.error('Git Pull Error:', err);
+                setGitUIStatus('error', `Lỗi tải từ Git: ${err.message}`);
+                if (manual) toast(`Lỗi tải từ Git: ${err.message}`);
+                isGitSyncing = false;
+                return false;
+            }
+        }
+
+        // Tự động đẩy lên Git sau 1.2 giây mỗi khi người dùng lưu bất kỳ thay đổi nào
+        function scheduleGitAutoPush(reason = 'Tự động đồng bộ từ thiết bị') {
+            const cfg = getGitConfig();
+            if (!isGitConfigured() || cfg.autoSync === false) return;
+            if (gitAutoPushTimer) clearTimeout(gitAutoPushTimer);
+            setGitUIStatus('syncing', 'Đang chờ tự động đồng bộ lên Git...');
+            gitAutoPushTimer = setTimeout(() => {
+                gitPushData(false, reason);
+            }, 1200);
         }
 
         /* ==========================================================================
@@ -959,9 +1349,10 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             localStorage.setItem(CUSTOM_EVENTS_KEY, JSON.stringify(customEvents));
             updateBackupBadgeUI();
+            scheduleGitAutoPush('Lưu mốc bảo vệ dữ liệu');
 
             if (!silent) {
-                toast('Đã lưu dữ liệu vừa nhập! Khi bấm Khôi phục sẽ không bị mất.');
+                toast('Đã lưu dữ liệu vừa nhập & đồng bộ lên Git!');
             }
         }
 
@@ -1010,11 +1401,12 @@
             calMonth = m - 1;
         }
 
-        function saveState() {
+        function saveState(reason = 'Cập nhật dữ liệu KhaiLife') {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             localStorage.setItem(CUSTOM_EVENTS_KEY, JSON.stringify(customEvents));
             buildCalendarSessions();
             renderAll();
+            scheduleGitAutoPush(reason);
         }
 
         function resetSample() {
@@ -1038,7 +1430,7 @@
             const [y, m] = realToday.split('-').map(Number);
             calYear = y;
             calMonth = m - 1;
-            saveState();
+            saveState('Khôi phục dữ liệu đã lưu');
         }
 
         /* ==========================================================================
@@ -1051,17 +1443,17 @@
             if (!input.value.trim()) return;
             state.tasks.unshift({ id: Date.now(), title: input.value.trim(), prio, done: false });
             input.value = '';
-            saveState();
+            saveState('Thêm nhiệm vụ mới');
         });
 
         function toggleTask(id) {
             const t = state.tasks.find(x => x.id === id);
-            if (t) { t.done = !t.done; saveState(); }
+            if (t) { t.done = !t.done; saveState('Cập nhật trạng thái nhiệm vụ'); }
         }
 
         function delTask(id) {
             state.tasks = state.tasks.filter(x => x.id !== id);
-            saveState();
+            saveState('Xóa nhiệm vụ');
         }
 
         function setTaskFilter(f) {
@@ -1128,12 +1520,12 @@
             state.finance.unshift({ id: Date.now(), desc, amount, type: finType });
             document.getElementById('finDesc').value = '';
             document.getElementById('finAmount').value = '';
-            saveState();
+            saveState('Cập nhật khoản Thu - Chi');
         });
 
         function delFin(id) {
             state.finance = state.finance.filter(x => x.id !== id);
-            saveState();
+            saveState('Xóa khoản Thu - Chi');
         }
 
         function renderFinance() {
@@ -1419,8 +1811,8 @@
             nameInput.value = '';
             roomInput.value = '';
             gvInput.value = '';
-            saveState();
             syncCustomEventsToBackup();
+            saveState(`Thêm lịch học ${name}`);
             toast(`Đã thêm "${name}" vào ngày ${fmtKeyVN(selectedDate)}`);
         });
 
@@ -1447,16 +1839,16 @@
                 delete customEvents[dateKey];
             }
 
-            saveState();
             syncCustomEventsToBackup();
+            saveState('Xóa mục lịch tự thêm');
             toast('Đã xóa mục lịch tự thêm');
         }
 
         function clearAllCustomOnDay() {
             if (!selectedDate || !customEvents[selectedDate]) return;
             delete customEvents[selectedDate];
-            saveState();
             syncCustomEventsToBackup();
+            saveState(`Xóa lịch tự thêm ngày ${fmtKeyVN(selectedDate)}`);
             toast(`Đã xóa toàn bộ lịch tự thêm ngày ${fmtKeyVN(selectedDate)}`);
         }
 
@@ -1842,10 +2234,10 @@
 
                     if (!parsed.length) { toast('File Excel không hợp lệ'); return; }
                     state.tkbRows = parsed;
-                    saveState();
+                    saveState('Nhập Thời khóa biểu từ Excel');
                     saveImportedBackup(true);
                     renderCalendar();
-                    toast(`Đã nạp & lưu bảo vệ ${parsed.length} dòng từ Excel`);
+                    toast(`Đã nạp ${parsed.length} dòng từ Excel & đồng bộ Git!`);
                 } catch {
                     toast('Lỗi đọc file Excel');
                 }
@@ -1925,9 +2317,10 @@
             return finalGrid;
         }
 
-        function saveSudokuState() {
+        function saveSudokuState(syncGit = false) {
             try {
                 localStorage.setItem(SUDOKU_SAVE_KEY, JSON.stringify(sdkState));
+                if (syncGit) scheduleGitAutoPush('Lưu tiến độ Sudoku');
             } catch {}
         }
 
@@ -1985,7 +2378,7 @@
                 status: 'playing'
             };
 
-            saveSudokuState();
+            saveSudokuState(true);
             renderSudokuAll();
             startSudokuTimerLoop();
         }
@@ -1997,7 +2390,7 @@
                     sdkState.seconds++;
                     const timerEl = document.getElementById('sdkTimer');
                     if (timerEl) timerEl.textContent = fmtSudokuTime(sdkState.seconds);
-                    if (sdkState.seconds % 5 === 0) saveSudokuState();
+                    if (sdkState.seconds % 5 === 0) saveSudokuState(false);
                 }
             }, 1000);
         }
@@ -2029,7 +2422,7 @@
                 sdkState.mistakes = Math.max(0, sdkState.maxMistakes - 1);
                 sdkState.status = 'playing';
                 sdkState.paused = false;
-                saveSudokuState();
+                saveSudokuState(true);
                 renderSudokuAll();
             } else {
                 startNewSudoku(sdkState.difficulty);
@@ -2115,7 +2508,7 @@
                 }
             }
 
-            saveSudokuState();
+            saveSudokuState(true);
             renderSudokuAll();
         }
 
@@ -2125,7 +2518,7 @@
             sdkState.board = prev.board;
             sdkState.notes = prev.notes;
             sdkState.score = prev.score;
-            saveSudokuState();
+            saveSudokuState(true);
             renderSudokuAll();
         }
 
@@ -2139,7 +2532,7 @@
                 pushSudokuHistory();
                 sdkState.board[idx] = 0;
                 sdkState.notes[idx] = [];
-                saveSudokuState();
+                saveSudokuState(true);
                 renderSudokuAll();
             }
         }
@@ -2147,7 +2540,7 @@
         function sudokuToggleNotes() {
             if (sdkState.status !== 'playing' || sdkState.paused) return;
             sdkState.notesMode = !sdkState.notesMode;
-            saveSudokuState();
+            saveSudokuState(false);
             renderSudokuControls();
         }
 
@@ -2176,7 +2569,7 @@
                 sdkState.status = 'won';
             }
 
-            saveSudokuState();
+            saveSudokuState(true);
             renderSudokuAll();
         }
 
@@ -2388,7 +2781,7 @@
             lucide.createIcons();
         }
 
-        window.onload = () => {
+        window.onload = async () => {
             if (localStorage.getItem(THEME_KEY) === 'dark') {
                 document.documentElement.classList.add('dark');
             }
@@ -2396,9 +2789,17 @@
             loadState();
             renderAll();
 
+            // Tự động tải dữ liệu mới nhất từ Git ngay khi mở ứng dụng
+            if (isGitConfigured()) {
+                await gitPullData(false);
+            }
+
             setInterval(checkAutoNewDay, 15000);
             document.addEventListener('visibilitychange', () => {
-                if (!document.hidden) checkAutoNewDay();
+                if (!document.hidden) {
+                    checkAutoNewDay();
+                    if (isGitConfigured()) gitPullData(false);
+                }
             });
             window.addEventListener('focus', checkAutoNewDay);
         };
