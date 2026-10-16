@@ -1,21 +1,8 @@
 {
-  "updatedAt": 1792165877094,
-  "updatedAtText": "22:51:17 16/10/2026",
+  "updatedAt": 1792165884076,
+  "updatedAtText": "22:51:24 16/10/2026",
   "state": {
-    "tasks": [
-      {
-        "id": 1,
-        "title": "Ôn tập Đồ họa ứng dụng 1",
-        "prio": "Cao",
-        "done": false
-      },
-      {
-        "id": 2,
-        "title": "Làm bài tập Cơ sở dữ liệu",
-        "prio": "TB",
-        "done": true
-      }
-    ],
+    "tasks": [],
     "finance": [],
     "tkbRows": [
       {
