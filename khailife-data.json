@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792166386950,
-  "updatedAtText": "22:59:46 16/10/2026",
+  "updatedAt": 1792166407037,
+  "updatedAtText": "23:00:07 16/10/2026",
   "state": {
     "tasks": [],
     "finance": [
@@ -200,6 +200,21 @@
           "07:30"
         ],
         "periodLabel": "Tiết 07:30",
+        "room": "NDH301",
+        "gv": "Trắc nghiệm (THI)",
+        "color": "rose"
+      }
+    ],
+    "2026-10-23": [
+      {
+        "id": "cust_1792166405217_fng6",
+        "code": "CUSTOM",
+        "name": "MAT356\tToán cho công nghệ thông tin",
+        "start": 1,
+        "periods": [
+          "09:30"
+        ],
+        "periodLabel": "Tiết 09:30",
         "room": "NDH301",
         "gv": "Trắc nghiệm (THI)",
         "color": "rose"
