@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KhaiLife — Quản Lý Cá Nhân & Sudoku</title>
+
+    <!-- ==========================================================================
+         CẤU HÌNH LOGO WEB & ICON KHI THÊM VÀO MÀN HÌNH CHÍNH IPHONE (iOS)
+         ========================================================================== -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="KhaiLife">
+    <link id="appleTouchIcon" rel="apple-touch-icon" sizes="180x180" href="logo.jpg">
+    <link id="favIcon" rel="icon" type="image/jpeg" href="logo.jpg">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -130,11 +140,14 @@
 
     <aside id="appSidebar" class="fixed top-0 left-0 bottom-0 z-50 w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-2xl transform -translate-x-full transition-transform duration-200 flex flex-col justify-between">
         <div>
-            <!-- Sidebar Header -->
+            <!-- Sidebar Header (Có hiển thị ảnh Logo của bạn) -->
             <div class="h-14 px-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm">
-                        <i data-lucide="layers" class="w-4 h-4"></i>
+                    <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm overflow-hidden border border-indigo-500/30">
+                        <img id="sidebarLogoImg" src="logo.jpg" alt="KhaiLife Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('sidebarFallbackIcon').style.display='flex';">
+                        <span id="sidebarFallbackIcon" style="display:none;" class="w-full h-full items-center justify-center">
+                            <i data-lucide="layers" class="w-4 h-4"></i>
+                        </span>
                     </div>
                     <div>
                         <div class="font-bold text-sm leading-tight text-slate-900 dark:text-white">Mục lục KhaiLife</div>
@@ -188,27 +201,46 @@
                     </span>
                     <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-[#0072e3] dark:bg-blue-950 dark:text-blue-300">Chơi ngay</span>
                 </button>
+
+                <!-- 3. Cài đặt nhanh Ảnh Logo cho Web & iPhone -->
+                <div class="pt-3 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Cá nhân hóa</div>
+                <label for="logoUploadInput" class="cursor-pointer w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-indigo-600 dark:text-indigo-300 bg-indigo-50/70 hover:bg-indigo-100/80 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 transition">
+                    <span class="flex items-center gap-2.5">
+                        <i data-lucide="image-plus" class="w-4 h-4"></i>
+                        <span>Đổi ảnh Logo / Icon iPhone</span>
+                    </span>
+                </label>
             </div>
         </div>
 
         <!-- Sidebar Footer -->
         <div class="p-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
             <span>Bấm biểu tượng góc trái để mở</span>
-            <span class="font-semibold text-indigo-500">v2.6</span>
+            <span class="font-semibold text-indigo-500">v2.7</span>
         </div>
     </aside>
 
     <!-- Compact Header -->
     <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200/80 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between gap-2">
-            <!-- Nút Mục lục + Logo -->
+            <!-- Nút Mục lục + Logo Ảnh của bạn -->
             <div class="flex items-center gap-2.5">
-                <button onclick="toggleAppMenu()" title="Mở Mục lục & Trò chơi Sudoku" class="relative group w-9 h-9 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 flex items-center justify-center text-white shadow-sm ring-2 ring-indigo-500/20 hover:ring-indigo-500/50 transition cursor-pointer">
-                    <i data-lucide="layers" class="w-4 h-4"></i>
-                    <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-white dark:ring-slate-900"></span>
+                <button onclick="toggleAppMenu()" title="Mở Mục lục & Trò chơi Sudoku" class="relative group w-9 h-9 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 flex items-center justify-center text-white shadow-sm ring-2 ring-indigo-500/30 hover:ring-indigo-500 transition cursor-pointer overflow-hidden">
+                    <img id="headerLogoImg" src="logo.jpg" alt="Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('headerFallbackIcon').style.display='flex';">
+                    <span id="headerFallbackIcon" style="display:none;" class="w-full h-full items-center justify-center">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
+                    </span>
+                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-white dark:ring-slate-900"></span>
                 </button>
                 <span onclick="toggleAppMenu()" class="font-bold text-base tracking-tight cursor-pointer hover:text-indigo-600 transition">KhaiLife</span>
                 <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">265D150073</span>
+
+                <!-- Nút chọn ảnh của bạn làm Logo Web & Icon Màn hình chính iPhone -->
+                <label for="logoUploadInput" title="Chọn ảnh của bạn làm Logo App & Icon Màn hình chính iPhone" class="cursor-pointer px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950 dark:hover:bg-indigo-900 text-indigo-600 dark:text-indigo-300 text-[11px] font-bold transition flex items-center gap-1 shadow-sm border border-indigo-200/60 dark:border-indigo-800">
+                    <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+                    <span>Chọn ảnh Logo</span>
+                </label>
+                <input type="file" id="logoUploadInput" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
             </div>
 
             <!-- Inline KPI Pills -->
@@ -690,6 +722,67 @@
     </section>
 
     <script>
+        /* ==========================================================================
+           0. XỬ LÝ LOGO WEB & ICON MÀN HÌNH CHÍNH IPHONE (LƯU TRỰC TIẾP TRONG TRÌNH DUYỆT)
+           ========================================================================== */
+        const APP_LOGO_KEY = 'khailife_custom_app_logo_v1';
+
+        function applySavedAppLogo() {
+            const savedLogo = localStorage.getItem(APP_LOGO_KEY);
+            if (!savedLogo) return;
+
+            const appleIcon = document.getElementById('appleTouchIcon');
+            const favIcon = document.getElementById('favIcon');
+            const headerImg = document.getElementById('headerLogoImg');
+            const sidebarImg = document.getElementById('sidebarLogoImg');
+            const headerFallback = document.getElementById('headerFallbackIcon');
+            const sidebarFallback = document.getElementById('sidebarFallbackIcon');
+
+            if (appleIcon) appleIcon.href = savedLogo;
+            if (favIcon) favIcon.href = savedLogo;
+            if (headerImg) {
+                headerImg.src = savedLogo;
+                headerImg.style.display = 'block';
+            }
+            if (sidebarImg) {
+                sidebarImg.src = savedLogo;
+                sidebarImg.style.display = 'block';
+            }
+            if (headerFallback) headerFallback.style.display = 'none';
+            if (sidebarFallback) sidebarFallback.style.display = 'none';
+        }
+
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // Cắt vuông chính giữa chuẩn kích thước Apple Touch Icon (180x180)
+                    const canvas = document.createElement('canvas');
+                    const size = 180;
+                    canvas.width = size;
+                    canvas.height = size;
+                    const ctx = canvas.getContext('2d');
+
+                    const minEdge = Math.min(img.width, img.height);
+                    const sx = (img.width - minEdge) / 2;
+                    const sy = (img.height - minEdge) / 2;
+
+                    ctx.drawImage(img, sx, sy, minEdge, minEdge, 0, 0, size, size);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+                    localStorage.setItem(APP_LOGO_KEY, dataUrl);
+                    applySavedAppLogo();
+                    toast('Đã đặt ảnh của bạn làm Logo Web & Icon Màn hình chính iPhone!');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            event.target.value = '';
+        }
+
         /* ==========================================================================
            1. DỮ LIỆU MẶC ĐỊNH & KHÓA BẢO VỆ DỮ LIỆU VỪA NHẬP
            ========================================================================== */
@@ -1228,7 +1321,6 @@
                 if (!Array.isArray(items)) return;
                 const [y, m] = dateKey.split('-').map(Number);
                 items.forEach((item, idx) => {
-                    // Đảm bảo mọi lịch tự thêm đều có ID hợp lệ để xóa
                     if (!item.id) {
                         item.id = 'cust_fixed_' + dateKey + '_' + idx;
                     }
@@ -1332,7 +1424,6 @@
             toast(`Đã thêm "${name}" vào ngày ${fmtKeyVN(selectedDate)}`);
         });
 
-        // Đồng bộ danh sách customEvents vào bản backup bảo vệ (nếu có) để khi xóa không bị khôi phục nhầm
         function syncCustomEventsToBackup() {
             const backup = getSavedBackup();
             if (backup) {
@@ -1341,7 +1432,6 @@
             }
         }
 
-        // HÀM XÓA MỤC THỜI KHÓA BIỂU DO NGƯỜI DÙNG TỰ ADD
         function deleteCustomEvent(dateKey, itemId, ev) {
             if (ev) ev.stopPropagation();
             if (!customEvents[dateKey]) return;
@@ -1349,7 +1439,6 @@
             const beforeLen = customEvents[dateKey].length;
             customEvents[dateKey] = customEvents[dateKey].filter(x => String(x.id) !== String(itemId));
 
-            // Dự phòng nếu item cũ không khớp id thì xóa theo vị trí đầu tiên tìm thấy
             if (customEvents[dateKey].length === beforeLen && customEvents[dateKey].length > 0) {
                 customEvents[dateKey].splice(0, 1);
             }
@@ -1363,7 +1452,6 @@
             toast('Đã xóa mục lịch tự thêm');
         }
 
-        // Xóa toàn bộ lịch tự thêm trong ngày đang chọn
         function clearAllCustomOnDay() {
             if (!selectedDate || !customEvents[selectedDate]) return;
             delete customEvents[selectedDate];
@@ -1534,7 +1622,6 @@
             document.getElementById('dayTitle').textContent = `Ngày ${fmtKeyVN(selectedDate)}`;
             document.getElementById('dayTodayBadge').classList.toggle('hidden', selectedDate !== todayISO);
 
-            // Render danh sách thẻ Chi tiết thời khóa biểu (Hiện nút Xóa cho mục tự thêm)
             if (!dayList.length) {
                 cardsBox.innerHTML = `
                     <div class="bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 p-8 text-center space-y-1">
@@ -1581,7 +1668,6 @@
                 }).join('');
             }
 
-            // Render danh sách xóa nhanh các mục tự thêm ở cột bên phải
             const customOnSelectedDay = customEvents[selectedDate] || [];
             const customManagerBox = document.getElementById('customAddedManager');
             const customListEl = document.getElementById('customAddedList');
@@ -1603,7 +1689,6 @@
                 customListEl.innerHTML = '';
             }
 
-            // Render Lưới Tháng
             document.getElementById('monthLabel').textContent = `${String(calMonth + 1).padStart(2, '0')} / ${calYear}`;
             document.getElementById('miniMonthLabel').textContent = `${String(calMonth + 1).padStart(2, '0')}/${calYear}`;
 
@@ -2307,6 +2392,7 @@
             if (localStorage.getItem(THEME_KEY) === 'dark') {
                 document.documentElement.classList.add('dark');
             }
+            applySavedAppLogo();
             loadState();
             renderAll();
 
