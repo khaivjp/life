@@ -1,9 +1,16 @@
 {
-  "updatedAt": 1792166061280,
-  "updatedAtText": "22:54:21 16/10/2026",
+  "updatedAt": 1792166098694,
+  "updatedAtText": "22:54:58 16/10/2026",
   "state": {
     "tasks": [],
-    "finance": [],
+    "finance": [
+      {
+        "id": 1792166096653,
+        "desc": "ĐANG TIẾT KIỆM",
+        "amount": 12023000,
+        "type": "income"
+      }
+    ],
     "tkbRows": [
       {
         "code": "INT304",
