@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KhaiLife — Quản Lý Cá Nhân</title>
+    <title>KhaiLife — Quản Lý Cá Nhân & Sudoku</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -23,7 +23,103 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 9999px; }
         .cal-cell { min-height: 92px; }
-        @media (max-width: 640px) { .cal-cell { min-height: 74px; } }
+        @media (max-width: 640px) { .cal-cell { min-height: 78px; } }
+
+        /* ==========================================================================
+           CHUẨN GIAO DIỆN SUDOKU.COM
+           ========================================================================== */
+        .sdk-board {
+            display: grid;
+            grid-template-columns: repeat(9, minmax(0, 1fr));
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            max-width: 486px;
+            border: 2.5px solid #344861;
+            border-radius: 6px;
+            overflow: hidden;
+            background-color: #ffffff;
+            user-select: none;
+            box-shadow: 0 4px 20px -2px rgba(52, 72, 97, 0.12);
+        }
+        .dark .sdk-board {
+            border-color: #64748b;
+            background-color: #0f172a;
+        }
+        .sdk-cell {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.25rem, 3.6vw, 1.85rem);
+            font-weight: 500;
+            cursor: pointer;
+            border-right: 1px solid #bec6d4;
+            border-bottom: 1px solid #bec6d4;
+            transition: background-color 0.08s ease;
+        }
+        .dark .sdk-cell {
+            border-right-color: #334155;
+            border-bottom-color: #334155;
+        }
+        /* Viền khối 3x3 đậm chuẩn Sudoku.com */
+        .sdk-cell.sdk-br { border-right: 2.5px solid #344861 !important; }
+        .sdk-cell.sdk-bb { border-bottom: 2.5px solid #344861 !important; }
+        .dark .sdk-cell.sdk-br { border-right: 2.5px solid #64748b !important; }
+        .dark .sdk-cell.sdk-bb { border-bottom: 2.5px solid #64748b !important; }
+        .sdk-cell.sdk-no-r { border-right: none !important; }
+        .sdk-cell.sdk-no-b { border-bottom: none !important; }
+
+        /* Màu sắc trạng thái ô chuẩn Sudoku.com */
+        .sdk-cell.sdk-related { background-color: #e2ebf3; }
+        .dark .sdk-cell.sdk-related { background-color: #1e293b; }
+
+        .sdk-cell.sdk-same-num { background-color: #c3d7ea; }
+        .dark .sdk-cell.sdk-same-num { background-color: #334155; }
+
+        .sdk-cell.sdk-conflict { background-color: #f7cfd6 !important; }
+        .dark .sdk-cell.sdk-conflict { background-color: #4c1d24 !important; }
+
+        .sdk-cell.sdk-selected { background-color: #bbdefb !important; }
+        .dark .sdk-cell.sdk-selected { background-color: #1d4ed8 !important; }
+
+        /* Màu chữ số trong ô */
+        .sdk-val-given { color: #344861; font-weight: 600; }
+        .dark .sdk-val-given { color: #f1f5f9; }
+
+        .sdk-val-user { color: #0072e3; font-weight: 500; }
+        .dark .sdk-val-user { color: #60a5fa; }
+        .sdk-cell.sdk-selected .sdk-val-user { color: #005bb5; }
+        .dark .sdk-cell.sdk-selected .sdk-val-user { color: #ffffff; }
+
+        .sdk-val-error { color: #e53935 !important; font-weight: 600; }
+        .dark .sdk-val-error { color: #f87171 !important; }
+
+        /* Lưới ghi chú nháp 3x3 trong 1 ô */
+        .sdk-notes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            width: 100%;
+            height: 100%;
+            padding: 2px;
+            pointer-events: none;
+        }
+        .sdk-note-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.55rem, 1.3vw, 0.72rem);
+            font-weight: 600;
+            color: #6e7c8c;
+            line-height: 1;
+        }
+        .dark .sdk-note-item { color: #94a3b8; }
+        .sdk-note-item.sdk-note-highlight {
+            color: #0072e3;
+            font-weight: 800;
+        }
+        .dark .sdk-note-item.sdk-note-highlight { color: #38bdf8; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen font-sans text-sm antialiased selection:bg-indigo-500 selection:text-white">
@@ -31,15 +127,91 @@
     <!-- Toast -->
     <div id="toastBox" class="fixed bottom-4 right-4 z-50 flex flex-col gap-1.5 pointer-events-none"></div>
 
+    <!-- ==========================================================================
+         SIDEBAR MỤC LỤC (MỞ KHI BẤM VÀO NÚT LOGO KHOANH ĐỎ GÓC TRÁI)
+         ========================================================================== -->
+    <div id="menuBackdrop" onclick="closeAppMenu()" class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-[2px] hidden opacity-0 transition-opacity duration-200"></div>
+
+    <aside id="appSidebar" class="fixed top-0 left-0 bottom-0 z-50 w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-2xl transform -translate-x-full transition-transform duration-200 flex flex-col justify-between">
+        <div>
+            <!-- Sidebar Header -->
+            <div class="h-14 px-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-sm leading-tight text-slate-900 dark:text-white">Mục lục KhaiLife</div>
+                        <div class="text-[10px] font-semibold text-slate-400">265D150073</div>
+                    </div>
+                </div>
+                <button onclick="closeAppMenu()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Danh sách Mục lục -->
+            <div class="p-3 space-y-1.5">
+                <div class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Chế độ hiển thị</div>
+
+                <!-- 1. Quản lý cá nhân -->
+                <button onclick="switchMainSection('dashboard')" id="navBtnDashboard" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold bg-indigo-50 text-indigo-600 dark:bg-indigo-950/70 dark:text-indigo-300 transition">
+                    <span class="flex items-center gap-2.5">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                        <span>Quản lý cá nhân</span>
+                    </span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300">Chính</span>
+                </button>
+
+                <!-- Liên kết nhảy nhanh trong trang Quản lý -->
+                <div class="pl-7 pr-2 py-1 space-y-1 border-l-2 border-slate-100 dark:border-slate-800 ml-4">
+                    <button onclick="jumpToSection('secTasks')" class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 transition">
+                        <i data-lucide="check-square" class="w-3.5 h-3.5 text-indigo-500"></i>
+                        <span>Nhiệm vụ</span>
+                    </button>
+                    <button onclick="jumpToSection('secFinance')" class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 transition">
+                        <i data-lucide="wallet" class="w-3.5 h-3.5 text-emerald-500"></i>
+                        <span>Thu - Chi</span>
+                    </button>
+                    <button onclick="jumpToSection('secTkb')" class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 transition">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#0f4c9c]"></i>
+                        <span>Thời khóa biểu</span>
+                    </button>
+                </div>
+
+                <div class="pt-2 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Giải trí & Rèn luyện trí não</div>
+
+                <!-- 2. Trò chơi Sudoku (Sudoku.com) -->
+                <button onclick="switchMainSection('sudoku')" id="navBtnSudoku" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <span class="flex items-center gap-2.5">
+                        <div class="w-6 h-6 rounded-lg bg-[#0072e3] text-white flex items-center justify-center font-extrabold text-[11px] shadow-sm">9</div>
+                        <div class="text-left">
+                            <div class="font-bold leading-tight">Trò chơi Sudoku</div>
+                            <div class="text-[10px] font-normal text-slate-400">Chuẩn Sudoku.com</div>
+                        </div>
+                    </span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-[#0072e3] dark:bg-blue-950 dark:text-blue-300">Chơi ngay</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="p-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+            <span>Bấm biểu tượng góc trái để mở</span>
+            <span class="font-semibold text-indigo-500">v2.5</span>
+        </div>
+    </aside>
+
     <!-- Compact Header -->
     <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200/80 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between gap-2">
-            <!-- Logo -->
+            <!-- Nút Mục lục (Vị trí khoanh đỏ) + Logo -->
             <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm">
+                <button onclick="toggleAppMenu()" title="Mở Mục lục & Trò chơi Sudoku" class="relative group w-9 h-9 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 flex items-center justify-center text-white shadow-sm ring-2 ring-indigo-500/20 hover:ring-indigo-500/50 transition cursor-pointer">
                     <i data-lucide="layers" class="w-4 h-4"></i>
-                </div>
-                <span class="font-bold text-base tracking-tight">KhaiLife</span>
+                    <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-white dark:ring-slate-900"></span>
+                </button>
+                <span onclick="toggleAppMenu()" class="font-bold text-base tracking-tight cursor-pointer hover:text-indigo-600 transition">KhaiLife</span>
                 <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">265D150073</span>
             </div>
 
@@ -53,21 +225,11 @@
                     <span class="text-slate-400">Số dư:</span>
                     <span id="kpiBalance" class="font-bold text-emerald-600 dark:text-emerald-400">0 ₫</span>
                 </div>
-                <div class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 flex items-center gap-2">
-                    <span class="text-slate-400">Đã học:</span>
-                    <span id="kpiStudy" class="font-bold text-amber-600 dark:text-amber-400">0p</span>
-                </div>
             </div>
 
             <!-- Quick Actions -->
             <div class="flex items-center gap-1.5">
-                <label for="excelUpload" class="cursor-pointer px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
-                    <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
-                    <span>Nhập Excel</span>
-                </label>
-                <input type="file" id="excelUpload" accept=".xlsx,.xls,.csv" class="hidden" onchange="handleExcelUpload(event)">
-
-                <button onclick="resetSample()" title="Khôi phục mặc định" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition">
+                <button onclick="resetSample()" title="Khôi phục về bản dữ liệu đã lưu" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition">
                     <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                 </button>
                 <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition">
@@ -77,14 +239,16 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-3 sm:px-6 py-4 space-y-4">
+    <!-- ==========================================================================
+         PHẦN 1: GIAO DIỆN QUẢN LÝ CÁ NHÂN (NHIỆM VỤ, THU - CHI, TKB)
+         ========================================================================== -->
+    <main id="dashboardContainer" class="max-w-7xl mx-auto px-3 sm:px-6 py-4 space-y-4">
 
-        <!-- TOP 3 COLUMNS: TASKS | FINANCE | STUDY -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <!-- TOP 2 COLUMNS: TASKS | FINANCE -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
             <!-- 1. NHIỆM VỤ -->
-            <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[390px]">
+            <section id="secTasks" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[360px]">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
                         <i data-lucide="check-square" class="w-4 h-4 text-indigo-500"></i>
@@ -116,7 +280,7 @@
             </section>
 
             <!-- 2. THU - CHI -->
-            <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[390px]">
+            <section id="secFinance" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[360px]">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
                         <i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i>
@@ -155,74 +319,39 @@
                 <div id="finList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
             </section>
 
-            <!-- 3. HỌC TẬP & POMODORO -->
-            <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[390px]">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
-                        <i data-lucide="timer" class="w-4 h-4 text-amber-500"></i>
-                        <span>Học tập</span>
-                    </div>
-                    <div class="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg text-[11px] font-semibold">
-                        <button onclick="setPreset(25)" id="p25" class="px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 text-amber-600 shadow-sm">25p</button>
-                        <button onclick="setPreset(50)" id="p50" class="px-2 py-0.5 rounded-md text-slate-500">50p</button>
-                    </div>
-                </div>
-
-                <!-- Compact Timer Bar -->
-                <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-900 text-white mb-3">
-                    <span id="timerClock" class="text-2xl font-mono font-bold text-amber-400 tracking-wider">25:00</span>
-                    <div class="flex items-center gap-1.5">
-                        <button onclick="toggleTimer()" id="btnTimer" class="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold transition">Bắt đầu</button>
-                        <button onclick="resetTimer()" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></button>
-                        <button onclick="saveTimerSession()" title="Lưu phiên" class="p-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white"><i data-lucide="save" class="w-3.5 h-3.5"></i></button>
-                    </div>
-                </div>
-
-                <!-- Quick Log Form -->
-                <form id="studyForm" class="flex gap-1.5 mb-3">
-                    <input type="text" id="studySubj" required list="subjSuggestions" placeholder="Môn học..."
-                        class="flex-1 min-w-0 px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500">
-                    <datalist id="subjSuggestions">
-                        <option value="Cơ sở dữ liệu (INT304)">
-                        <option value="Lập trình cơ bản (INT342)">
-                        <option value="Toán rời rạc (INT349)">
-                        <option value="Đồ họa ứng dụng 1 (INT358)">
-                    </datalist>
-                    <input type="number" id="studyMins" required min="1" max="600" placeholder="Phút"
-                        class="w-16 px-2.5 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500">
-                    <button type="submit" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs transition">
-                        <i data-lucide="plus" class="w-4 h-4"></i>
-                    </button>
-                </form>
-
-                <!-- Study Log List -->
-                <div id="studyList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
-            </section>
-
         </div>
 
-        <!-- BOTTOM SECTION: LỊCH THÁNG TKB (PHÒNG HỌC MẶC ĐỊNH EXCEL) -->
-        <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4">
+        <!-- BOTTOM SECTION: THỜI KHÓA BIỂU -->
+        <section id="secTkb" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4">
             <!-- Toolbar -->
-            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
+            <div class="flex flex-wrap items-center justify-between gap-2.5 pb-3 mb-4 border-b border-slate-100 dark:border-slate-800">
                 <div class="flex flex-wrap items-center gap-2">
-                    <i data-lucide="calendar" class="w-4 h-4 text-indigo-500"></i>
-                    <h2 class="font-bold text-slate-900 dark:text-white">Lịch Tháng TKB</h2>
-
-                    <!-- Month Switcher -->
-                    <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl p-0.5 ml-1">
-                        <button onclick="changeMonth(-1)" class="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-900 transition"><i data-lucide="chevron-left" class="w-3.5 h-3.5"></i></button>
-                        <span id="monthLabel" class="px-2.5 text-xs font-bold min-w-[90px] text-center">10 / 2026</span>
-                        <button onclick="changeMonth(1)" class="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-900 transition"><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
+                    <div class="w-7 h-7 rounded-lg bg-[#0f4c9c] text-white flex items-center justify-center shadow-sm">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
                     </div>
+                    <h2 class="font-bold text-base text-slate-900 dark:text-white">Thời khóa biểu</h2>
 
-                    <button onclick="goToToday()" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition shadow-sm flex items-center gap-1.5">
+                    <button onclick="goToToday()" class="px-2.5 py-1.5 rounded-lg bg-[#0f4c9c] hover:bg-blue-800 text-white text-xs font-semibold transition shadow-sm flex items-center gap-1.5 ml-1">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping"></span>
                         <span>Hôm nay (<span id="liveTodayText">--/--</span>)</span>
                     </button>
 
+                    <!-- Cụm nút Nhập Excel & Lưu dữ liệu vừa nhập -->
+                    <div class="flex flex-wrap items-center gap-1.5 ml-1">
+                        <label for="excelUpload" class="cursor-pointer px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+                            <span>Nhập Excel</span>
+                        </label>
+                        <input type="file" id="excelUpload" accept=".xlsx,.xls,.csv" class="hidden" onchange="handleExcelUpload(event)">
+
+                        <button type="button" onclick="saveImportedBackup()" id="btnSaveBackup" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm" title="Lưu khóa toàn bộ dữ liệu vừa nhập để khi bấm Khôi phục không bị mất">
+                            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                            <span id="saveBackupText">Lưu dữ liệu vừa nhập</span>
+                        </button>
+                    </div>
+
                     <!-- Quick Semester Months -->
-                    <div class="hidden sm:flex items-center gap-1">
+                    <div class="hidden xl:flex items-center gap-1 ml-1">
                         <button onclick="setMonth(2026, 9)" id="m-2026-9" class="px-2 py-1 rounded-lg text-xs font-semibold">T10/26</button>
                         <button onclick="setMonth(2026, 10)" id="m-2026-10" class="px-2 py-1 rounded-lg text-xs font-semibold">T11/26</button>
                         <button onclick="setMonth(2026, 11)" id="m-2026-11" class="px-2 py-1 rounded-lg text-xs font-semibold">T12/26</button>
@@ -230,62 +359,129 @@
                     </div>
                 </div>
 
-                <!-- Right Controls -->
-                <div class="flex items-center gap-2">
-                    <span class="hidden lg:inline-flex items-center gap-1.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-1 rounded-lg">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                        Tự động đổi ngày lúc 00:00
-                    </span>
+                <!-- Right Controls: Mode Switcher & Filter -->
+                <div class="flex flex-wrap items-center gap-2">
                     <select id="subjFilter" onchange="renderCalendar()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-medium border-0 focus:ring-2 focus:ring-indigo-500">
                         <option value="ALL">Tất cả môn</option>
                     </select>
-                    <button onclick="toggleRawTable()" id="btnRawTable" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-medium transition">
-                        Bảng Excel
-                    </button>
+
+                    <!-- View Tabs: Ngày / Tuần | Lưới Tháng | Bảng Excel -->
+                    <div class="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl text-xs font-semibold">
+                        <button onclick="setTkbView('day')" id="tabViewDay" class="px-3 py-1 rounded-lg bg-[#0f4c9c] text-white shadow-sm transition">Ngày / Tuần</button>
+                        <button onclick="setTkbView('month')" id="tabViewMonth" class="px-3 py-1 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 transition">Lưới Tháng</button>
+                        <button onclick="setTkbView('raw')" id="tabViewRaw" class="px-3 py-1 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 transition">Bảng Excel</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Calendar + Day Detail Grid -->
-            <div id="calView" class="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
-                <!-- 7-Column Calendar -->
-                <div class="xl:col-span-9 overflow-x-auto">
-                    <div class="min-w-[600px]">
-                        <div class="grid grid-cols-7 gap-1 mb-1 text-center text-[11px] font-bold text-slate-400">
-                            <div class="py-1">T2</div>
-                            <div class="py-1">T3</div>
-                            <div class="py-1">T4</div>
-                            <div class="py-1">T5</div>
-                            <div class="py-1">T6</div>
-                            <div class="py-1 text-amber-500">T7</div>
-                            <div class="py-1 text-rose-500">CN</div>
+            <!-- MAIN TKB CONTAINER -->
+            <div id="calView" class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
+
+                <!-- CỘT CHÍNH (TRÁI): DẠNG NGÀY / TUẦN HOẶC LƯỚI THÁNG -->
+                <div class="xl:col-span-8 space-y-4">
+
+                    <!-- 1. GIAO DIỆN DẠNG NGÀY / TUẦN -->
+                    <div id="dayScheduleView" class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Thời khoá biểu dạng ngày</span>
+                            <span id="backupStatusBadge" class="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 hidden items-center gap-1">
+                                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                                <span id="backupTimeLabel">Đã bảo vệ dữ liệu</span>
+                            </span>
                         </div>
-                        <div id="calGrid" class="grid grid-cols-7 gap-1"></div>
+
+                        <!-- Khung chọn Tuần & Ngày -->
+                        <div class="bg-slate-50/80 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3.5">
+                            <!-- Hàng trên: Trước | Sau + Ô chọn ngày -->
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    <button onclick="changeWeek(-1)" class="w-8 h-8 rounded-full bg-[#0f4c9c] hover:bg-blue-800 text-white flex items-center justify-center shadow-sm transition" title="Tuần trước">
+                                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                                    </button>
+                                    <div class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#0f4c9c] dark:text-blue-400 select-none">
+                                        <button onclick="changeWeek(-1)" class="hover:underline">Trước</button>
+                                        <span class="text-slate-300 dark:text-slate-600">|</span>
+                                        <button onclick="changeWeek(1)" class="hover:underline">Sau</button>
+                                    </div>
+                                    <button onclick="changeWeek(1)" class="w-8 h-8 rounded-full bg-[#0f4c9c] hover:bg-blue-800 text-white flex items-center justify-center shadow-sm transition" title="Tuần sau">
+                                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Nút chọn ngày DD/MM/YYYY -->
+                                <label class="relative cursor-pointer inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-indigo-50/90 dark:bg-slate-800 hover:bg-indigo-100/80 text-[#0f4c9c] dark:text-blue-300 font-bold text-xs sm:text-sm border border-indigo-200/60 dark:border-slate-700 transition">
+                                    <span id="selectedDatePillText">--/--/----</span>
+                                    <i data-lucide="calendar-days" class="w-4 h-4"></i>
+                                    <input type="date" id="nativeDatePicker" onchange="onPickNativeDate(this.value)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+                                </label>
+                            </div>
+
+                            <!-- Tiêu đề Tháng MM/YYYY -->
+                            <div id="weekMonthTitle" class="text-sm font-bold text-[#8b2635] dark:text-rose-400">
+                                Tháng --/----
+                            </div>
+
+                            <!-- Thanh 7 ngày trong tuần (Th2 -> CN) -->
+                            <div id="weekDaysStrip" class="grid grid-cols-7 gap-1.5 sm:gap-2 pt-0.5"></div>
+                        </div>
+
+                        <!-- Chi tiết thời khóa biểu -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100">Chi tiết thời khóa biểu</h3>
+                                <span id="dayTodayBadge" class="hidden text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#0f4c9c] text-white">HÔM NAY</span>
+                            </div>
+
+                            <!-- Danh sách thẻ môn học có màu sắc -->
+                            <div id="daySessionsCards" class="space-y-3"></div>
+                        </div>
                     </div>
+
+                    <!-- 2. GIAO DIỆN LƯỚI LỊCH THÁNG -->
+                    <div id="monthGridView" class="hidden space-y-3">
+                        <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/60 px-3 py-2 rounded-xl border border-slate-200/70 dark:border-slate-800">
+                            <span class="text-xs font-bold text-slate-600 dark:text-slate-300">Lịch cả tháng</span>
+                            <div class="flex items-center bg-white dark:bg-slate-900 rounded-xl p-0.5 border border-slate-200/80 dark:border-slate-700">
+                                <button onclick="changeMonth(-1)" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"><i data-lucide="chevron-left" class="w-3.5 h-3.5"></i></button>
+                                <span id="monthLabel" class="px-3 text-xs font-bold min-w-[95px] text-center">10 / 2026</span>
+                                <button onclick="changeMonth(1)" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="w-full overflow-x-auto pb-2">
+                            <div class="min-w-[640px] w-full">
+                                <div class="grid grid-cols-7 gap-1 mb-1 text-center text-[11px] font-bold text-slate-400">
+                                    <div class="py-1">Th2</div>
+                                    <div class="py-1">Th3</div>
+                                    <div class="py-1">Th4</div>
+                                    <div class="py-1">Th5</div>
+                                    <div class="py-1">Th6</div>
+                                    <div class="py-1 text-amber-500">Th7</div>
+                                    <div class="py-1 text-rose-500">CN</div>
+                                </div>
+                                <div id="calGrid" class="grid grid-cols-7 gap-1"></div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
-                <!-- Selected Day Panel -->
-                <div class="xl:col-span-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3.5 border border-slate-200/70 dark:border-slate-800 flex flex-col gap-3">
-                    <div class="flex flex-wrap items-center justify-between gap-1.5 pb-2.5 border-b border-slate-200/70 dark:border-slate-700">
-                        <div class="flex items-center gap-1.5">
-                            <span id="dayTitle" class="font-bold text-xs text-slate-800 dark:text-slate-100">--/--/----</span>
-                            <span id="dayTodayBadge" class="hidden text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-indigo-600 text-white">HÔM NAY</span>
+                <!-- CỘT PHẢI: THÊM LỊCH TỰ CHỌN & LỊCH THÁNG MINI -->
+                <div class="xl:col-span-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-200/70 dark:border-slate-800 flex flex-col gap-4">
+                    <div class="flex items-center justify-between pb-2.5 border-b border-slate-200/70 dark:border-slate-700">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="calendar-check" class="w-4 h-4 text-[#0f4c9c] dark:text-blue-400"></i>
+                            <span id="dayTitle" class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100">Ngày --/--/----</span>
                         </div>
-                        <div class="flex items-center gap-1">
-                            <button onclick="restoreHiddenOnDay()" id="btnRestoreDay" class="hidden px-2 py-1 rounded-lg bg-amber-500/15 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25 text-[11px] font-semibold transition" title="Khôi phục lịch mặc định đã ẩn trong ngày này">
-                                Khôi phục
-                            </button>
-                            <button onclick="addDayToTasks()" class="px-2 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-semibold transition">
-                                +Nhiệm vụ
-                            </button>
-                        </div>
+                        <span class="text-[11px] text-slate-400 font-medium">Quản lý nhanh</span>
                     </div>
 
-                    <!-- Quick-Add Schedule Form for Selected Day -->
-                    <form id="addDayScheduleForm" class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800 space-y-2 shadow-sm">
+                    <!-- Form Thêm lịch vào ngày đang chọn -->
+                    <form id="addDayScheduleForm" class="bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 space-y-2.5 shadow-sm">
                         <div class="flex items-center justify-between">
-                            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1">
-                                <i data-lucide="calendar-plus" class="w-3.5 h-3.5 text-indigo-500"></i>
-                                Thêm lịch vào ngày này
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                                <i data-lucide="calendar-plus" class="w-3.5 h-3.5 text-[#0f4c9c] dark:text-blue-400"></i>
+                                Thêm lịch học / sự kiện
                             </span>
                             <!-- Color Tag Selector -->
                             <div class="flex items-center gap-1" id="schedColorPicker">
@@ -297,8 +493,8 @@
                             </div>
                         </div>
 
-                        <input type="text" id="schedName" required list="schedSubjList" placeholder="Tên môn / Lịch hẹn (VD: Học bù...)"
-                            class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <input type="text" id="schedName" required list="schedSubjList" placeholder="Tên môn học (VD: Đồ họa ứng dụng 1...)"
+                            class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <datalist id="schedSubjList">
                             <option value="Cơ sở dữ liệu">
                             <option value="Lập trình cơ bản">
@@ -306,24 +502,39 @@
                             <option value="Đồ họa ứng dụng 1">
                             <option value="Học bù">
                             <option value="Thi kết thúc học phần">
-                            <option value="Tự học / Nhóm">
                         </datalist>
 
-                        <div class="grid grid-cols-2 gap-1.5">
-                            <input type="text" id="schedPeriod" placeholder="Tiết/Giờ (VD: 1-5)" value="1-5"
-                                class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            <input type="text" id="schedRoom" placeholder="Phòng (VD: B45)"
-                                class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="schedPeriod" placeholder="Tiết (VD: 6-10 hoặc 13)" value="6-10"
+                                class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input type="text" id="schedRoom" placeholder="Phòng (VD: NDH214)"
+                                class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </div>
 
-                        <button type="submit" class="w-full py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition flex items-center justify-center gap-1 shadow-sm">
+                        <input type="text" id="schedGv" placeholder="Giảng viên (VD: N.K.Trung)"
+                            class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+
+                        <button type="submit" class="w-full py-2 rounded-xl bg-[#0f4c9c] hover:bg-blue-800 text-white text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow-sm">
                             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                            <span>Thêm lịch ngày này</span>
+                            <span>Thêm vào ngày này</span>
                         </button>
                     </form>
 
-                    <!-- Day Sessions List -->
-                    <div id="daySessions" class="space-y-2 max-h-[320px] overflow-y-auto pr-0.5"></div>
+                    <!-- Mini Month Overview -->
+                    <div class="bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 space-y-2.5 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Lịch tháng thu gọn</span>
+                            <div class="flex items-center gap-1">
+                                <button onclick="changeMonth(-1)" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="chevron-left" class="w-3.5 h-3.5"></i></button>
+                                <span id="miniMonthLabel" class="text-xs font-bold text-[#0f4c9c] dark:text-blue-400 min-w-[65px] text-center">10/2026</span>
+                                <button onclick="changeMonth(1)" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400">
+                            <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div class="text-amber-500">T7</div><div class="text-rose-500">CN</div>
+                        </div>
+                        <div id="miniCalGrid" class="grid grid-cols-7 gap-1"></div>
+                    </div>
                 </div>
             </div>
 
@@ -338,7 +549,7 @@
                             <th class="p-2 text-center">Tiết</th>
                             <th class="p-2 text-center">Phòng</th>
                             <th class="p-2">Giảng viên</th>
-                            <th class="p-2 rounded-r-lg">Thời gian</th>
+                            <th class="p-2 rounded-r-lg">Đợt học</th>
                         </tr>
                     </thead>
                     <tbody id="rawTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
@@ -348,22 +559,144 @@
 
     </main>
 
+    <!-- ==========================================================================
+         PHẦN 2: TRÒ CHƠI SUDOKU (CHUẨN GIAO DIỆN SUDOKU.COM)
+         ========================================================================== -->
+    <section id="sudokuContainer" class="hidden max-w-5xl mx-auto px-3 sm:px-6 py-5">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-4 sm:p-6 shadow-sm">
+
+            <!-- Header Sudoku.com -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-5 border-b border-slate-200/80 dark:border-slate-800">
+                <div class="flex items-center gap-3">
+                    <button onclick="switchMainSection('dashboard')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span>Quay lại Quản lý</span>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl sm:text-2xl font-extrabold tracking-tight text-[#344861] dark:text-white">Sudoku<span class="text-[#0072e3]">.com</span></span>
+                    </div>
+                </div>
+
+                <!-- Thanh chọn độ khó giống Sudoku.com -->
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <span class="text-xs font-bold text-slate-400 mr-1 hidden sm:inline">Độ khó:</span>
+                    <button onclick="startNewSudoku('easy')" id="sdkDiff-easy" class="px-3 py-1.5 rounded-lg text-xs font-bold transition">Dễ</button>
+                    <button onclick="startNewSudoku('medium')" id="sdkDiff-medium" class="px-3 py-1.5 rounded-lg text-xs font-bold transition">Trung bình</button>
+                    <button onclick="startNewSudoku('hard')" id="sdkDiff-hard" class="px-3 py-1.5 rounded-lg text-xs font-bold transition">Khó</button>
+                    <button onclick="startNewSudoku('expert')" id="sdkDiff-expert" class="px-3 py-1.5 rounded-lg text-xs font-bold transition">Chuyên gia</button>
+                </div>
+            </div>
+
+            <!-- Thanh thông số: Lỗi | Điểm | Thời gian -->
+            <div class="max-w-[840px] mx-auto flex items-center justify-between text-xs sm:text-sm font-semibold text-[#6e7c8c] dark:text-slate-400 mb-3 px-1">
+                <div>
+                    Lỗi: <span id="sdkMistakes" class="font-bold text-[#344861] dark:text-slate-200">0/3</span>
+                </div>
+                <div>
+                    Điểm: <span id="sdkScore" class="font-bold text-[#344861] dark:text-slate-200">0</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <span id="sdkTimer" class="font-mono font-bold text-[#344861] dark:text-slate-200">00:00</span>
+                    <button onclick="toggleSudokuPause()" id="sdkPauseBtn" title="Tạm dừng / Tiếp tục" class="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition">
+                        <i data-lucide="pause" class="w-3 h-3"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bố cục chính: Bàn cờ 9x9 bên trái + Cụm điều khiển Sudoku.com bên phải -->
+            <div class="max-w-[840px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+
+                <!-- Cột Bàn cờ 9x9 -->
+                <div class="md:col-span-7 flex justify-center relative">
+                    <div id="sdkBoard" class="sdk-board"></div>
+
+                    <!-- Màn hình che khi Tạm dừng hoặc Thắng / Thua -->
+                    <div id="sdkOverlay" class="hidden absolute inset-0 max-w-[486px] mx-auto rounded-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-6 text-center space-y-4 border-2 border-[#344861]">
+                        <div id="sdkOverlayIcon" class="w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-950 text-[#0072e3] flex items-center justify-center">
+                            <i data-lucide="trophy" class="w-7 h-7"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <h3 id="sdkOverlayTitle" class="text-lg font-extrabold text-[#344861] dark:text-white">Tạm dừng</h3>
+                            <p id="sdkOverlaySub" class="text-xs text-slate-500 dark:text-slate-400">Trò chơi đang được tạm dừng</p>
+                        </div>
+                        <div class="flex items-center gap-2.5">
+                            <button onclick="resumeOrRetrySudoku()" id="sdkOverlayPrimaryBtn" class="px-5 py-2.5 rounded-xl bg-[#0072e3] hover:bg-blue-700 text-white text-xs font-bold shadow-md transition">
+                                Tiếp tục chơi
+                            </button>
+                            <button onclick="startNewSudoku(sdkState.difficulty)" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold transition">
+                                Ván mới
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cột Điều khiển chuẩn Sudoku.com -->
+                <div class="md:col-span-5 flex flex-col gap-4 max-w-[340px] mx-auto w-full">
+
+                    <!-- Nút Ván mới lớn màu xanh -->
+                    <button onclick="startNewSudoku(sdkState.difficulty)" class="w-full py-3.5 rounded-xl bg-[#0072e3] hover:bg-[#005bb5] active:scale-[0.99] text-white font-bold text-sm sm:text-base shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-2">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>Ván mới</span>
+                    </button>
+
+                    <!-- 4 Nút tròn công cụ: Hoàn tác | Xóa | Ghi chú (ON/OFF) | Gợi ý (3) -->
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <!-- Undo -->
+                        <button onclick="sudokuUndo()" class="flex flex-col items-center gap-1.5 group">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#eaeef4] group-hover:bg-[#dce3ed] dark:bg-slate-800 dark:group-hover:bg-slate-700 text-[#325aaf] dark:text-blue-400 flex items-center justify-center transition">
+                                <i data-lucide="undo-2" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-[11px] font-semibold text-[#344861] dark:text-slate-300">Hoàn tác</span>
+                        </button>
+
+                        <!-- Erase -->
+                        <button onclick="sudokuErase()" class="flex flex-col items-center gap-1.5 group">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#eaeef4] group-hover:bg-[#dce3ed] dark:bg-slate-800 dark:group-hover:bg-slate-700 text-[#325aaf] dark:text-blue-400 flex items-center justify-center transition">
+                                <i data-lucide="eraser" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-[11px] font-semibold text-[#344861] dark:text-slate-300">Xóa</span>
+                        </button>
+
+                        <!-- Notes (Pencil) -->
+                        <button onclick="sudokuToggleNotes()" class="flex flex-col items-center gap-1.5 group relative">
+                            <div id="sdkNotesCircle" class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#eaeef4] group-hover:bg-[#dce3ed] dark:bg-slate-800 dark:group-hover:bg-slate-700 text-[#325aaf] dark:text-blue-400 flex items-center justify-center transition relative">
+                                <i data-lucide="pencil" class="w-5 h-5"></i>
+                                <span id="sdkNotesBadge" class="absolute -top-1 -right-1 px-1.5 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-500 text-white leading-none">OFF</span>
+                            </div>
+                            <span class="text-[11px] font-semibold text-[#344861] dark:text-slate-300">Ghi chú</span>
+                        </button>
+
+                        <!-- Hint -->
+                        <button onclick="sudokuHint()" class="flex flex-col items-center gap-1.5 group relative">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#eaeef4] group-hover:bg-[#dce3ed] dark:bg-slate-800 dark:group-hover:bg-slate-700 text-[#325aaf] dark:text-blue-400 flex items-center justify-center transition relative">
+                                <i data-lucide="lightbulb" class="w-5 h-5"></i>
+                                <span id="sdkHintBadge" class="absolute -top-1 -right-1 w-5 h-5 rounded-full text-[10px] font-extrabold bg-[#0072e3] text-white flex items-center justify-center leading-none">3</span>
+                            </div>
+                            <span class="text-[11px] font-semibold text-[#344861] dark:text-slate-300">Gợi ý</span>
+                        </button>
+                    </div>
+
+                    <!-- Bàn phím số 1 - 9 chuẩn Sudoku.com (3x3 trên Desktop, 1 hàng ngang trên Mobile) -->
+                    <div id="sdkNumpad" class="grid grid-cols-9 md:grid-cols-3 gap-1.5 sm:gap-2.5 pt-1"></div>
+
+                    <p class="text-[11px] text-center text-slate-400 hidden md:block">
+                        Mẹo: Dùng phím số <kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-mono">1-9</kbd>, phím mũi tên, <kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-mono">N</kbd> (Ghi chú) hoặc <kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-mono">Backspace</kbd>.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
     <script>
         /* ==========================================================================
-           1. DỮ LIỆU MẶC ĐỊNH TỪ FILE Export_TKB.xlsx (16 DÒNG CHUẨN)
+           1. DỮ LIỆU MẶC ĐỊNH & KHÓA BẢO VỆ DỮ LIỆU VỪA NHẬP
            ========================================================================== */
         const STORAGE_KEY = 'lifesync_minimal_v4';
         const CUSTOM_EVENTS_KEY = 'ls_custom_events_v1';
-        const HIDDEN_EXCEL_KEY = 'ls_hidden_excel_instances_v1';
+        const SAVED_BACKUP_KEY = 'khailife_saved_user_backup_v1';
+        const SUDOKU_SAVE_KEY = 'khailife_sudoku_state_v1';
         const THEME_KEY = 'lifesync_theme';
-
-        const PERIOD_TIME = {
-            1: ['07:00', '07:50'], 2: ['07:55', '08:45'], 3: ['08:50', '09:40'],
-            4: ['09:50', '10:40'], 5: ['10:45', '11:35'], 6: ['13:00', '13:50'],
-            7: ['13:55', '14:45'], 8: ['14:50', '15:40'], 9: ['15:50', '16:40'],
-            10: ['16:45', '17:35'], 11: ['17:45', '18:35'], 12: ['18:40', '19:30'],
-            13: ['19:35', '20:25'], 14: ['20:30', '21:20'], 15: ['21:25', '22:15']
-        };
 
         const DEFAULT_EXCEL_ROWS = [
             { code: 'INT304', name: 'Cơ sở dữ liệu', day: 4, start: 6, count: 5, room: 'B45', gv: 'N.T.T.Hương', range: '04/11/26 đến 11/11/26' },
@@ -396,20 +729,17 @@
                 { id: 1, desc: 'Trợ cấp tháng', amount: 2500000, type: 'income' },
                 { id: 2, desc: 'Ăn trưa & Cà phê', amount: 65000, type: 'expense' }
             ],
-            study: [
-                { id: 1, subj: 'Cơ sở dữ liệu (INT304)', mins: 50 },
-                { id: 2, subj: 'Toán rời rạc (INT349)', mins: 25 }
-            ],
             tkbRows: JSON.parse(JSON.stringify(DEFAULT_EXCEL_ROWS))
         };
 
         let state = {};
         let customEvents = {};
-        let hiddenExcelInstances = {};
         let expandedDays = [];
         let taskFilter = 'all';
         let finType = 'expense';
         let selectedSchedColor = 'indigo';
+        let currentTkbView = 'day';
+        let activeMainSection = 'dashboard'; // 'dashboard' | 'sudoku'
 
         const initNow = new Date();
         let calYear = initNow.getFullYear();
@@ -417,15 +747,72 @@
         let selectedDate = '';
         let lastKnownTodayISO = '';
 
-        // Timer state
-        let timerInt = null;
-        let timerRunning = false;
-        let presetMins = 25;
-        let secsLeft = 25 * 60;
-        let elapsedSecs = 0;
+        /* ==========================================================================
+           2. ĐIỀU KHIỂN MỤC LỤC (SIDEBAR MENU) & CHUYỂN TRANG
+           ========================================================================== */
+        function toggleAppMenu() {
+            const sb = document.getElementById('appSidebar');
+            const isClosed = sb.classList.contains('-translate-x-full');
+            if (isClosed) openAppMenu();
+            else closeAppMenu();
+        }
+
+        function openAppMenu() {
+            const sb = document.getElementById('appSidebar');
+            const bd = document.getElementById('menuBackdrop');
+            bd.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                bd.classList.remove('opacity-0');
+                sb.classList.remove('-translate-x-full');
+            });
+        }
+
+        function closeAppMenu() {
+            const sb = document.getElementById('appSidebar');
+            const bd = document.getElementById('menuBackdrop');
+            bd.classList.add('opacity-0');
+            sb.classList.add('-translate-x-full');
+            setTimeout(() => bd.classList.add('hidden'), 200);
+        }
+
+        function switchMainSection(sec) {
+            activeMainSection = sec;
+            const dash = document.getElementById('dashboardContainer');
+            const sdk = document.getElementById('sudokuContainer');
+            const btnDash = document.getElementById('navBtnDashboard');
+            const btnSdk = document.getElementById('navBtnSudoku');
+
+            const activeClass = 'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold bg-indigo-50 text-indigo-600 dark:bg-indigo-950/70 dark:text-indigo-300 transition';
+            const inactiveClass = 'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition';
+
+            if (sec === 'sudoku') {
+                dash.classList.add('hidden');
+                sdk.classList.remove('hidden');
+                btnDash.className = inactiveClass;
+                btnSdk.className = activeClass;
+                ensureSudokuInitialized();
+                startSudokuTimerLoop();
+            } else {
+                sdk.classList.add('hidden');
+                dash.classList.remove('hidden');
+                btnDash.className = activeClass;
+                btnSdk.className = inactiveClass;
+                stopSudokuTimerLoop();
+            }
+            closeAppMenu();
+            lucide.createIcons();
+        }
+
+        function jumpToSection(elementId) {
+            switchMainSection('dashboard');
+            setTimeout(() => {
+                const el = document.getElementById(elementId);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 80);
+        }
 
         /* ==========================================================================
-           2. TIỆN ÍCH & LƯU TRỮ
+           3. TIỆN ÍCH & LƯU TRỮ AN TOÀN
            ========================================================================== */
         function esc(s) {
             return String(s || '').replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
@@ -441,64 +828,127 @@
             el.className = 'px-3 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-semibold shadow-lg transition-all';
             el.textContent = msg;
             box.appendChild(el);
-            setTimeout(() => el.remove(), 2200);
+            setTimeout(() => el.remove(), 2500);
+        }
+
+        function getSavedBackup() {
+            try {
+                const raw = localStorage.getItem(SAVED_BACKUP_KEY);
+                return raw ? JSON.parse(raw) : null;
+            } catch {
+                return null;
+            }
+        }
+
+        function updateBackupBadgeUI() {
+            const backup = getSavedBackup();
+            const badge = document.getElementById('backupStatusBadge');
+            const timeLabel = document.getElementById('backupTimeLabel');
+            if (backup && backup.savedAt) {
+                if (badge) {
+                    badge.classList.remove('hidden');
+                    badge.classList.add('inline-flex');
+                }
+                if (timeLabel) timeLabel.textContent = `Đã lưu mốc bảo vệ (${backup.savedAt})`;
+            }
+        }
+
+        function saveImportedBackup(silent = false) {
+            const now = new Date();
+            const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} ${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}`;
+            const snapshot = {
+                state: JSON.parse(JSON.stringify(state)),
+                customEvents: JSON.parse(JSON.stringify(customEvents)),
+                savedAt: timeStr
+            };
+            localStorage.setItem(SAVED_BACKUP_KEY, JSON.stringify(snapshot));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            localStorage.setItem(CUSTOM_EVENTS_KEY, JSON.stringify(customEvents));
+            updateBackupBadgeUI();
+
+            if (!silent) {
+                toast('Đã lưu dữ liệu vừa nhập! Khi bấm Khôi phục sẽ không bị mất.');
+            }
         }
 
         function loadState() {
+            const backup = getSavedBackup();
             try {
                 const raw = localStorage.getItem(STORAGE_KEY);
-                state = raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(DEFAULT_STATE));
-                if (!state.tkbRows || !state.tkbRows.length) {
-                    state.tkbRows = JSON.parse(JSON.stringify(DEFAULT_EXCEL_ROWS));
+                if (raw) {
+                    state = JSON.parse(raw);
+                } else if (backup && backup.state) {
+                    state = JSON.parse(JSON.stringify(backup.state));
+                } else {
+                    state = JSON.parse(JSON.stringify(DEFAULT_STATE));
                 }
-                delete state.pinnedToday;
+                if (!state.tkbRows || !state.tkbRows.length) {
+                    state.tkbRows = (backup && backup.state && backup.state.tkbRows)
+                        ? JSON.parse(JSON.stringify(backup.state.tkbRows))
+                        : JSON.parse(JSON.stringify(DEFAULT_EXCEL_ROWS));
+                }
             } catch {
                 state = JSON.parse(JSON.stringify(DEFAULT_STATE));
             }
+
             try {
                 const rawCustom = localStorage.getItem(CUSTOM_EVENTS_KEY);
-                customEvents = rawCustom ? JSON.parse(rawCustom) : {};
+                if (rawCustom) {
+                    customEvents = JSON.parse(rawCustom);
+                } else if (backup && backup.customEvents) {
+                    customEvents = JSON.parse(JSON.stringify(backup.customEvents));
+                } else {
+                    customEvents = {};
+                }
             } catch {
                 customEvents = {};
             }
-            try {
-                const rawHidden = localStorage.getItem(HIDDEN_EXCEL_KEY);
-                hiddenExcelInstances = rawHidden ? JSON.parse(rawHidden) : {};
-            } catch {
-                hiddenExcelInstances = {};
-            }
+
+            buildCalendarSessions();
+            updateBackupBadgeUI();
+
             const realToday = getTodayISO();
             lastKnownTodayISO = realToday;
             selectedDate = realToday;
+
             const [y, m] = realToday.split('-').map(Number);
             calYear = y;
             calMonth = m - 1;
-            buildCalendarSessions();
         }
 
         function saveState() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             localStorage.setItem(CUSTOM_EVENTS_KEY, JSON.stringify(customEvents));
-            localStorage.setItem(HIDDEN_EXCEL_KEY, JSON.stringify(hiddenExcelInstances));
             buildCalendarSessions();
             renderAll();
         }
 
         function resetSample() {
-            state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-            customEvents = {};
-            hiddenExcelInstances = {};
+            const backup = getSavedBackup();
+            if (backup && backup.state) {
+                state = JSON.parse(JSON.stringify(backup.state));
+                customEvents = JSON.parse(JSON.stringify(backup.customEvents || {}));
+                toast(`Đã khôi phục về bản đã lưu (${backup.savedAt})`);
+            } else {
+                const currentTkb = (state.tkbRows && state.tkbRows.length)
+                    ? JSON.parse(JSON.stringify(state.tkbRows))
+                    : JSON.parse(JSON.stringify(DEFAULT_EXCEL_ROWS));
+                state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+                state.tkbRows = currentTkb;
+                toast('Đã làm mới (Vẫn giữ nguyên Thời khóa biểu của bạn)');
+            }
+
+            buildCalendarSessions();
             const realToday = getTodayISO();
+            selectedDate = realToday;
             const [y, m] = realToday.split('-').map(Number);
             calYear = y;
             calMonth = m - 1;
-            selectedDate = realToday;
             saveState();
-            toast('Đã khôi phục dữ liệu gốc');
         }
 
         /* ==========================================================================
-           3. NHIỆM VỤ
+           4. NHIỆM VỤ & THU - CHI
            ========================================================================== */
         document.getElementById('taskForm').addEventListener('submit', e => {
             e.preventDefault();
@@ -566,9 +1016,6 @@
             `).join('');
         }
 
-        /* ==========================================================================
-           4. THU - CHI
-           ========================================================================== */
         function setFinType(type) {
             finType = type;
             document.getElementById('btnExp').className = type === 'expense' ? 'px-2.5 py-1 rounded-lg bg-rose-600 text-white' : 'px-2.5 py-1 rounded-lg text-slate-500';
@@ -622,104 +1069,7 @@
         }
 
         /* ==========================================================================
-           5. HỌC TẬP & BẤM GIỜ
-           ========================================================================== */
-        function fmtClock(s) {
-            return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
-        }
-
-        function setPreset(m) {
-            pauseTimer();
-            presetMins = m;
-            secsLeft = m * 60;
-            elapsedSecs = 0;
-            document.getElementById('timerClock').textContent = fmtClock(secsLeft);
-            document.getElementById('p25').className = m === 25 ? 'px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 text-amber-600 shadow-sm' : 'px-2 py-0.5 rounded-md text-slate-500';
-            document.getElementById('p50').className = m === 50 ? 'px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 text-amber-600 shadow-sm' : 'px-2 py-0.5 rounded-md text-slate-500';
-        }
-
-        function toggleTimer() {
-            if (timerRunning) {
-                pauseTimer();
-            } else {
-                timerRunning = true;
-                document.getElementById('btnTimer').textContent = 'Dừng';
-                timerInt = setInterval(() => {
-                    elapsedSecs++;
-                    if (secsLeft > 0) {
-                        secsLeft--;
-                        document.getElementById('timerClock').textContent = fmtClock(secsLeft);
-                    } else {
-                        pauseTimer();
-                        toast('Đã hoàn thành phiên học!');
-                    }
-                }, 1000);
-            }
-        }
-
-        function pauseTimer() {
-            timerRunning = false;
-            clearInterval(timerInt);
-            document.getElementById('btnTimer').textContent = 'Bắt đầu';
-        }
-
-        function resetTimer() {
-            pauseTimer();
-            elapsedSecs = 0;
-            secsLeft = presetMins * 60;
-            document.getElementById('timerClock').textContent = fmtClock(secsLeft);
-        }
-
-        function saveTimerSession() {
-            pauseTimer();
-            const mins = Math.max(1, Math.round(elapsedSecs / 60));
-            if (elapsedSecs < 5) { toast('Chưa đủ thời gian lưu'); return; }
-            const subj = document.getElementById('studySubj').value.trim() || 'Tự học';
-            state.study.unshift({ id: Date.now(), subj, mins });
-            resetTimer();
-            saveState();
-            toast(`Đã lưu ${mins}p học ${subj}`);
-        }
-
-        document.getElementById('studyForm').addEventListener('submit', e => {
-            e.preventDefault();
-            const subj = document.getElementById('studySubj').value.trim();
-            const mins = Number(document.getElementById('studyMins').value);
-            if (!subj || mins <= 0) return;
-            state.study.unshift({ id: Date.now(), subj, mins });
-            document.getElementById('studySubj').value = '';
-            document.getElementById('studyMins').value = '';
-            saveState();
-        });
-
-        function delStudy(id) {
-            state.study = state.study.filter(x => x.id !== id);
-            saveState();
-        }
-
-        function renderStudy() {
-            const total = state.study.reduce((s, x) => s + Number(x.mins), 0);
-            document.getElementById('kpiStudy').textContent = `${total}p`;
-
-            const box = document.getElementById('studyList');
-            if (!state.study.length) {
-                box.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">Trống</p>`;
-                return;
-            }
-
-            box.innerHTML = state.study.map(s => `
-                <div class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-800">
-                    <span class="text-xs font-medium truncate">${esc(s.subj)}</span>
-                    <div class="flex items-center gap-2 shrink-0">
-                        <span class="text-xs font-bold text-amber-600 dark:text-amber-400">${s.mins}p</span>
-                        <button onclick="delStudy(${s.id})" class="text-slate-400 hover:text-rose-500">×</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        /* ==========================================================================
-           6. LỊCH THÁNG TKB & IMPORT EXCEL (PHÒNG MẶC ĐỊNH EXCEL)
+           5. THỜI KHÓA BIỂU
            ========================================================================== */
         function parseDateVN(str) {
             const m = String(str || '').trim().match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
@@ -733,13 +1083,83 @@
             return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         }
 
+        function fromKey(k) {
+            const [y, m, d] = String(k || '').split('-').map(Number);
+            return new Date(y || 2026, (m || 1) - 1, d || 1);
+        }
+
         function fmtKeyVN(k) {
-            const [y, m, d] = k.split('-');
+            const [y, m, d] = String(k || '').split('-');
             return `${d}/${m}/${y}`;
         }
 
         function getTodayISO() {
             return toKey(new Date());
+        }
+
+        function getPeriodsArray(start, count) {
+            const arr = [];
+            const s = Number(start) || 1;
+            const c = Math.max(1, Number(count) || 1);
+            for (let i = 0; i < c; i++) arr.push(s + i);
+            return arr;
+        }
+
+        function getSubjectTheme(code, customColor) {
+            const themes = {
+                indigo: {
+                    card: 'bg-gradient-to-r from-indigo-50/90 via-blue-50/40 to-white dark:from-indigo-950/50 dark:via-slate-900 dark:to-slate-900 border-indigo-200/90 dark:border-indigo-800/70 border-l-4 border-l-indigo-600',
+                    title: 'text-indigo-950 dark:text-indigo-100',
+                    codeBadge: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/70 dark:text-indigo-200',
+                    roomBadge: 'bg-indigo-100/80 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-200',
+                    gridCell: 'bg-indigo-50/90 dark:bg-indigo-950/70 text-indigo-950 dark:text-indigo-200 border-indigo-200 dark:border-indigo-800 border-l-2 border-l-indigo-600'
+                },
+                emerald: {
+                    card: 'bg-gradient-to-r from-emerald-50/90 via-teal-50/40 to-white dark:from-emerald-950/50 dark:via-slate-900 dark:to-slate-900 border-emerald-200/90 dark:border-emerald-800/70 border-l-4 border-l-emerald-600',
+                    title: 'text-emerald-950 dark:text-emerald-100',
+                    codeBadge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/70 dark:text-emerald-200',
+                    roomBadge: 'bg-emerald-100/80 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200',
+                    gridCell: 'bg-emerald-50/90 dark:bg-emerald-950/70 text-emerald-950 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800 border-l-2 border-l-emerald-600'
+                },
+                amber: {
+                    card: 'bg-gradient-to-r from-amber-50/90 via-orange-50/40 to-white dark:from-amber-950/50 dark:via-slate-900 dark:to-slate-900 border-amber-200/90 dark:border-amber-800/70 border-l-4 border-l-amber-500',
+                    title: 'text-amber-950 dark:text-amber-100',
+                    codeBadge: 'bg-amber-100 text-amber-800 dark:bg-amber-900/70 dark:text-amber-200',
+                    roomBadge: 'bg-amber-100/80 text-amber-900 dark:bg-amber-900/60 dark:text-amber-200',
+                    gridCell: 'bg-amber-50/90 dark:bg-amber-950/70 text-amber-950 dark:text-amber-200 border-amber-200 dark:border-amber-800 border-l-2 border-l-amber-500'
+                },
+                rose: {
+                    card: 'bg-gradient-to-r from-rose-50/90 via-pink-50/40 to-white dark:from-rose-950/50 dark:via-slate-900 dark:to-slate-900 border-rose-200/90 dark:border-rose-800/70 border-l-4 border-l-rose-500',
+                    title: 'text-rose-950 dark:text-rose-100',
+                    codeBadge: 'bg-rose-100 text-rose-700 dark:bg-rose-900/70 dark:text-rose-200',
+                    roomBadge: 'bg-rose-100/80 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200',
+                    gridCell: 'bg-rose-50/90 dark:bg-rose-950/70 text-rose-950 dark:text-rose-200 border-rose-200 dark:border-rose-800 border-l-2 border-l-rose-500'
+                },
+                purple: {
+                    card: 'bg-gradient-to-r from-purple-50/90 via-fuchsia-50/40 to-white dark:from-purple-950/50 dark:via-slate-900 dark:to-slate-900 border-purple-200/90 dark:border-purple-800/70 border-l-4 border-l-purple-600',
+                    title: 'text-purple-950 dark:text-purple-100',
+                    codeBadge: 'bg-purple-100 text-purple-700 dark:bg-purple-900/70 dark:text-purple-200',
+                    roomBadge: 'bg-purple-100/80 text-purple-800 dark:bg-purple-900/60 dark:text-purple-200',
+                    gridCell: 'bg-purple-50/90 dark:bg-purple-950/70 text-purple-950 dark:text-purple-200 border-purple-200 dark:border-purple-800 border-l-2 border-l-purple-600'
+                }
+            };
+
+            if (customColor && themes[customColor]) return themes[customColor];
+            const mapByCode = {
+                'INT304': themes.indigo,
+                'INT342': themes.emerald,
+                'INT349': themes.amber,
+                'INT358': themes.rose
+            };
+            return mapByCode[code] || themes.indigo;
+        }
+
+        function renderPeriodBadges(periods, small = false) {
+            const list = Array.isArray(periods) && periods.length ? periods : [1];
+            const cls = small
+                ? 'inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded bg-[#0f4c9c] text-white text-[9px] font-bold leading-none'
+                : 'inline-flex items-center justify-center min-w-[28px] h-6 px-1.5 rounded-md bg-[#0f4c9c] text-white text-xs font-bold shadow-sm';
+            return list.map(p => `<span class="${cls}">${esc(p)}</span>`).join('');
         }
 
         function goToToday() {
@@ -780,35 +1200,29 @@
                     const hvuDay = cur.getDay() === 0 ? 8 : cur.getDay() + 1;
                     if (hvuDay === Number(r.day)) {
                         const dateKey = toKey(cur);
-                        const instanceKey = `${r.code}_${r.start}_${r.room}`;
-                        const hiddenForDate = hiddenExcelInstances[dateKey] || [];
-                        if (!hiddenForDate.includes(instanceKey)) {
-                            const endP = Number(r.start) + Number(r.count) - 1;
-                            const tStart = (PERIOD_TIME[r.start] || ['07:00'])[0];
-                            const tEnd = (PERIOD_TIME[endP] || ['17:35'])[1];
-                            list.push({
-                                id: instanceKey,
-                                isCustom: false,
-                                dateKey,
-                                year: cur.getFullYear(),
-                                month: cur.getMonth(),
-                                code: r.code,
-                                name: r.name,
-                                day: r.day,
-                                start: Number(r.start),
-                                count: Number(r.count),
-                                periodLabel: r.count > 1 ? `T${r.start}-${endP}` : `T${r.start}`,
-                                timeStr: `${tStart}-${tEnd}`,
-                                room: r.room,
-                                gv: r.gv
-                            });
-                        }
+                        const endP = Number(r.start) + Number(r.count) - 1;
+                        const periods = getPeriodsArray(r.start, r.count);
+                        list.push({
+                            id: `${r.code}_${r.start}_${r.room}`,
+                            isCustom: false,
+                            dateKey,
+                            year: cur.getFullYear(),
+                            month: cur.getMonth(),
+                            code: r.code,
+                            name: r.name,
+                            day: r.day,
+                            start: Number(r.start),
+                            count: Number(r.count),
+                            periods,
+                            periodLabel: r.count > 1 ? `Tiết ${r.start}-${endP}` : `Tiết ${r.start}`,
+                            room: r.room,
+                            gv: r.gv
+                        });
                     }
                     cur.setDate(cur.getDate() + 1);
                 }
             });
 
-            // Merge custom user-added schedule events per day
             Object.entries(customEvents).forEach(([dateKey, items]) => {
                 if (!Array.isArray(items)) return;
                 const [y, m] = dateKey.split('-').map(Number);
@@ -822,8 +1236,8 @@
                         code: item.code || 'CUSTOM',
                         name: item.name,
                         start: item.start || 1,
-                        periodLabel: item.periodLabel || 'T1-5',
-                        timeStr: item.timeStr || 'Lịch tự thêm',
+                        periods: item.periods && item.periods.length ? item.periods : [1],
+                        periodLabel: item.periodLabel || 'Tiết 1-5',
                         room: item.room || 'Tự chọn',
                         gv: item.gv || 'Cá nhân',
                         color: item.color || 'indigo'
@@ -834,7 +1248,6 @@
             list.sort((a, b) => a.dateKey.localeCompare(b.dateKey) || a.start - b.start);
             expandedDays = list;
 
-            // Populate Subject Filter
             const sel = document.getElementById('subjFilter');
             if (sel) {
                 const curVal = sel.value;
@@ -844,24 +1257,6 @@
                     [...map.entries()].map(([c, n]) => `<option value="${esc(c)}">${esc(n)}</option>`).join('');
                 if ([...map.keys()].includes(curVal)) sel.value = curVal;
             }
-        }
-
-        function getSubjColor(code, customColor) {
-            const palette = {
-                'indigo': 'bg-indigo-50 dark:bg-indigo-950/70 text-indigo-900 dark:text-indigo-200 border-indigo-200 dark:border-indigo-800',
-                'emerald': 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800',
-                'amber': 'bg-amber-50 dark:bg-amber-950/70 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800',
-                'purple': 'bg-purple-50 dark:bg-purple-950/70 text-purple-900 dark:text-purple-200 border-purple-200 dark:border-purple-800',
-                'rose': 'bg-rose-50 dark:bg-rose-950/70 text-rose-900 dark:text-rose-200 border-rose-200 dark:border-rose-800'
-            };
-            if (customColor && palette[customColor]) return palette[customColor];
-            const byCode = {
-                'INT304': palette.indigo,
-                'INT342': palette.emerald,
-                'INT349': palette.amber,
-                'INT358': palette.rose
-            };
-            return byCode[code] || palette.indigo;
         }
 
         function setSchedColor(c) {
@@ -875,23 +1270,26 @@
         }
 
         function parseCustomPeriodInput(rawPeriod) {
-            const str = String(rawPeriod || '').trim() || '1-5';
+            const str = String(rawPeriod || '').trim() || '6-10';
             const rangeMatch = str.match(/^t?\s*(\d{1,2})\s*-\s*(\d{1,2})$/i);
             if (rangeMatch) {
                 const pStart = Number(rangeMatch[1]);
-                const pEnd = Number(rangeMatch[2]);
-                const tStart = (PERIOD_TIME[pStart] || ['07:00'])[0];
-                const tEnd = (PERIOD_TIME[pEnd] || ['11:35'])[1];
-                return { start: pStart, periodLabel: `T${pStart}-${pEnd}`, timeStr: `${tStart}-${tEnd}` };
+                const pEnd = Math.max(pStart, Number(rangeMatch[2]));
+                const periods = [];
+                for (let p = pStart; p <= pEnd; p++) periods.push(p);
+                return { start: pStart, periods, periodLabel: `Tiết ${pStart}-${pEnd}` };
+            }
+            const listMatch = str.match(/^\d+(?:\s*,\s*\d+)+$/);
+            if (listMatch) {
+                const periods = str.split(',').map(x => Number(x.trim())).filter(Boolean);
+                return { start: periods[0] || 1, periods, periodLabel: `Tiết ${periods.join(',')}` };
             }
             const singleMatch = str.match(/^t?\s*(\d{1,2})$/i);
             if (singleMatch) {
                 const pStart = Number(singleMatch[1]);
-                const tStart = (PERIOD_TIME[pStart] || ['07:00'])[0];
-                const tEnd = (PERIOD_TIME[pStart] || ['07:50'])[1];
-                return { start: pStart, periodLabel: `T${pStart}`, timeStr: `${tStart}-${tEnd}` };
+                return { start: pStart, periods: [pStart], periodLabel: `Tiết ${pStart}` };
             }
-            return { start: 1, periodLabel: str, timeStr: 'Lịch cá nhân' };
+            return { start: 1, periods: [str], periodLabel: `Tiết ${str}` };
         }
 
         document.getElementById('addDayScheduleForm').addEventListener('submit', e => {
@@ -900,10 +1298,12 @@
             const nameInput = document.getElementById('schedName');
             const periodInput = document.getElementById('schedPeriod');
             const roomInput = document.getElementById('schedRoom');
+            const gvInput = document.getElementById('schedGv');
 
             const name = nameInput.value.trim();
             if (!name) return;
             const room = roomInput.value.trim() || 'Tự chọn';
+            const gv = gvInput.value.trim() || 'Cá nhân';
             const parsedP = parseCustomPeriodInput(periodInput.value);
 
             if (!customEvents[selectedDate]) customEvents[selectedDate] = [];
@@ -912,120 +1312,233 @@
                 code: 'CUSTOM',
                 name,
                 start: parsedP.start,
+                periods: parsedP.periods,
                 periodLabel: parsedP.periodLabel,
-                timeStr: parsedP.timeStr,
                 room,
-                gv: 'Tự thêm',
+                gv,
                 color: selectedSchedColor
             });
 
             nameInput.value = '';
             roomInput.value = '';
+            gvInput.value = '';
             saveState();
             toast(`Đã thêm "${name}" vào ngày ${fmtKeyVN(selectedDate)}`);
         });
 
-        function removeScheduleItem(dateKey, itemId, isCustom, ev) {
-            if (ev) ev.stopPropagation();
-            if (isCustom) {
-                if (customEvents[dateKey]) {
-                    customEvents[dateKey] = customEvents[dateKey].filter(x => x.id !== itemId);
-                    if (!customEvents[dateKey].length) delete customEvents[dateKey];
-                }
-                saveState();
-                toast('Đã xóa lịch tự thêm');
-            } else {
-                if (!hiddenExcelInstances[dateKey]) hiddenExcelInstances[dateKey] = [];
-                if (!hiddenExcelInstances[dateKey].includes(itemId)) {
-                    hiddenExcelInstances[dateKey].push(itemId);
-                }
-                saveState();
-                toast('Đã ẩn buổi học này (Bấm "Khôi phục" để hiện lại)');
-            }
-        }
-
-        function restoreHiddenOnDay() {
-            if (hiddenExcelInstances[selectedDate]) {
-                delete hiddenExcelInstances[selectedDate];
-                saveState();
-                toast(`Đã khôi phục lịch gốc ngày ${fmtKeyVN(selectedDate)}`);
-            }
-        }
-
-        function quickAddForDate(k, ev) {
-            if (ev) ev.stopPropagation();
-            selectedDate = k;
+        function changeWeek(deltaWeeks) {
+            const d = fromKey(selectedDate || getTodayISO());
+            d.setDate(d.getDate() + deltaWeeks * 7);
+            selectedDate = toKey(d);
+            calYear = d.getFullYear();
+            calMonth = d.getMonth();
             renderCalendar();
-            const input = document.getElementById('schedName');
-            if (input) {
-                input.focus();
-                input.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
+        }
+
+        function onPickNativeDate(val) {
+            if (!val) return;
+            selectedDate = val;
+            const [y, m] = val.split('-').map(Number);
+            calYear = y;
+            calMonth = m - 1;
+            renderCalendar();
         }
 
         function changeMonth(delta) {
             calMonth += delta;
             if (calMonth > 11) { calMonth = 0; calYear++; }
             if (calMonth < 0) { calMonth = 11; calYear--; }
+            const todayISO = getTodayISO();
+            const [ty, tm] = todayISO.split('-').map(Number);
+            if (calYear === ty && calMonth === tm - 1) {
+                selectedDate = todayISO;
+            } else {
+                const firstInMonth = expandedDays.find(x => x.year === calYear && x.month === calMonth);
+                selectedDate = firstInMonth ? firstInMonth.dateKey : toKey(new Date(calYear, calMonth, 1));
+            }
             renderCalendar();
         }
 
         function setMonth(y, m) {
             calYear = y;
             calMonth = m;
-            const first = expandedDays.find(x => x.year === y && x.month === m);
-            if (first) selectedDate = first.dateKey;
+            const todayISO = getTodayISO();
+            const [ty, tm] = todayISO.split('-').map(Number);
+            if (y === ty && m === tm - 1) {
+                selectedDate = todayISO;
+            } else {
+                const first = expandedDays.find(x => x.year === y && x.month === m);
+                selectedDate = first ? first.dateKey : toKey(new Date(y, m, 1));
+            }
             renderCalendar();
         }
 
         function pickDate(k) {
             selectedDate = k;
+            const [y, m] = k.split('-').map(Number);
+            calYear = y;
+            calMonth = m - 1;
             renderCalendar();
         }
 
-        function toggleRawTable() {
-            const cal = document.getElementById('calView');
-            const raw = document.getElementById('rawTableView');
-            const btn = document.getElementById('btnRawTable');
-            const isHidden = raw.classList.contains('hidden');
-            if (isHidden) {
-                raw.classList.remove('hidden');
-                cal.classList.add('hidden');
-                btn.textContent = 'Lịch Tháng';
+        function setTkbView(view) {
+            currentTkbView = view;
+            const calView = document.getElementById('calView');
+            const dayView = document.getElementById('dayScheduleView');
+            const monthView = document.getElementById('monthGridView');
+            const rawView = document.getElementById('rawTableView');
+
+            const activeCls = 'px-3 py-1 rounded-lg bg-[#0f4c9c] text-white shadow-sm transition';
+            const inactiveCls = 'px-3 py-1 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 transition';
+
+            document.getElementById('tabViewDay').className = view === 'day' ? activeCls : inactiveCls;
+            document.getElementById('tabViewMonth').className = view === 'month' ? activeCls : inactiveCls;
+            document.getElementById('tabViewRaw').className = view === 'raw' ? activeCls : inactiveCls;
+
+            if (view === 'raw') {
+                calView.classList.add('hidden');
+                rawView.classList.remove('hidden');
             } else {
-                raw.classList.add('hidden');
-                cal.classList.remove('hidden');
-                btn.textContent = 'Bảng Excel';
+                rawView.classList.add('hidden');
+                calView.classList.remove('hidden');
+                if (view === 'day') {
+                    dayView.classList.remove('hidden');
+                    monthView.classList.add('hidden');
+                } else {
+                    dayView.classList.add('hidden');
+                    monthView.classList.remove('hidden');
+                }
             }
+            renderCalendar();
         }
 
         function renderCalendar() {
             const todayISO = getTodayISO();
             lastKnownTodayISO = todayISO;
+            if (!selectedDate) selectedDate = todayISO;
+
             const [, tm, td] = todayISO.split('-');
             const liveEl = document.getElementById('liveTodayText');
             if (liveEl) liveEl.textContent = `${td}/${tm}`;
-
-            document.getElementById('monthLabel').textContent = `${String(calMonth + 1).padStart(2, '0')} / ${calYear}`;
 
             ['2026-9', '2026-10', '2026-11', '2027-0'].forEach(id => {
                 const btn = document.getElementById('m-' + id);
                 if (!btn) return;
                 btn.className = id === `${calYear}-${calMonth}`
-                    ? 'px-2 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white'
+                    ? 'px-2 py-1 rounded-lg text-xs font-bold bg-[#0f4c9c] text-white'
                     : 'px-2 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-500';
             });
 
             const filterCode = document.getElementById('subjFilter').value || 'ALL';
             const filtered = expandedDays.filter(x => filterCode === 'ALL' || x.code === filterCode);
 
+            const selDateObj = fromKey(selectedDate);
+            document.getElementById('selectedDatePillText').textContent = fmtKeyVN(selectedDate);
+            document.getElementById('nativeDatePicker').value = selectedDate;
+            document.getElementById('weekMonthTitle').textContent = `Tháng ${String(selDateObj.getMonth() + 1).padStart(2, '0')}/${selDateObj.getFullYear()}`;
+
+            const dow = (selDateObj.getDay() + 6) % 7;
+            const monday = new Date(selDateObj.getTime());
+            monday.setDate(selDateObj.getDate() - dow);
+
+            const dayLabels = ['Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'CN'];
+            let weekHtml = '';
+            for (let i = 0; i < 7; i++) {
+                const cur = new Date(monday.getTime());
+                cur.setDate(monday.getDate() + i);
+                const k = toKey(cur);
+                const dNum = String(cur.getDate()).padStart(2, '0');
+                const isToday = (k === todayISO);
+                const isSelected = (k === selectedDate);
+                const hasClass = filtered.some(x => x.dateKey === k);
+
+                if (isToday) {
+                    weekHtml += `
+                        <button type="button" onclick="pickDate('${k}')" class="flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl bg-[#0f4c9c] text-white shadow-md transition ${
+                            isSelected ? 'ring-2 ring-offset-2 ring-[#0f4c9c] dark:ring-offset-slate-900' : ''
+                        }">
+                            <span class="text-[11px] sm:text-xs font-medium opacity-95">${dayLabels[i]}</span>
+                            <span class="text-sm sm:text-base font-extrabold mt-1">${dNum}</span>
+                            <span class="w-1.5 h-1.5 rounded-full mt-1.5 ${hasClass ? 'bg-white' : 'bg-transparent'}"></span>
+                        </button>
+                    `;
+                } else if (isSelected) {
+                    weekHtml += `
+                        <button type="button" onclick="pickDate('${k}')" class="flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl bg-blue-100/90 dark:bg-blue-950/80 text-[#0f4c9c] dark:text-blue-300 ring-2 ring-[#0f4c9c] transition">
+                            <span class="text-[11px] sm:text-xs font-semibold">${dayLabels[i]}</span>
+                            <span class="text-sm sm:text-base font-extrabold mt-1">${dNum}</span>
+                            <span class="w-1.5 h-1.5 rounded-full mt-1.5 ${hasClass ? 'bg-[#0f4c9c] dark:bg-blue-400' : 'bg-transparent'}"></span>
+                        </button>
+                    `;
+                } else {
+                    weekHtml += `
+                        <button type="button" onclick="pickDate('${k}')" class="flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl hover:bg-slate-200/60 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition">
+                            <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400">${dayLabels[i]}</span>
+                            <span class="text-sm sm:text-base font-bold mt-1">${dNum}</span>
+                            <span class="w-1.5 h-1.5 rounded-full mt-1.5 ${hasClass ? 'bg-[#0f4c9c] dark:bg-blue-400' : 'bg-transparent'}"></span>
+                        </button>
+                    `;
+                }
+            }
+            document.getElementById('weekDaysStrip').innerHTML = weekHtml;
+
+            const dayList = filtered.filter(x => x.dateKey === selectedDate);
+            const cardsBox = document.getElementById('daySessionsCards');
+
+            document.getElementById('dayTitle').textContent = `Ngày ${fmtKeyVN(selectedDate)}`;
+            document.getElementById('dayTodayBadge').classList.toggle('hidden', selectedDate !== todayISO);
+
+            if (!dayList.length) {
+                cardsBox.innerHTML = `
+                    <div class="bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 p-8 text-center space-y-1">
+                        <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">Không có lịch học trong ngày ${fmtKeyVN(selectedDate)}</p>
+                        <p class="text-xs text-slate-400">Chọn các ngày có dấu chấm tròn xanh trên thanh tuần để xem môn học.</p>
+                    </div>
+                `;
+            } else {
+                cardsBox.innerHTML = dayList.map(s => {
+                    const theme = getSubjectTheme(s.code, s.color);
+                    return `
+                        <div class="rounded-2xl p-4 border shadow-sm transition ${theme.card}">
+                            <div class="space-y-2.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <div class="font-bold text-base ${theme.title} leading-snug">
+                                        ${esc(s.name)}
+                                    </div>
+                                    <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full shrink-0 ${theme.codeBadge}">
+                                        ${esc(s.code === 'CUSTOM' ? 'Lịch thêm' : s.code)}
+                                    </span>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-1.5">
+                                    <span class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 mr-0.5">Tiết:</span>
+                                    ${renderPeriodBadges(s.periods, false)}
+                                </div>
+                                <div class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                                    <span>Phòng:</span>
+                                    <span class="px-2 py-0.5 rounded-md font-bold ${theme.roomBadge}">${esc(s.room)}</span>
+                                </div>
+                                <div class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    GV: <span class="text-[#2e8540] dark:text-emerald-400 font-bold">${esc(s.gv)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('monthLabel').textContent = `${String(calMonth + 1).padStart(2, '0')} / ${calYear}`;
+            document.getElementById('miniMonthLabel').textContent = `${String(calMonth + 1).padStart(2, '0')}/${calYear}`;
+
             const firstDay = new Date(calYear, calMonth, 1);
             const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
             const offset = (firstDay.getDay() + 6) % 7;
 
             let html = '';
+            let miniHtml = '';
+
             for (let i = 0; i < offset; i++) {
                 html += `<div class="cal-cell rounded-xl bg-slate-50/50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/40"></div>`;
+                miniHtml += `<div class="h-7"></div>`;
             }
 
             for (let d = 1; d <= daysInMonth; d++) {
@@ -1034,28 +1547,41 @@
                 const isSel = k === selectedDate;
                 const isToday = k === todayISO;
 
+                miniHtml += `
+                    <button type="button" onclick="pickDate('${k}')" class="h-7 rounded-lg text-[11px] font-bold flex flex-col items-center justify-center relative transition ${
+                        isToday
+                            ? 'bg-[#0f4c9c] text-white shadow-sm'
+                            : isSel
+                                ? 'bg-blue-100 dark:bg-blue-950 text-[#0f4c9c] dark:text-blue-300 ring-1 ring-[#0f4c9c]'
+                                : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
+                    }">
+                        <span>${d}</span>
+                        ${sessions.length ? `<span class="w-1 h-1 rounded-full ${isToday ? 'bg-white' : 'bg-[#0f4c9c] dark:bg-blue-400'}"></span>` : ''}
+                    </button>
+                `;
+
                 if (isToday) {
                     html += `
-                        <div onclick="pickDate('${k}')" style="background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);" class="group cal-cell cursor-pointer rounded-xl p-1.5 border border-indigo-600 text-white shadow-md shadow-indigo-500/25 transition flex flex-col ${
-                            isSel ? 'ring-2 ring-offset-1 ring-indigo-600 dark:ring-offset-slate-900' : ''
+                        <div onclick="pickDate('${k}')" class="group cal-cell cursor-pointer rounded-xl p-1.5 border border-[#0f4c9c] bg-[#0f4c9c] text-white shadow-md transition flex flex-col ${
+                            isSel ? 'ring-2 ring-offset-1 ring-[#0f4c9c] dark:ring-offset-slate-900' : ''
                         }">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[11px] font-extrabold text-white">${d}</span>
-                                <div class="flex items-center gap-1">
-                                    <span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-white/25 text-white leading-none">HÔM NAY</span>
-                                    <button type="button" onclick="quickAddForDate('${k}', event)" title="Thêm lịch ngày này" class="w-4 h-4 rounded bg-white/20 hover:bg-white/40 text-white text-[11px] font-bold flex items-center justify-center leading-none">+</button>
-                                </div>
+                                <span class="text-[8px] font-extrabold px-1.5 py-0.5 rounded bg-white/25 text-white">HÔM NAY</span>
                             </div>
                             <div class="space-y-1 flex-1">
-                                ${sessions.map(s => `
-                                    <div class="px-1.5 py-1 rounded-lg border text-[10px] leading-tight bg-white/95 text-slate-900 border-white shadow-sm">
-                                        <div class="font-bold truncate text-indigo-950">${esc(s.name)}</div>
-                                        <div class="flex items-center justify-between mt-0.5">
-                                            <span class="font-semibold text-slate-600">${esc(s.periodLabel)}</span>
-                                            <span class="font-extrabold px-1 rounded bg-indigo-100 text-indigo-700">${esc(s.room)}</span>
+                                ${sessions.map(s => {
+                                    const theme = getSubjectTheme(s.code, s.color);
+                                    return `
+                                        <div class="px-1.5 py-1 rounded-lg border text-[10px] leading-tight ${theme.gridCell}">
+                                            <div class="font-bold truncate">${esc(s.name)}</div>
+                                            <div class="flex flex-wrap items-center gap-0.5 mt-1">
+                                                ${renderPeriodBadges(s.periods, true)}
+                                            </div>
+                                            <div class="mt-1 font-semibold opacity-90 truncate">Phòng: ${esc(s.room)}</div>
                                         </div>
-                                    </div>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </div>
                         </div>
                     `;
@@ -1063,23 +1589,25 @@
                     html += `
                         <div onclick="pickDate('${k}')" class="group cal-cell cursor-pointer rounded-xl p-1.5 border transition flex flex-col ${
                             isSel
-                                ? 'ring-2 ring-indigo-600 bg-indigo-50/40 dark:bg-indigo-950/30 border-indigo-400'
-                                : 'bg-white dark:bg-slate-900 border-slate-200/70 dark:border-slate-800 hover:border-indigo-300'
+                                ? 'ring-2 ring-[#0f4c9c] bg-blue-50/40 dark:bg-blue-950/30 border-[#0f4c9c]'
+                                : 'bg-white dark:bg-slate-900 border-slate-200/70 dark:border-slate-800 hover:border-blue-400'
                         }">
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-[11px] font-bold ${isSel ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'}">${d}</span>
-                                <button type="button" onclick="quickAddForDate('${k}', event)" title="Thêm lịch vào ngày ${d}" class="opacity-0 group-hover:opacity-100 focus:opacity-100 w-4 h-4 rounded bg-indigo-100 dark:bg-indigo-900/70 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-600 hover:text-white text-[11px] font-bold flex items-center justify-center leading-none transition">+</button>
+                                <span class="text-[11px] font-bold ${isSel ? 'text-[#0f4c9c] dark:text-blue-400' : 'text-slate-500'}">${d}</span>
                             </div>
                             <div class="space-y-1 flex-1">
-                                ${sessions.map(s => `
-                                    <div class="px-1.5 py-1 rounded-lg border text-[10px] leading-tight ${getSubjColor(s.code, s.color)}">
-                                        <div class="font-bold truncate">${esc(s.name)}</div>
-                                        <div class="flex items-center justify-between mt-0.5 opacity-90">
-                                            <span>${esc(s.periodLabel)}</span>
-                                            <span class="font-extrabold px-1 rounded bg-white/80 dark:bg-slate-900/80">${esc(s.room)}</span>
+                                ${sessions.map(s => {
+                                    const theme = getSubjectTheme(s.code, s.color);
+                                    return `
+                                        <div class="px-1.5 py-1 rounded-lg border text-[10px] leading-tight ${theme.gridCell}">
+                                            <div class="font-bold truncate">${esc(s.name)}</div>
+                                            <div class="flex flex-wrap items-center gap-0.5 mt-1">
+                                                ${renderPeriodBadges(s.periods, true)}
+                                            </div>
+                                            <div class="mt-1 font-semibold opacity-90 truncate">Phòng: ${esc(s.room)}</div>
                                         </div>
-                                    </div>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </div>
                         </div>
                     `;
@@ -1087,80 +1615,27 @@
             }
 
             document.getElementById('calGrid').innerHTML = html;
+            document.getElementById('miniCalGrid').innerHTML = miniHtml;
 
-            // Render Selected Day Panel
-            document.getElementById('dayTitle').textContent = `Ngày ${fmtKeyVN(selectedDate)}`;
-            const isSelToday = selectedDate === todayISO;
-            document.getElementById('dayTodayBadge').classList.toggle('hidden', !isSelToday);
-
-            const hasHidden = (hiddenExcelInstances[selectedDate] || []).length > 0;
-            const restoreBtn = document.getElementById('btnRestoreDay');
-            if (restoreBtn) restoreBtn.classList.toggle('hidden', !hasHidden);
-
-            const dayList = expandedDays.filter(x => x.dateKey === selectedDate);
-            const dayBox = document.getElementById('daySessions');
-
-            if (!dayList.length) {
-                dayBox.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Chưa có lịch học trong ngày này. Bạn có thể điền form bên trên để thêm lịch mới.</p>`;
-            } else {
-                dayBox.innerHTML = dayList.map(s => `
-                    <div class="p-2.5 rounded-xl border ${getSubjColor(s.code, s.color)} space-y-1.5 relative">
-                        <div class="flex items-center justify-between gap-1">
-                            <span class="font-bold text-xs truncate">${esc(s.name)}</span>
-                            <div class="flex items-center gap-1 shrink-0">
-                                <span class="px-2 py-0.5 rounded-md bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-[11px] font-extrabold">
-                                    Phòng ${esc(s.room)}
-                                </span>
-                                <button type="button" onclick="removeScheduleItem('${s.dateKey}', '${esc(s.id)}', ${s.isCustom}, event)" title="${s.isCustom ? 'Xóa lịch này' : 'Báo nghỉ / Ẩn buổi học này'}" class="w-5 h-5 rounded-md bg-white/70 hover:bg-rose-500 hover:text-white dark:bg-slate-900/70 text-slate-500 text-xs font-bold flex items-center justify-center transition">
-                                    ✕
-                                </button>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between text-[11px] opacity-80">
-                            <span>${esc(s.periodLabel)} (${esc(s.timeStr)})</span>
-                            <span>${s.isCustom ? '✨ Lịch tự thêm' : 'GV: ' + esc(s.gv)}</span>
-                        </div>
-                        <button onclick="studyThis('${esc(s.name)} (${esc(s.code)})')" class="w-full py-1 rounded-lg bg-white/80 hover:bg-white dark:bg-slate-900/80 text-[11px] font-semibold transition">
-                            Bấm giờ học
-                        </button>
-                    </div>
-                `).join('');
-            }
-
-            // Render Raw Excel Table
             document.getElementById('rawTableBody').innerHTML = state.tkbRows.map(r => `
                 <tr>
                     <td class="p-2 font-mono font-semibold text-indigo-600 dark:text-indigo-400">${esc(r.code)}</td>
                     <td class="p-2 font-medium">${esc(r.name)}</td>
                     <td class="p-2 text-center">Thứ ${r.day}</td>
-                    <td class="p-2 text-center">T${r.start} (${r.count}t)</td>
+                    <td class="p-2 text-center">
+                        <div class="inline-flex flex-wrap gap-1 justify-center">
+                            ${renderPeriodBadges(getPeriodsArray(r.start, r.count), true)}
+                        </div>
+                    </td>
                     <td class="p-2 text-center"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-bold">${esc(r.room)}</span></td>
-                    <td class="p-2">${esc(r.gv)}</td>
+                    <td class="p-2 text-[#2e8540] dark:text-emerald-400 font-semibold">${esc(r.gv)}</td>
                     <td class="p-2 font-mono text-slate-500">${esc(r.range)}</td>
                 </tr>
             `).join('');
+
+            lucide.createIcons();
         }
 
-        function studyThis(subjName) {
-            document.getElementById('studySubj').value = subjName;
-            if (!timerRunning) toggleTimer();
-            toast(`Đang bấm giờ: ${subjName}`);
-        }
-
-        function addDayToTasks() {
-            const dayList = expandedDays.filter(x => x.dateKey === selectedDate);
-            if (!dayList.length) { toast('Không có ca học trong ngày này'); return; }
-            dayList.forEach(s => {
-                const title = `${s.name} - Phòng ${s.room} (${s.periodLabel})`;
-                if (!state.tasks.some(t => t.title === title)) {
-                    state.tasks.unshift({ id: Date.now() + Math.random(), title, prio: 'Cao', done: false });
-                }
-            });
-            saveState();
-            toast('Đã thêm vào Nhiệm vụ');
-        }
-
-        // Direct Excel Upload (.xlsx)
         function handleExcelUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -1207,13 +1682,9 @@
                     if (!parsed.length) { toast('File Excel không hợp lệ'); return; }
                     state.tkbRows = parsed;
                     saveState();
-                    if (expandedDays.length) {
-                        calYear = expandedDays[0].year;
-                        calMonth = expandedDays[0].month;
-                        selectedDate = expandedDays[0].dateKey;
-                        renderCalendar();
-                    }
-                    toast(`Đã nạp ${parsed.length} dòng từ Excel`);
+                    saveImportedBackup(true);
+                    renderCalendar();
+                    toast(`Đã nạp & lưu bảo vệ ${parsed.length} dòng từ Excel`);
                 } catch {
                     toast('Lỗi đọc file Excel');
                 }
@@ -1221,6 +1692,541 @@
             };
             reader.readAsArrayBuffer(file);
         }
+
+        /* ==========================================================================
+           6. BỘ MÁY TRÒ CHƠI SUDOKU (CHUẨN LOGIC & GIAO DIỆN SUDOKU.COM)
+           ========================================================================== */
+        let sdkState = {
+            difficulty: 'easy',
+            solution: [],   // mảng 81 số đáp án chuẩn
+            given: [],      // mảng 81 boolean (true = số đề bài cố định)
+            board: [],      // mảng 81 số hiện tại trên bàn cờ
+            notes: [],      // mảng 81 mảng con chứa các số ghi chú nháp (1-9)
+            history: [],    // ngăn xếp hoàn tác (Undo)
+            selectedIdx: 0,
+            notesMode: false,
+            mistakes: 0,
+            maxMistakes: 3,
+            score: 0,
+            seconds: 0,
+            hintsLeft: 3,
+            paused: false,
+            status: 'playing' // 'playing' | 'won' | 'lost'
+        };
+        let sdkTimerInterval = null;
+
+        // Sinh bảng đáp án Sudoku 9x9 ngẫu nhiên hợp lệ
+        function generateSolvedBoard() {
+            const base = [
+                1,2,3,4,5,6,7,8,9,
+                4,5,6,7,8,9,1,2,3,
+                7,8,9,1,2,3,4,5,6,
+                2,3,1,5,6,4,8,9,7,
+                5,6,4,8,9,7,2,3,1,
+                8,9,7,2,3,1,5,6,4,
+                3,1,2,6,4,5,9,7,8,
+                6,4,5,9,7,8,3,1,2,
+                9,7,8,3,1,2,6,4,5
+            ];
+            const shuffle = arr => {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            };
+
+            // Tráo đổi các con số 1..9
+            const digits = shuffle([1,2,3,4,5,6,7,8,9]);
+            let grid = base.map(v => digits[v - 1]);
+
+            // Tráo đổi các hàng trong cùng khối ngang 3x3
+            const rowOrder = [];
+            for (let b = 0; b < 3; b++) {
+                const rows = shuffle([0, 1, 2]).map(r => b * 3 + r);
+                rowOrder.push(...rows);
+            }
+            const gridRows = new Array(81);
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    gridRows[r * 9 + c] = grid[rowOrder[r] * 9 + c];
+                }
+            }
+
+            // Tráo đổi các cột trong cùng khối dọc 3x3
+            const colOrder = [];
+            for (let b = 0; b < 3; b++) {
+                const cols = shuffle([0, 1, 2]).map(c => b * 3 + c);
+                colOrder.push(...cols);
+            }
+            const finalGrid = new Array(81);
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    finalGrid[r * 9 + c] = gridRows[r * 9 + colOrder[c]];
+                }
+            }
+            return finalGrid;
+        }
+
+        function saveSudokuState() {
+            try {
+                localStorage.setItem(SUDOKU_SAVE_KEY, JSON.stringify(sdkState));
+            } catch {}
+        }
+
+        function ensureSudokuInitialized() {
+            try {
+                const raw = localStorage.getItem(SUDOKU_SAVE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && Array.isArray(parsed.solution) && parsed.solution.length === 81) {
+                        sdkState = parsed;
+                        sdkState.paused = false;
+                        renderSudokuAll();
+                        return;
+                    }
+                }
+            } catch {}
+            startNewSudoku('easy');
+        }
+
+        function startNewSudoku(diff = 'easy') {
+            const removeCountMap = { easy: 36, medium: 45, hard: 52, expert: 57 };
+            const holes = removeCountMap[diff] || 36;
+            const solution = generateSolvedBoard();
+            const board = [...solution];
+            const given = new Array(81).fill(true);
+
+            const indices = Array.from({ length: 81 }, (_, i) => i);
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+            for (let k = 0; k < holes; k++) {
+                const idx = indices[k];
+                board[idx] = 0;
+                given[idx] = false;
+            }
+
+            const firstEmpty = board.findIndex(v => v === 0);
+
+            sdkState = {
+                difficulty: diff,
+                solution,
+                given,
+                board,
+                notes: Array.from({ length: 81 }, () => []),
+                history: [],
+                selectedIdx: firstEmpty !== -1 ? firstEmpty : 0,
+                notesMode: false,
+                mistakes: 0,
+                maxMistakes: 3,
+                score: 0,
+                seconds: 0,
+                hintsLeft: 3,
+                paused: false,
+                status: 'playing'
+            };
+
+            saveSudokuState();
+            renderSudokuAll();
+            startSudokuTimerLoop();
+        }
+
+        function startSudokuTimerLoop() {
+            stopSudokuTimerLoop();
+            sdkTimerInterval = setInterval(() => {
+                if (activeMainSection === 'sudoku' && sdkState.status === 'playing' && !sdkState.paused) {
+                    sdkState.seconds++;
+                    const timerEl = document.getElementById('sdkTimer');
+                    if (timerEl) timerEl.textContent = fmtSudokuTime(sdkState.seconds);
+                    if (sdkState.seconds % 5 === 0) saveSudokuState();
+                }
+            }, 1000);
+        }
+
+        function stopSudokuTimerLoop() {
+            if (sdkTimerInterval) {
+                clearInterval(sdkTimerInterval);
+                sdkTimerInterval = null;
+            }
+        }
+
+        function fmtSudokuTime(sec) {
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function toggleSudokuPause() {
+            if (sdkState.status !== 'playing') return;
+            sdkState.paused = !sdkState.paused;
+            renderSudokuAll();
+        }
+
+        function resumeOrRetrySudoku() {
+            if (sdkState.status === 'playing' && sdkState.paused) {
+                sdkState.paused = false;
+                renderSudokuAll();
+            } else if (sdkState.status === 'lost') {
+                // Cho thêm 1 cơ hội tiếp tục ván hiện tại
+                sdkState.mistakes = Math.max(0, sdkState.maxMistakes - 1);
+                sdkState.status = 'playing';
+                sdkState.paused = false;
+                saveSudokuState();
+                renderSudokuAll();
+            } else {
+                startNewSudoku(sdkState.difficulty);
+            }
+        }
+
+        function selectSudokuCell(idx) {
+            if (sdkState.status !== 'playing' || sdkState.paused) return;
+            sdkState.selectedIdx = idx;
+            renderSudokuBoard();
+        }
+
+        function pushSudokuHistory() {
+            sdkState.history.push({
+                board: [...sdkState.board],
+                notes: sdkState.notes.map(n => [...n]),
+                score: sdkState.score
+            });
+            if (sdkState.history.length > 40) sdkState.history.shift();
+        }
+
+        function clearPeerNotes(cellIdx, num) {
+            const r = Math.floor(cellIdx / 9);
+            const c = cellIdx % 9;
+            const br = Math.floor(r / 3) * 3;
+            const bc = Math.floor(c / 3) * 3;
+
+            for (let i = 0; i < 81; i++) {
+                const ir = Math.floor(i / 9);
+                const ic = i % 9;
+                if (ir === r || ic === c || (ir >= br && ir < br + 3 && ic >= bc && ic < bc + 3)) {
+                    sdkState.notes[i] = sdkState.notes[i].filter(n => n !== num);
+                }
+            }
+        }
+
+        function checkSudokuWin() {
+            for (let i = 0; i < 81; i++) {
+                if (sdkState.board[i] !== sdkState.solution[i]) return false;
+            }
+            return true;
+        }
+
+        function sudokuInputNumber(num) {
+            if (sdkState.status !== 'playing' || sdkState.paused) return;
+            const idx = sdkState.selectedIdx;
+            if (idx < 0 || idx >= 81 || sdkState.given[idx]) return;
+
+            // Nếu ô này đã điền đúng đáp án rồi thì không ghi đè
+            if (sdkState.board[idx] === sdkState.solution[idx]) return;
+
+            pushSudokuHistory();
+
+            if (sdkState.notesMode) {
+                sdkState.board[idx] = 0;
+                const curNotes = sdkState.notes[idx];
+                if (curNotes.includes(num)) {
+                    sdkState.notes[idx] = curNotes.filter(n => n !== num);
+                } else {
+                    sdkState.notes[idx] = [...curNotes, num].sort((a, b) => a - b);
+                }
+            } else {
+                if (sdkState.board[idx] === num) {
+                    // Bấm lại cùng số đang sai để xóa
+                    sdkState.board[idx] = 0;
+                } else {
+                    sdkState.board[idx] = num;
+                    sdkState.notes[idx] = [];
+
+                    if (num === sdkState.solution[idx]) {
+                        // Điền đúng: cộng điểm & tự xóa ghi chú trùng ở cùng hàng/cột/khối 3x3
+                        const mult = { easy: 10, medium: 15, hard: 20, expert: 25 }[sdkState.difficulty] || 10;
+                        sdkState.score += mult;
+                        clearPeerNotes(idx, num);
+
+                        if (checkSudokuWin()) {
+                            sdkState.status = 'won';
+                            sdkState.score += 200;
+                            toast('Chúc mừng! Bạn đã giải thành công bàn cờ Sudoku!');
+                        }
+                    } else {
+                        // Điền sai: tăng bộ đếm lỗi
+                        sdkState.mistakes++;
+                        if (sdkState.mistakes >= sdkState.maxMistakes) {
+                            sdkState.status = 'lost';
+                        }
+                    }
+                }
+            }
+
+            saveSudokuState();
+            renderSudokuAll();
+        }
+
+        function sudokuUndo() {
+            if (sdkState.status !== 'playing' || sdkState.paused || !sdkState.history.length) return;
+            const prev = sdkState.history.pop();
+            sdkState.board = prev.board;
+            sdkState.notes = prev.notes;
+            sdkState.score = prev.score;
+            saveSudokuState();
+            renderSudokuAll();
+        }
+
+        function sudokuErase() {
+            if (sdkState.status !== 'playing' || sdkState.paused) return;
+            const idx = sdkState.selectedIdx;
+            if (idx < 0 || idx >= 81 || sdkState.given[idx]) return;
+            if (sdkState.board[idx] === sdkState.solution[idx]) return; // Không xóa ô đã điền đúng
+
+            if (sdkState.board[idx] !== 0 || sdkState.notes[idx].length > 0) {
+                pushSudokuHistory();
+                sdkState.board[idx] = 0;
+                sdkState.notes[idx] = [];
+                saveSudokuState();
+                renderSudokuAll();
+            }
+        }
+
+        function sudokuToggleNotes() {
+            if (sdkState.status !== 'playing' || sdkState.paused) return;
+            sdkState.notesMode = !sdkState.notesMode;
+            saveSudokuState();
+            renderSudokuControls();
+        }
+
+        function sudokuHint() {
+            if (sdkState.status !== 'playing' || sdkState.paused) return;
+            if (sdkState.hintsLeft <= 0) {
+                toast('Bạn đã dùng hết 3 lượt gợi ý trong ván này');
+                return;
+            }
+
+            let target = sdkState.selectedIdx;
+            if (sdkState.given[target] || sdkState.board[target] === sdkState.solution[target]) {
+                target = sdkState.board.findIndex((v, i) => v !== sdkState.solution[i]);
+            }
+            if (target === -1) return;
+
+            pushSudokuHistory();
+            sdkState.selectedIdx = target;
+            const correctNum = sdkState.solution[target];
+            sdkState.board[target] = correctNum;
+            sdkState.notes[target] = [];
+            sdkState.hintsLeft--;
+            clearPeerNotes(target, correctNum);
+
+            if (checkSudokuWin()) {
+                sdkState.status = 'won';
+            }
+
+            saveSudokuState();
+            renderSudokuAll();
+        }
+
+        function hasSudokuCellConflict(idx, val) {
+            if (!val) return false;
+            if (val !== sdkState.solution[idx]) return true;
+            const r = Math.floor(idx / 9);
+            const c = idx % 9;
+            const br = Math.floor(r / 3) * 3;
+            const bc = Math.floor(c / 3) * 3;
+            for (let i = 0; i < 81; i++) {
+                if (i === idx || sdkState.board[i] !== val) continue;
+                const ir = Math.floor(i / 9);
+                const ic = i % 9;
+                if (ir === r || ic === c || (ir >= br && ir < br + 3 && ic >= bc && ic < bc + 3)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function renderSudokuBoard() {
+            const boardEl = document.getElementById('sdkBoard');
+            if (!boardEl) return;
+
+            const sel = sdkState.selectedIdx;
+            const selR = Math.floor(sel / 9);
+            const selC = sel % 9;
+            const selBr = Math.floor(selR / 3) * 3;
+            const selBc = Math.floor(selC / 3) * 3;
+            const selVal = sdkState.board[sel] || 0;
+
+            let html = '';
+            for (let i = 0; i < 81; i++) {
+                const r = Math.floor(i / 9);
+                const c = i % 9;
+                const val = sdkState.board[i];
+                const isGiven = sdkState.given[i];
+                const isSelected = (i === sel);
+                const isRelated = (r === selR || c === selC || (r >= selBr && r < selBr + 3 && c >= selBc && c < selBc + 3));
+                const isSameNum = (selVal > 0 && val === selVal && !isSelected);
+                const isConflict = (!isGiven && val > 0 && hasSudokuCellConflict(i, val));
+
+                const borderClasses = [
+                    (c === 2 || c === 5) ? 'sdk-br' : '',
+                    (r === 2 || r === 5) ? 'sdk-bb' : '',
+                    (c === 8) ? 'sdk-no-r' : '',
+                    (r === 8) ? 'sdk-no-b' : ''
+                ].filter(Boolean).join(' ');
+
+                let stateClass = '';
+                if (isSelected) stateClass = 'sdk-selected';
+                else if (isConflict) stateClass = 'sdk-conflict';
+                else if (isSameNum) stateClass = 'sdk-same-num';
+                else if (isRelated) stateClass = 'sdk-related';
+
+                let innerHtml = '';
+                if (sdkState.paused) {
+                    innerHtml = '';
+                } else if (val > 0) {
+                    const valClass = isGiven
+                        ? 'sdk-val-given'
+                        : (val !== sdkState.solution[i] ? 'sdk-val-error' : 'sdk-val-user');
+                    innerHtml = `<span class="${valClass}">${val}</span>`;
+                } else if (sdkState.notes[i] && sdkState.notes[i].length > 0) {
+                    const notesSet = sdkState.notes[i];
+                    let notesGrid = '<div class="sdk-notes-grid">';
+                    for (let n = 1; n <= 9; n++) {
+                        const hasN = notesSet.includes(n);
+                        const hi = (hasN && selVal === n) ? 'sdk-note-highlight' : '';
+                        notesGrid += `<span class="sdk-note-item ${hi}">${hasN ? n : ''}</span>`;
+                    }
+                    notesGrid += '</div>';
+                    innerHtml = notesGrid;
+                }
+
+                html += `
+                    <div onclick="selectSudokuCell(${i})" class="sdk-cell ${borderClasses} ${stateClass}">
+                        ${innerHtml}
+                    </div>
+                `;
+            }
+
+            boardEl.innerHTML = html;
+        }
+
+        function renderSudokuControls() {
+            // Độ khó
+            ['easy', 'medium', 'hard', 'expert'].forEach(d => {
+                const btn = document.getElementById('sdkDiff-' + d);
+                if (!btn) return;
+                btn.className = (sdkState.difficulty === d)
+                    ? 'px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0072e3] text-white shadow-sm transition'
+                    : 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition';
+            });
+
+            // Lỗi, Điểm, Thời gian
+            document.getElementById('sdkMistakes').textContent = `${sdkState.mistakes}/${sdkState.maxMistakes}`;
+            document.getElementById('sdkScore').textContent = sdkState.score;
+            document.getElementById('sdkTimer').textContent = fmtSudokuTime(sdkState.seconds);
+
+            // Trạng thái nút Ghi chú (ON / OFF)
+            const notesBadge = document.getElementById('sdkNotesBadge');
+            const notesCircle = document.getElementById('sdkNotesCircle');
+            if (sdkState.notesMode) {
+                notesBadge.textContent = 'ON';
+                notesBadge.className = 'absolute -top-1 -right-1 px-1.5 py-0.5 rounded-full text-[9px] font-extrabold bg-[#0072e3] text-white leading-none';
+                notesCircle.className = 'w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0072e3] text-white flex items-center justify-center transition relative shadow-sm';
+            } else {
+                notesBadge.textContent = 'OFF';
+                notesBadge.className = 'absolute -top-1 -right-1 px-1.5 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-500 text-white leading-none';
+                notesCircle.className = 'w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#eaeef4] group-hover:bg-[#dce3ed] dark:bg-slate-800 dark:group-hover:bg-slate-700 text-[#325aaf] dark:text-blue-400 flex items-center justify-center transition relative';
+            }
+
+            // Số gợi ý còn lại
+            document.getElementById('sdkHintBadge').textContent = sdkState.hintsLeft;
+
+            // Bàn phím 1 - 9 (Đếm số lượng từng chữ số còn thiếu)
+            const counts = new Array(10).fill(0);
+            for (let i = 0; i < 81; i++) {
+                if (sdkState.board[i] === sdkState.solution[i]) {
+                    counts[sdkState.board[i]]++;
+                }
+            }
+
+            let numpadHtml = '';
+            for (let n = 1; n <= 9; n++) {
+                const remain = Math.max(0, 9 - counts[n]);
+                const done = (remain === 0);
+                numpadHtml += `
+                    <button type="button" onclick="sudokuInputNumber(${n})" ${done ? 'disabled' : ''} class="h-14 sm:h-16 rounded-xl bg-[#eaeef4] hover:bg-[#dce3ed] active:scale-95 dark:bg-slate-800 dark:hover:bg-slate-700 flex flex-col items-center justify-center transition ${
+                        done ? 'opacity-25 pointer-events-none' : 'cursor-pointer shadow-sm'
+                    }">
+                        <span class="text-xl sm:text-2xl font-semibold text-[#0072e3] dark:text-blue-400 leading-none">${n}</span>
+                        <span class="text-[10px] font-semibold text-slate-400 mt-1 leading-none">${remain}</span>
+                    </button>
+                `;
+            }
+            document.getElementById('sdkNumpad').innerHTML = numpadHtml;
+
+            // Overlay Tạm dừng / Thắng / Thua
+            const overlay = document.getElementById('sdkOverlay');
+            const title = document.getElementById('sdkOverlayTitle');
+            const sub = document.getElementById('sdkOverlaySub');
+            const primaryBtn = document.getElementById('sdkOverlayPrimaryBtn');
+
+            if (sdkState.status === 'won') {
+                overlay.classList.remove('hidden');
+                title.textContent = 'Tuyệt vời! Bạn đã chiến thắng!';
+                sub.textContent = `Điểm số: ${sdkState.score} • Thời gian: ${fmtSudokuTime(sdkState.seconds)}`;
+                primaryBtn.textContent = 'Chơi ván mới';
+            } else if (sdkState.status === 'lost') {
+                overlay.classList.remove('hidden');
+                title.textContent = 'Trò chơi kết thúc';
+                sub.textContent = 'Bạn đã mắc 3/3 lỗi trong ván này.';
+                primaryBtn.textContent = 'Thêm 1 cơ hội';
+            } else if (sdkState.paused) {
+                overlay.classList.remove('hidden');
+                title.textContent = 'Đã tạm dừng';
+                sub.textContent = 'Bấm Tiếp tục chơi để quay lại bàn cờ';
+                primaryBtn.textContent = 'Tiếp tục chơi';
+            } else {
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function renderSudokuAll() {
+            renderSudokuBoard();
+            renderSudokuControls();
+            lucide.createIcons();
+        }
+
+        // Hỗ trợ bàn phím cho Sudoku.com
+        window.addEventListener('keydown', e => {
+            if (activeMainSection !== 'sudoku') return;
+            const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+            if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+
+            if (e.key >= '1' && e.key <= '9') {
+                e.preventDefault();
+                sudokuInputNumber(Number(e.key));
+            } else if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') {
+                e.preventDefault();
+                sudokuErase();
+            } else if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                sudokuToggleNotes();
+            } else if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                sudokuUndo();
+            } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+                let r = Math.floor(sdkState.selectedIdx / 9);
+                let c = sdkState.selectedIdx % 9;
+                if (e.key === 'ArrowUp') r = (r + 8) % 9;
+                if (e.key === 'ArrowDown') r = (r + 1) % 9;
+                if (e.key === 'ArrowLeft') c = (c + 8) % 9;
+                if (e.key === 'ArrowRight') c = (c + 1) % 9;
+                selectSudokuCell(r * 9 + c);
+            }
+        });
 
         /* ==========================================================================
            7. GIAO DIỆN SÁNG / TỐI & KHỞI TẠO
@@ -1234,7 +2240,6 @@
         function renderAll() {
             renderTasks();
             renderFinance();
-            renderStudy();
             renderCalendar();
             lucide.createIcons();
         }
@@ -1246,7 +2251,6 @@
             loadState();
             renderAll();
 
-            // Tự động kiểm tra bước sang ngày mới mỗi 15 giây & khi quay lại tab
             setInterval(checkAutoNewDay, 15000);
             document.addEventListener('visibilitychange', () => {
                 if (!document.hidden) checkAutoNewDay();
