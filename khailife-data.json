@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792166470582,
-  "updatedAtText": "23:01:10 16/10/2026",
+  "updatedAt": 1792166506572,
+  "updatedAtText": "23:01:46 16/10/2026",
   "state": {
     "tasks": [
       {
@@ -40,26 +40,6 @@
         "range": "25/11/26 đến 06/01/27"
       },
       {
-        "code": "INT304",
-        "name": "Cơ sở dữ liệu",
-        "day": 4,
-        "start": 13,
-        "count": 1,
-        "room": "A22",
-        "gv": "N.T.T.Hương",
-        "range": "04/11/26 đến 11/11/26"
-      },
-      {
-        "code": "INT304",
-        "name": "Cơ sở dữ liệu",
-        "day": 4,
-        "start": 13,
-        "count": 1,
-        "room": "A22",
-        "gv": "N.T.T.Hương",
-        "range": "25/11/26 đến 06/01/27"
-      },
-      {
         "code": "INT342",
         "name": "Lập trình cơ bản",
         "day": 5,
@@ -76,26 +56,6 @@
         "start": 6,
         "count": 5,
         "room": "NDH216",
-        "gv": "N.T.Kiên",
-        "range": "26/11/26 đến 07/01/27"
-      },
-      {
-        "code": "INT342",
-        "name": "Lập trình cơ bản",
-        "day": 5,
-        "start": 13,
-        "count": 1,
-        "room": "A41",
-        "gv": "N.T.Kiên",
-        "range": "05/11/26 đến 12/11/26"
-      },
-      {
-        "code": "INT342",
-        "name": "Lập trình cơ bản",
-        "day": 5,
-        "start": 13,
-        "count": 1,
-        "room": "A41",
         "gv": "N.T.Kiên",
         "range": "26/11/26 đến 07/01/27"
       },
@@ -120,26 +80,6 @@
         "range": "01/12/26 đến 12/01/27"
       },
       {
-        "code": "INT349",
-        "name": "Toán rời rạc",
-        "day": 3,
-        "start": 13,
-        "count": 1,
-        "room": "A21",
-        "gv": "N.H.Cường",
-        "range": "03/11/26 đến 10/11/26"
-      },
-      {
-        "code": "INT349",
-        "name": "Toán rời rạc",
-        "day": 3,
-        "start": 13,
-        "count": 1,
-        "room": "A21",
-        "gv": "N.H.Cường",
-        "range": "01/12/26 đến 12/01/27"
-      },
-      {
         "code": "INT358",
         "name": "Đồ họa ứng dụng 1",
         "day": 2,
@@ -156,26 +96,6 @@
         "start": 6,
         "count": 5,
         "room": "NDH214",
-        "gv": "N.K.Trung",
-        "range": "23/11/26 đến 04/01/27"
-      },
-      {
-        "code": "INT358",
-        "name": "Đồ họa ứng dụng 1",
-        "day": 2,
-        "start": 13,
-        "count": 1,
-        "room": "B41",
-        "gv": "N.K.Trung",
-        "range": "02/11/26 đến 09/11/26"
-      },
-      {
-        "code": "INT358",
-        "name": "Đồ họa ứng dụng 1",
-        "day": 2,
-        "start": 13,
-        "count": 1,
-        "room": "B41",
         "gv": "N.K.Trung",
         "range": "23/11/26 đến 04/01/27"
       }
@@ -228,7 +148,156 @@
       }
     ]
   },
-  "savedBackup": null,
+  "savedBackup": {
+    "state": {
+      "tasks": [
+        {
+          "id": 1792166460767,
+          "title": "HỌC OPENQUIZ",
+          "prio": "Cao",
+          "done": false
+        }
+      ],
+      "finance": [
+        {
+          "id": 1792166096653,
+          "desc": "ĐANG TIẾT KIỆM",
+          "amount": 12023000,
+          "type": "income"
+        }
+      ],
+      "tkbRows": [
+        {
+          "code": "INT304",
+          "name": "Cơ sở dữ liệu",
+          "day": 4,
+          "start": 6,
+          "count": 5,
+          "room": "B45",
+          "gv": "N.T.T.Hương",
+          "range": "04/11/26 đến 11/11/26"
+        },
+        {
+          "code": "INT304",
+          "name": "Cơ sở dữ liệu",
+          "day": 4,
+          "start": 6,
+          "count": 5,
+          "room": "B45",
+          "gv": "N.T.T.Hương",
+          "range": "25/11/26 đến 06/01/27"
+        },
+        {
+          "code": "INT342",
+          "name": "Lập trình cơ bản",
+          "day": 5,
+          "start": 6,
+          "count": 5,
+          "room": "NDH216",
+          "gv": "N.T.Kiên",
+          "range": "05/11/26 đến 12/11/26"
+        },
+        {
+          "code": "INT342",
+          "name": "Lập trình cơ bản",
+          "day": 5,
+          "start": 6,
+          "count": 5,
+          "room": "NDH216",
+          "gv": "N.T.Kiên",
+          "range": "26/11/26 đến 07/01/27"
+        },
+        {
+          "code": "INT349",
+          "name": "Toán rời rạc",
+          "day": 3,
+          "start": 6,
+          "count": 5,
+          "room": "A44",
+          "gv": "N.H.Cường",
+          "range": "03/11/26 đến 10/11/26"
+        },
+        {
+          "code": "INT349",
+          "name": "Toán rời rạc",
+          "day": 3,
+          "start": 6,
+          "count": 5,
+          "room": "A44",
+          "gv": "N.H.Cường",
+          "range": "01/12/26 đến 12/01/27"
+        },
+        {
+          "code": "INT358",
+          "name": "Đồ họa ứng dụng 1",
+          "day": 2,
+          "start": 6,
+          "count": 5,
+          "room": "NDH214",
+          "gv": "N.K.Trung",
+          "range": "02/11/26 đến 09/11/26"
+        },
+        {
+          "code": "INT358",
+          "name": "Đồ họa ứng dụng 1",
+          "day": 2,
+          "start": 6,
+          "count": 5,
+          "room": "NDH214",
+          "gv": "N.K.Trung",
+          "range": "23/11/26 đến 04/01/27"
+        }
+      ]
+    },
+    "customEvents": {
+      "2026-10-28": [
+        {
+          "id": "cust_1792166338673_cork",
+          "code": "CUSTOM",
+          "name": "LAW207\tPháp luật đại cương",
+          "start": 1,
+          "periods": [
+            "08:30"
+          ],
+          "periodLabel": "Tiết 08:30",
+          "room": "B12",
+          "gv": "Trắc nghiệm (THI)",
+          "color": "rose"
+        }
+      ],
+      "2026-10-31": [
+        {
+          "id": "cust_1792166375984_r52f",
+          "code": "CUSTOM",
+          "name": "INT343\tQuản lý hệ thống máy tính",
+          "start": 1,
+          "periods": [
+            "07:30"
+          ],
+          "periodLabel": "Tiết 07:30",
+          "room": "NDH301",
+          "gv": "Trắc nghiệm (THI)",
+          "color": "rose"
+        }
+      ],
+      "2026-10-23": [
+        {
+          "id": "cust_1792166405217_fng6",
+          "code": "CUSTOM",
+          "name": "MAT356\tToán cho công nghệ thông tin",
+          "start": 1,
+          "periods": [
+            "09:30"
+          ],
+          "periodLabel": "Tiết 09:30",
+          "room": "NDH301",
+          "gv": "Trắc nghiệm (THI)",
+          "color": "rose"
+        }
+      ]
+    },
+    "savedAt": "23:01 16/10"
+  },
   "sudoku": {
     "difficulty": "easy",
     "solution": [],
