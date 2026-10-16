@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792165852971,
-  "updatedAtText": "22:50:52 16/10/2026",
+  "updatedAt": 1792165877094,
+  "updatedAtText": "22:51:17 16/10/2026",
   "state": {
     "tasks": [
       {
@@ -16,20 +16,7 @@
         "done": true
       }
     ],
-    "finance": [
-      {
-        "id": 1,
-        "desc": "Trợ cấp tháng",
-        "amount": 2500000,
-        "type": "income"
-      },
-      {
-        "id": 2,
-        "desc": "Ăn trưa & Cà phê",
-        "amount": 65000,
-        "type": "expense"
-      }
-    ],
+    "finance": [],
     "tkbRows": [
       {
         "code": "INT304",
