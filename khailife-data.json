@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792166341203,
-  "updatedAtText": "22:59:01 16/10/2026",
+  "updatedAt": 1792166377827,
+  "updatedAtText": "22:59:37 16/10/2026",
   "state": {
     "tasks": [],
     "finance": [
@@ -201,6 +201,21 @@
         ],
         "periodLabel": "Tiết 08:30",
         "room": "B12",
+        "gv": "Trắc nghiệm (THI)",
+        "color": "rose"
+      }
+    ],
+    "2026-10-31": [
+      {
+        "id": "cust_1792166375984_r52f",
+        "code": "CUSTOM",
+        "name": "INT343\tQuản lý hệ thống máy tính",
+        "start": 1,
+        "periods": [
+          "07:30"
+        ],
+        "periodLabel": "Tiết 07:30",
+        "room": "NDH301",
         "gv": "Trắc nghiệm (THI)",
         "color": "rose"
       }
