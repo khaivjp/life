@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792166098694,
-  "updatedAtText": "22:54:58 16/10/2026",
+  "updatedAt": 1792166285009,
+  "updatedAtText": "22:58:05 16/10/2026",
   "state": {
     "tasks": [],
     "finance": [
@@ -174,7 +174,23 @@
       }
     ]
   },
-  "customEvents": {},
+  "customEvents": {
+    "2026-10-23": [
+      {
+        "id": "cust_1792166282993_i7f8",
+        "code": "CUSTOM",
+        "name": "MAT356\tToán cho công nghệ thông tin",
+        "start": 1,
+        "periods": [
+          "2-3 09:30"
+        ],
+        "periodLabel": "Tiết 2-3 09:30",
+        "room": "NDH301",
+        "gv": "Trắc nghiệm (THI)",
+        "color": "indigo"
+      }
+    ]
+  },
   "savedBackup": null,
   "sudoku": {
     "difficulty": "easy",
