@@ -62,7 +62,6 @@
             border-right-color: #334155;
             border-bottom-color: #334155;
         }
-        /* Viền khối 3x3 đậm chuẩn Sudoku.com */
         .sdk-cell.sdk-br { border-right: 2.5px solid #344861 !important; }
         .sdk-cell.sdk-bb { border-bottom: 2.5px solid #344861 !important; }
         .dark .sdk-cell.sdk-br { border-right: 2.5px solid #64748b !important; }
@@ -70,7 +69,6 @@
         .sdk-cell.sdk-no-r { border-right: none !important; }
         .sdk-cell.sdk-no-b { border-bottom: none !important; }
 
-        /* Màu sắc trạng thái ô chuẩn Sudoku.com */
         .sdk-cell.sdk-related { background-color: #e2ebf3; }
         .dark .sdk-cell.sdk-related { background-color: #1e293b; }
 
@@ -83,7 +81,6 @@
         .sdk-cell.sdk-selected { background-color: #bbdefb !important; }
         .dark .sdk-cell.sdk-selected { background-color: #1d4ed8 !important; }
 
-        /* Màu chữ số trong ô */
         .sdk-val-given { color: #344861; font-weight: 600; }
         .dark .sdk-val-given { color: #f1f5f9; }
 
@@ -95,7 +92,6 @@
         .sdk-val-error { color: #e53935 !important; font-weight: 600; }
         .dark .sdk-val-error { color: #f87171 !important; }
 
-        /* Lưới ghi chú nháp 3x3 trong 1 ô */
         .sdk-notes-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -128,7 +124,7 @@
     <div id="toastBox" class="fixed bottom-4 right-4 z-50 flex flex-col gap-1.5 pointer-events-none"></div>
 
     <!-- ==========================================================================
-         SIDEBAR MỤC LỤC (MỞ KHI BẤM VÀO NÚT LOGO KHOANH ĐỎ GÓC TRÁI)
+         SIDEBAR MỤC LỤC (MỞ KHI BẤM VÀO NÚT LOGO GÓC TRÁI)
          ========================================================================== -->
     <div id="menuBackdrop" onclick="closeAppMenu()" class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-[2px] hidden opacity-0 transition-opacity duration-200"></div>
 
@@ -198,14 +194,14 @@
         <!-- Sidebar Footer -->
         <div class="p-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
             <span>Bấm biểu tượng góc trái để mở</span>
-            <span class="font-semibold text-indigo-500">v2.5</span>
+            <span class="font-semibold text-indigo-500">v2.6</span>
         </div>
     </aside>
 
     <!-- Compact Header -->
     <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200/80 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between gap-2">
-            <!-- Nút Mục lục (Vị trí khoanh đỏ) + Logo -->
+            <!-- Nút Mục lục + Logo -->
             <div class="flex items-center gap-2.5">
                 <button onclick="toggleAppMenu()" title="Mở Mục lục & Trò chơi Sudoku" class="relative group w-9 h-9 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 flex items-center justify-center text-white shadow-sm ring-2 ring-indigo-500/20 hover:ring-indigo-500/50 transition cursor-pointer">
                     <i data-lucide="layers" class="w-4 h-4"></i>
@@ -466,7 +462,7 @@
 
                 </div>
 
-                <!-- CỘT PHẢI: THÊM LỊCH TỰ CHỌN & LỊCH THÁNG MINI -->
+                <!-- CỘT PHẢI: THÊM LỊCH TỰ CHỌN & DANH SÁCH LỊCH ĐÃ THÊM -->
                 <div class="xl:col-span-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-200/70 dark:border-slate-800 flex flex-col gap-4">
                     <div class="flex items-center justify-between pb-2.5 border-b border-slate-200/70 dark:border-slate-700">
                         <div class="flex items-center gap-2">
@@ -518,6 +514,15 @@
                             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                             <span>Thêm vào ngày này</span>
                         </button>
+
+                        <!-- Khung quản lý & xóa nhanh các mục tự thêm trong ngày -->
+                        <div id="customAddedManager" class="hidden pt-2.5 mt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300">Lịch bạn đã thêm ngày này:</span>
+                                <button type="button" onclick="clearAllCustomOnDay()" class="text-[11px] font-semibold text-rose-600 hover:underline">Xóa tất cả</button>
+                            </div>
+                            <div id="customAddedList" class="space-y-1.5"></div>
+                        </div>
                     </form>
 
                     <!-- Mini Month Overview -->
@@ -641,7 +646,6 @@
 
                     <!-- 4 Nút tròn công cụ: Hoàn tác | Xóa | Ghi chú (ON/OFF) | Gợi ý (3) -->
                     <div class="grid grid-cols-4 gap-2 text-center">
-                        <!-- Undo -->
                         <button onclick="sudokuUndo()" class="flex flex-col items-center gap-1.5 group">
                             <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#eaeef4] group-hover:bg-[#dce3ed] dark:bg-slate-800 dark:group-hover:bg-slate-700 text-[#325aaf] dark:text-blue-400 flex items-center justify-center transition">
                                 <i data-lucide="undo-2" class="w-5 h-5"></i>
@@ -649,7 +653,6 @@
                             <span class="text-[11px] font-semibold text-[#344861] dark:text-slate-300">Hoàn tác</span>
                         </button>
 
-                        <!-- Erase -->
                         <button onclick="sudokuErase()" class="flex flex-col items-center gap-1.5 group">
                             <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#eaeef4] group-hover:bg-[#dce3ed] dark:bg-slate-800 dark:group-hover:bg-slate-700 text-[#325aaf] dark:text-blue-400 flex items-center justify-center transition">
                                 <i data-lucide="eraser" class="w-5 h-5"></i>
@@ -657,7 +660,6 @@
                             <span class="text-[11px] font-semibold text-[#344861] dark:text-slate-300">Xóa</span>
                         </button>
 
-                        <!-- Notes (Pencil) -->
                         <button onclick="sudokuToggleNotes()" class="flex flex-col items-center gap-1.5 group relative">
                             <div id="sdkNotesCircle" class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#eaeef4] group-hover:bg-[#dce3ed] dark:bg-slate-800 dark:group-hover:bg-slate-700 text-[#325aaf] dark:text-blue-400 flex items-center justify-center transition relative">
                                 <i data-lucide="pencil" class="w-5 h-5"></i>
@@ -666,7 +668,6 @@
                             <span class="text-[11px] font-semibold text-[#344861] dark:text-slate-300">Ghi chú</span>
                         </button>
 
-                        <!-- Hint -->
                         <button onclick="sudokuHint()" class="flex flex-col items-center gap-1.5 group relative">
                             <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#eaeef4] group-hover:bg-[#dce3ed] dark:bg-slate-800 dark:group-hover:bg-slate-700 text-[#325aaf] dark:text-blue-400 flex items-center justify-center transition relative">
                                 <i data-lucide="lightbulb" class="w-5 h-5"></i>
@@ -676,7 +677,7 @@
                         </button>
                     </div>
 
-                    <!-- Bàn phím số 1 - 9 chuẩn Sudoku.com (3x3 trên Desktop, 1 hàng ngang trên Mobile) -->
+                    <!-- Bàn phím số 1 - 9 -->
                     <div id="sdkNumpad" class="grid grid-cols-9 md:grid-cols-3 gap-1.5 sm:gap-2.5 pt-1"></div>
 
                     <p class="text-[11px] text-center text-slate-400 hidden md:block">
@@ -739,7 +740,7 @@
         let finType = 'expense';
         let selectedSchedColor = 'indigo';
         let currentTkbView = 'day';
-        let activeMainSection = 'dashboard'; // 'dashboard' | 'sudoku'
+        let activeMainSection = 'dashboard';
 
         const initNow = new Date();
         let calYear = initNow.getFullYear();
@@ -1069,7 +1070,7 @@
         }
 
         /* ==========================================================================
-           5. THỜI KHÓA BIỂU
+           5. THỜI KHÓA BIỂU & XÓA MỤC TỰ THÊM
            ========================================================================== */
         function parseDateVN(str) {
             const m = String(str || '').trim().match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
@@ -1226,7 +1227,11 @@
             Object.entries(customEvents).forEach(([dateKey, items]) => {
                 if (!Array.isArray(items)) return;
                 const [y, m] = dateKey.split('-').map(Number);
-                items.forEach(item => {
+                items.forEach((item, idx) => {
+                    // Đảm bảo mọi lịch tự thêm đều có ID hợp lệ để xóa
+                    if (!item.id) {
+                        item.id = 'cust_fixed_' + dateKey + '_' + idx;
+                    }
                     list.push({
                         id: item.id,
                         isCustom: true,
@@ -1323,8 +1328,49 @@
             roomInput.value = '';
             gvInput.value = '';
             saveState();
+            syncCustomEventsToBackup();
             toast(`Đã thêm "${name}" vào ngày ${fmtKeyVN(selectedDate)}`);
         });
+
+        // Đồng bộ danh sách customEvents vào bản backup bảo vệ (nếu có) để khi xóa không bị khôi phục nhầm
+        function syncCustomEventsToBackup() {
+            const backup = getSavedBackup();
+            if (backup) {
+                backup.customEvents = JSON.parse(JSON.stringify(customEvents));
+                localStorage.setItem(SAVED_BACKUP_KEY, JSON.stringify(backup));
+            }
+        }
+
+        // HÀM XÓA MỤC THỜI KHÓA BIỂU DO NGƯỜI DÙNG TỰ ADD
+        function deleteCustomEvent(dateKey, itemId, ev) {
+            if (ev) ev.stopPropagation();
+            if (!customEvents[dateKey]) return;
+
+            const beforeLen = customEvents[dateKey].length;
+            customEvents[dateKey] = customEvents[dateKey].filter(x => String(x.id) !== String(itemId));
+
+            // Dự phòng nếu item cũ không khớp id thì xóa theo vị trí đầu tiên tìm thấy
+            if (customEvents[dateKey].length === beforeLen && customEvents[dateKey].length > 0) {
+                customEvents[dateKey].splice(0, 1);
+            }
+
+            if (customEvents[dateKey].length === 0) {
+                delete customEvents[dateKey];
+            }
+
+            saveState();
+            syncCustomEventsToBackup();
+            toast('Đã xóa mục lịch tự thêm');
+        }
+
+        // Xóa toàn bộ lịch tự thêm trong ngày đang chọn
+        function clearAllCustomOnDay() {
+            if (!selectedDate || !customEvents[selectedDate]) return;
+            delete customEvents[selectedDate];
+            saveState();
+            syncCustomEventsToBackup();
+            toast(`Đã xóa toàn bộ lịch tự thêm ngày ${fmtKeyVN(selectedDate)}`);
+        }
 
         function changeWeek(deltaWeeks) {
             const d = fromKey(selectedDate || getTodayISO());
@@ -1488,6 +1534,7 @@
             document.getElementById('dayTitle').textContent = `Ngày ${fmtKeyVN(selectedDate)}`;
             document.getElementById('dayTodayBadge').classList.toggle('hidden', selectedDate !== todayISO);
 
+            // Render danh sách thẻ Chi tiết thời khóa biểu (Hiện nút Xóa cho mục tự thêm)
             if (!dayList.length) {
                 cardsBox.innerHTML = `
                     <div class="bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 p-8 text-center space-y-1">
@@ -1505,9 +1552,17 @@
                                     <div class="font-bold text-base ${theme.title} leading-snug">
                                         ${esc(s.name)}
                                     </div>
-                                    <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full shrink-0 ${theme.codeBadge}">
-                                        ${esc(s.code === 'CUSTOM' ? 'Lịch thêm' : s.code)}
-                                    </span>
+                                    <div class="flex items-center gap-1.5 shrink-0">
+                                        <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full ${theme.codeBadge}">
+                                            ${esc(s.code === 'CUSTOM' ? 'Lịch thêm' : s.code)}
+                                        </span>
+                                        ${s.isCustom ? `
+                                            <button type="button" onclick="deleteCustomEvent('${s.dateKey}', '${esc(s.id)}', event)" title="Xóa lịch tự thêm này" class="px-2.5 py-0.5 rounded-full bg-rose-100 hover:bg-rose-600 text-rose-600 hover:text-white dark:bg-rose-950/90 dark:text-rose-300 dark:hover:bg-rose-600 dark:hover:text-white text-[11px] font-bold transition flex items-center gap-1 cursor-pointer shadow-sm">
+                                                <i data-lucide="trash-2" class="w-3 h-3"></i>
+                                                <span>Xóa</span>
+                                            </button>
+                                        ` : ''}
+                                    </div>
                                 </div>
                                 <div class="flex flex-wrap items-center gap-1.5">
                                     <span class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 mr-0.5">Tiết:</span>
@@ -1526,6 +1581,29 @@
                 }).join('');
             }
 
+            // Render danh sách xóa nhanh các mục tự thêm ở cột bên phải
+            const customOnSelectedDay = customEvents[selectedDate] || [];
+            const customManagerBox = document.getElementById('customAddedManager');
+            const customListEl = document.getElementById('customAddedList');
+            if (customOnSelectedDay.length > 0) {
+                customManagerBox.classList.remove('hidden');
+                customListEl.innerHTML = customOnSelectedDay.map(item => `
+                    <div class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/70 dark:border-slate-700 text-xs">
+                        <div class="min-w-0 flex-1">
+                            <span class="font-bold text-slate-800 dark:text-slate-100 truncate block">${esc(item.name)}</span>
+                            <span class="text-[10px] text-slate-500">${esc(item.periodLabel || '')} • Phòng ${esc(item.room || 'Tự chọn')}</span>
+                        </div>
+                        <button type="button" onclick="deleteCustomEvent('${selectedDate}', '${esc(item.id)}', event)" class="px-2 py-1 rounded-md bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white dark:bg-rose-950/60 dark:text-rose-300 text-[11px] font-bold transition shrink-0">
+                            Xóa
+                        </button>
+                    </div>
+                `).join('');
+            } else {
+                customManagerBox.classList.add('hidden');
+                customListEl.innerHTML = '';
+            }
+
+            // Render Lưới Tháng
             document.getElementById('monthLabel').textContent = `${String(calMonth + 1).padStart(2, '0')} / ${calYear}`;
             document.getElementById('miniMonthLabel').textContent = `${String(calMonth + 1).padStart(2, '0')}/${calYear}`;
 
@@ -1560,6 +1638,26 @@
                     </button>
                 `;
 
+                const renderGridSessionItem = s => {
+                    const theme = getSubjectTheme(s.code, s.color);
+                    return `
+                        <div class="px-1.5 py-1 rounded-lg border text-[10px] leading-tight ${theme.gridCell} relative group/item">
+                            <div class="flex items-center justify-between gap-1">
+                                <div class="font-bold truncate">${esc(s.name)}</div>
+                                ${s.isCustom ? `
+                                    <button type="button" onclick="deleteCustomEvent('${s.dateKey}', '${esc(s.id)}', event)" title="Xóa lịch này" class="w-4 h-4 rounded bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center shrink-0 hover:bg-rose-700 transition">
+                                        ×
+                                    </button>
+                                ` : ''}
+                            </div>
+                            <div class="flex flex-wrap items-center gap-0.5 mt-1">
+                                ${renderPeriodBadges(s.periods, true)}
+                            </div>
+                            <div class="mt-1 font-semibold opacity-90 truncate">Phòng: ${esc(s.room)}</div>
+                        </div>
+                    `;
+                };
+
                 if (isToday) {
                     html += `
                         <div onclick="pickDate('${k}')" class="group cal-cell cursor-pointer rounded-xl p-1.5 border border-[#0f4c9c] bg-[#0f4c9c] text-white shadow-md transition flex flex-col ${
@@ -1570,18 +1668,7 @@
                                 <span class="text-[8px] font-extrabold px-1.5 py-0.5 rounded bg-white/25 text-white">HÔM NAY</span>
                             </div>
                             <div class="space-y-1 flex-1">
-                                ${sessions.map(s => {
-                                    const theme = getSubjectTheme(s.code, s.color);
-                                    return `
-                                        <div class="px-1.5 py-1 rounded-lg border text-[10px] leading-tight ${theme.gridCell}">
-                                            <div class="font-bold truncate">${esc(s.name)}</div>
-                                            <div class="flex flex-wrap items-center gap-0.5 mt-1">
-                                                ${renderPeriodBadges(s.periods, true)}
-                                            </div>
-                                            <div class="mt-1 font-semibold opacity-90 truncate">Phòng: ${esc(s.room)}</div>
-                                        </div>
-                                    `;
-                                }).join('')}
+                                ${sessions.map(renderGridSessionItem).join('')}
                             </div>
                         </div>
                     `;
@@ -1596,18 +1683,7 @@
                                 <span class="text-[11px] font-bold ${isSel ? 'text-[#0f4c9c] dark:text-blue-400' : 'text-slate-500'}">${d}</span>
                             </div>
                             <div class="space-y-1 flex-1">
-                                ${sessions.map(s => {
-                                    const theme = getSubjectTheme(s.code, s.color);
-                                    return `
-                                        <div class="px-1.5 py-1 rounded-lg border text-[10px] leading-tight ${theme.gridCell}">
-                                            <div class="font-bold truncate">${esc(s.name)}</div>
-                                            <div class="flex flex-wrap items-center gap-0.5 mt-1">
-                                                ${renderPeriodBadges(s.periods, true)}
-                                            </div>
-                                            <div class="mt-1 font-semibold opacity-90 truncate">Phòng: ${esc(s.room)}</div>
-                                        </div>
-                                    `;
-                                }).join('')}
+                                ${sessions.map(renderGridSessionItem).join('')}
                             </div>
                         </div>
                     `;
@@ -1698,11 +1774,11 @@
            ========================================================================== */
         let sdkState = {
             difficulty: 'easy',
-            solution: [],   // mảng 81 số đáp án chuẩn
-            given: [],      // mảng 81 boolean (true = số đề bài cố định)
-            board: [],      // mảng 81 số hiện tại trên bàn cờ
-            notes: [],      // mảng 81 mảng con chứa các số ghi chú nháp (1-9)
-            history: [],    // ngăn xếp hoàn tác (Undo)
+            solution: [],
+            given: [],
+            board: [],
+            notes: [],
+            history: [],
             selectedIdx: 0,
             notesMode: false,
             mistakes: 0,
@@ -1711,11 +1787,10 @@
             seconds: 0,
             hintsLeft: 3,
             paused: false,
-            status: 'playing' // 'playing' | 'won' | 'lost'
+            status: 'playing'
         };
         let sdkTimerInterval = null;
 
-        // Sinh bảng đáp án Sudoku 9x9 ngẫu nhiên hợp lệ
         function generateSolvedBoard() {
             const base = [
                 1,2,3,4,5,6,7,8,9,
@@ -1736,11 +1811,9 @@
                 return arr;
             };
 
-            // Tráo đổi các con số 1..9
             const digits = shuffle([1,2,3,4,5,6,7,8,9]);
             let grid = base.map(v => digits[v - 1]);
 
-            // Tráo đổi các hàng trong cùng khối ngang 3x3
             const rowOrder = [];
             for (let b = 0; b < 3; b++) {
                 const rows = shuffle([0, 1, 2]).map(r => b * 3 + r);
@@ -1753,7 +1826,6 @@
                 }
             }
 
-            // Tráo đổi các cột trong cùng khối dọc 3x3
             const colOrder = [];
             for (let b = 0; b < 3; b++) {
                 const cols = shuffle([0, 1, 2]).map(c => b * 3 + c);
@@ -1869,7 +1941,6 @@
                 sdkState.paused = false;
                 renderSudokuAll();
             } else if (sdkState.status === 'lost') {
-                // Cho thêm 1 cơ hội tiếp tục ván hiện tại
                 sdkState.mistakes = Math.max(0, sdkState.maxMistakes - 1);
                 sdkState.status = 'playing';
                 sdkState.paused = false;
@@ -1921,8 +1992,6 @@
             if (sdkState.status !== 'playing' || sdkState.paused) return;
             const idx = sdkState.selectedIdx;
             if (idx < 0 || idx >= 81 || sdkState.given[idx]) return;
-
-            // Nếu ô này đã điền đúng đáp án rồi thì không ghi đè
             if (sdkState.board[idx] === sdkState.solution[idx]) return;
 
             pushSudokuHistory();
@@ -1937,14 +2006,12 @@
                 }
             } else {
                 if (sdkState.board[idx] === num) {
-                    // Bấm lại cùng số đang sai để xóa
                     sdkState.board[idx] = 0;
                 } else {
                     sdkState.board[idx] = num;
                     sdkState.notes[idx] = [];
 
                     if (num === sdkState.solution[idx]) {
-                        // Điền đúng: cộng điểm & tự xóa ghi chú trùng ở cùng hàng/cột/khối 3x3
                         const mult = { easy: 10, medium: 15, hard: 20, expert: 25 }[sdkState.difficulty] || 10;
                         sdkState.score += mult;
                         clearPeerNotes(idx, num);
@@ -1955,7 +2022,6 @@
                             toast('Chúc mừng! Bạn đã giải thành công bàn cờ Sudoku!');
                         }
                     } else {
-                        // Điền sai: tăng bộ đếm lỗi
                         sdkState.mistakes++;
                         if (sdkState.mistakes >= sdkState.maxMistakes) {
                             sdkState.status = 'lost';
@@ -1982,7 +2048,7 @@
             if (sdkState.status !== 'playing' || sdkState.paused) return;
             const idx = sdkState.selectedIdx;
             if (idx < 0 || idx >= 81 || sdkState.given[idx]) return;
-            if (sdkState.board[idx] === sdkState.solution[idx]) return; // Không xóa ô đã điền đúng
+            if (sdkState.board[idx] === sdkState.solution[idx]) return;
 
             if (sdkState.board[idx] !== 0 || sdkState.notes[idx].length > 0) {
                 pushSudokuHistory();
@@ -2113,7 +2179,6 @@
         }
 
         function renderSudokuControls() {
-            // Độ khó
             ['easy', 'medium', 'hard', 'expert'].forEach(d => {
                 const btn = document.getElementById('sdkDiff-' + d);
                 if (!btn) return;
@@ -2122,12 +2187,10 @@
                     : 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition';
             });
 
-            // Lỗi, Điểm, Thời gian
             document.getElementById('sdkMistakes').textContent = `${sdkState.mistakes}/${sdkState.maxMistakes}`;
             document.getElementById('sdkScore').textContent = sdkState.score;
             document.getElementById('sdkTimer').textContent = fmtSudokuTime(sdkState.seconds);
 
-            // Trạng thái nút Ghi chú (ON / OFF)
             const notesBadge = document.getElementById('sdkNotesBadge');
             const notesCircle = document.getElementById('sdkNotesCircle');
             if (sdkState.notesMode) {
@@ -2140,10 +2203,8 @@
                 notesCircle.className = 'w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#eaeef4] group-hover:bg-[#dce3ed] dark:bg-slate-800 dark:group-hover:bg-slate-700 text-[#325aaf] dark:text-blue-400 flex items-center justify-center transition relative';
             }
 
-            // Số gợi ý còn lại
             document.getElementById('sdkHintBadge').textContent = sdkState.hintsLeft;
 
-            // Bàn phím 1 - 9 (Đếm số lượng từng chữ số còn thiếu)
             const counts = new Array(10).fill(0);
             for (let i = 0; i < 81; i++) {
                 if (sdkState.board[i] === sdkState.solution[i]) {
@@ -2166,7 +2227,6 @@
             }
             document.getElementById('sdkNumpad').innerHTML = numpadHtml;
 
-            // Overlay Tạm dừng / Thắng / Thua
             const overlay = document.getElementById('sdkOverlay');
             const title = document.getElementById('sdkOverlayTitle');
             const sub = document.getElementById('sdkOverlaySub');
@@ -2198,7 +2258,6 @@
             lucide.createIcons();
         }
 
-        // Hỗ trợ bàn phím cho Sudoku.com
         window.addEventListener('keydown', e => {
             if (activeMainSection !== 'sudoku') return;
             const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
