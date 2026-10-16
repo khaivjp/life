@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792166285009,
-  "updatedAtText": "22:58:05 16/10/2026",
+  "updatedAt": 1792166341203,
+  "updatedAtText": "22:59:01 16/10/2026",
   "state": {
     "tasks": [],
     "finance": [
@@ -188,6 +188,21 @@
         "room": "NDH301",
         "gv": "Trắc nghiệm (THI)",
         "color": "indigo"
+      }
+    ],
+    "2026-10-28": [
+      {
+        "id": "cust_1792166338673_cork",
+        "code": "CUSTOM",
+        "name": "LAW207\tPháp luật đại cương",
+        "start": 1,
+        "periods": [
+          "08:30"
+        ],
+        "periodLabel": "Tiết 08:30",
+        "room": "B12",
+        "gv": "Trắc nghiệm (THI)",
+        "color": "rose"
       }
     ]
   },
