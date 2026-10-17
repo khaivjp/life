@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Làm Việc 1 - Bảng Tính GPA Học Kỳ Tự Động</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        excel: {
+                            green: '#107c41',
+                            dark: '#0c5e31',
+                            light: '#e6f4ea',
+                            border: '#d4d4d4',
+                            header: '#f3f2f1'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Tùy chỉnh thanh cuộn và hiệu ứng bảng giống Excel hiện đại */
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        
+        /* Ẩn mũi tên tăng giảm mặc định của input number để giao diện gọn gàng như ô Excel */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .excel-grid th,
+        .excel-grid td {
+            border: 1px solid #cbd5e1;
+        }
+
+        .cell-input {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            transition: all 0.15s ease;
+        }
+
+        .cell-input:focus {
+            outline: none;
+            background-color: #eff6ff;
+            box-shadow: inset 0 0 0 2px #2563eb;
+        }
+
+        .calculated-cell {
+            transition: all 0.15s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-center antialiased selection:bg-emerald-100 selection:text-emerald-900 py-6 px-3 sm:px-6">
+
+    <!-- Nội dung chính: Chỉ giữ lại duy nhất bảng tính -->
+    <main class="max-w-7xl w-full mx-auto">
+
+        <!-- Khung Bảng Tính Excel Chính -->
+        <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+
+            <!-- Bảng Excel cuộn ngang mượt trên di động -->
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse excel-grid text-xs sm:text-sm">
+                    <thead>
+                        <!-- Dòng tiêu đề chữ cái cột giống Excel (A, B, C, D, E, F, G, H, I) -->
+                        <tr class="bg-slate-200/80 text-slate-500 font-mono text-[11px] select-none">
+                            <th class="w-10 py-1 text-center bg-slate-200">#</th>
+                            <th class="py-1 text-center min-w-[230px]">A</th>
+                            <th class="py-1 text-center w-24">B</th>
+                            <th class="py-1 text-center w-28">C</th>
+                            <th class="py-1 text-center w-36">D</th>
+                            <th class="py-1 text-center w-36">E</th>
+                            <th class="py-1 text-center w-28">F</th>
+                            <th class="py-1 text-center w-32">G</th>
+                            <th class="py-1 text-center w-36">H</th>
+                            <th class="py-1 text-center w-36">I</th>
+                            <th class="py-1 text-center w-12">Xóa</th>
+                        </tr>
+
+                        <!-- DÒNG 1 TRONG EXCEL: Tiêu đề cột chính -->
+                        <tr class="bg-slate-50 text-slate-800 font-bold text-center align-middle">
+                            <!-- Cột số thứ tự hàng Excel (Row 1) -->
+                            <th class="bg-slate-200/80 text-slate-500 font-mono text-xs select-none">1</th>
+
+                            <!-- Cột A: MÔN (Gộp dòng 1 & 2) -->
+                            <th rowspan="2" class="p-2.5 bg-slate-100/90 text-slate-800">
+                                <div class="flex flex-col items-center gap-0.5">
+                                    <span class="tracking-wide">MÔN</span>
+                                    <span class="text-[11px] font-normal text-slate-500">(Tự nhập mã / tên môn)</span>
+                                </div>
+                            </th>
+
+                            <!-- Cột B: SỐ TC (Gộp dòng 1 & 2) -->
+                            <th rowspan="2" class="p-2 bg-slate-100/90 text-slate-800">
+                                <div class="flex flex-col items-center gap-0.5">
+                                    <span>SỐ TC</span>
+                                    <span class="text-[11px] font-normal text-slate-500">(Tự nhập)</span>
+                                </div>
+                            </th>
+
+                            <!-- Cột C: TỔNG SỐ TC (Gộp dòng 1 & 2) -->
+                            <th rowspan="2" class="p-2 bg-emerald-50/80 text-emerald-900">
+                                <div class="flex flex-col items-center gap-0.5">
+                                    <span>TỔNG SỐ TC</span>
+                                    <span class="text-[10px] font-mono font-normal text-emerald-700 bg-emerald-100/80 px-1.5 py-0.5 rounded">=SUM(B3:Bn)</span>
+                                </div>
+                            </th>
+
+                            <!-- Cột D (Dòng 1): ĐIỂM THÀNH PHẦN -->
+                            <th class="p-2 bg-blue-50/60 text-slate-800">
+                                ĐIỂM THÀNH PHẦN
+                            </th>
+
+                            <!-- Cột E (Dòng 1): ĐIỂM THI KTHP -->
+                            <th class="p-2 bg-blue-50/60 text-slate-800">
+                                ĐIỂM THI KTHP
+                            </th>
+
+                            <!-- Cột F: TỔNG (Gộp dòng 1 & 2) -->
+                            <th rowspan="2" class="p-2 bg-emerald-50/80 text-emerald-900">
+                                <div class="flex flex-col items-center gap-0.5">
+                                    <span>TỔNG</span>
+                                    <span class="text-[10px] font-mono font-normal text-emerald-700 bg-emerald-100/80 px-1.5 py-0.5 rounded">=D*D2+E*E2</span>
+                                </div>
+                            </th>
+
+                            <!-- Cột G: GPA MÔN HỌC (Gộp dòng 1 & 2) -->
+                            <th rowspan="2" class="p-2 bg-emerald-50/80 text-emerald-900">
+                                <div class="flex flex-col items-center gap-0.5">
+                                    <span>GPA MÔN HỌC</span>
+                                    <span class="text-[10px] font-mono font-normal text-emerald-700 bg-emerald-100/80 px-1.5 py-0.5 rounded">=F*4/10</span>
+                                </div>
+                            </th>
+
+                            <!-- Cột H: GPA HỌC KỲ HỆ 4 (Gộp dòng 1 & 2) -->
+                            <th rowspan="2" class="p-2 bg-amber-50/90 text-amber-900">
+                                <div class="flex flex-col items-center gap-0.5">
+                                    <span>GPA HỌC KỲ HỆ 4</span>
+                                    <span class="text-[10px] font-mono font-normal text-amber-800 bg-amber-100/80 px-1.5 py-0.5 rounded">Tự động (Hệ 4)</span>
+                                </div>
+                            </th>
+
+                            <!-- Cột I: GPA HỌC KỲ HỆ 10 (Gộp dòng 1 & 2) -->
+                            <th rowspan="2" class="p-2 bg-indigo-50/90 text-indigo-900">
+                                <div class="flex flex-col items-center gap-0.5">
+                                    <span>GPA HỌC KỲ HỆ 10</span>
+                                    <span class="text-[10px] font-mono font-normal text-indigo-800 bg-indigo-100/80 px-1.5 py-0.5 rounded">Tự động (Hệ 10)</span>
+                                </div>
+                            </th>
+
+                            <!-- Cột Xóa dòng (Gộp dòng 1 & 2) -->
+                            <th rowspan="2" class="p-2 bg-slate-100 text-slate-500">
+                                <i class="fa-solid fa-gear"></i>
+                            </th>
+                        </tr>
+
+                        <!-- DÒNG 2 TRONG EXCEL: Hệ số trọng số D2 & E2 (Có thể chỉnh sửa) -->
+                        <tr class="bg-blue-50/30 text-center align-middle">
+                            <th class="bg-slate-200/80 text-slate-500 font-mono text-xs select-none">2</th>
+
+                            <!-- Ô D2: Hệ số Điểm thành phần -->
+                            <th class="p-1.5 bg-amber-50/40">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <span class="text-[11px] font-medium text-slate-500">Hệ số (D2):</span>
+                                    <input id="weightD2" type="number" step="0.05" min="0" max="1" value="0.5"
+                                        data-cell="D2"
+                                        class="w-16 text-center font-mono font-bold text-blue-700 bg-white border border-blue-300 rounded px-1.5 py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        title="Trọng số Điểm thành phần (Ô D2 trong Excel, mặc định 0.5)">
+                                </div>
+                            </th>
+
+                            <!-- Ô E2: Hệ số Điểm thi KTHP -->
+                            <th class="p-1.5 bg-amber-50/40">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <span class="text-[11px] font-medium text-slate-500">Hệ số (E2):</span>
+                                    <input id="weightE2" type="number" step="0.05" min="0" max="1" value="0.5"
+                                        data-cell="E2"
+                                        class="w-16 text-center font-mono font-bold text-blue-700 bg-white border border-blue-300 rounded px-1.5 py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        title="Trọng số Điểm thi KTHP (Ô E2 trong Excel, mặc định 0.5)">
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <!-- Thân bảng (Các dòng môn học từ Dòng 3 trở đi) -->
+                    <tbody id="spreadsheetBody" class="divide-y divide-slate-200">
+                        <!-- Được render động bằng JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Thanh công cụ thêm dòng bên dưới bảng -->
+            <div class="bg-slate-50 border-t border-slate-200 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button id="btnAddRow" type="button"
+                        class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Thêm 1 môn học</span>
+                    </button>
+
+                    <button id="btnAdd5Rows" type="button"
+                        class="px-3 py-2 rounded-lg text-xs sm:text-sm font-medium bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-slate-500"></i>
+                        <span>+ Thêm nhanh 5 dòng</span>
+                    </button>
+
+                    <button id="btnClearAll" type="button"
+                        class="px-3 py-2 rounded-lg text-xs sm:text-sm font-medium bg-white hover:bg-rose-50 text-rose-600 border border-slate-300 hover:border-rose-200 transition flex items-center gap-1.5"
+                        title="Xóa trắng toàn bộ các ô để nhập lại">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Làm trống</span>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-4 text-xs text-slate-500">
+                    <span class="hidden sm:inline-flex items-center gap-1.5">
+                        <kbd class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-[11px] font-mono shadow-sm">Enter</kbd>
+                        hoặc phím mũi tên để di chuyển giữa các ô
+                    </span>
+                    <span id="saveStatus" class="inline-flex items-center gap-1 text-emerald-700 font-medium">
+                        <i class="fa-solid fa-check text-emerald-600"></i>
+                        Đã tự động lưu
+                    </span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript Xử Lý Bảng Tính & Công Thức Tự Động -->
+    <script>
+        // Khóa lưu trữ LocalStorage để giữ dữ liệu người dùng tự nhập
+        const STORAGE_KEY = 'so_lam_viec_1_gpa_web_v1';
+
+        // Tạo danh sách dòng trống ban đầu để người dùng tự nhập tên môn và các con số ngay lập tức
+        function createBlankCourses(count = 5) {
+            return Array.from({ length: count }, (_, idx) => ({
+                id: 'row_' + Date.now() + '_' + idx + '_' + Math.random().toString(36).substring(2, 6),
+                name: '',
+                credits: '',
+                scoreD: '',
+                scoreE: ''
+            }));
+        }
+
+        // Trạng thái ứng dụng
+        let state = {
+            weightD2: 0.5,
+            weightE2: 0.5,
+            courses: createBlankCourses(5)
+        };
+
+        // Khởi tạo dữ liệu từ LocalStorage nếu có
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && Array.isArray(parsed.courses) && parsed.courses.length > 0) {
+                        state.weightD2 = parsed.weightD2 ?? 0.5;
+                        state.weightE2 = parsed.weightE2 ?? 0.5;
+                        state.courses = parsed.courses;
+                    }
+                }
+            } catch (err) {
+                console.error('Không thể đọc dữ liệu đã lưu:', err);
+            }
+        }
+
+        // Lưu trạng thái vào LocalStorage
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    weightD2: state.weightD2,
+                    weightE2: state.weightE2,
+                    courses: state.courses
+                }));
+                const saveEl = document.getElementById('saveStatus');
+                if (saveEl) {
+                    saveEl.innerHTML = '<i class="fa-solid fa-check text-emerald-600"></i> Đã tự động lưu';
+                }
+            } catch (err) {
+                console.error('Không thể lưu dữ liệu:', err);
+            }
+        }
+
+        // Hàm định dạng số đẹp, cắt bỏ số 0 thừa nhưng giữ độ chính xác như Excel
+        function formatExcelNumber(value, maxDecimals = 3) {
+            if (value === null || value === undefined || Number.isNaN(value) || !Number.isFinite(value)) {
+                return '';
+            }
+            return Number(value.toFixed(maxDecimals)).toString();
+        }
+
+        // Hàm tính toán toàn bộ công thức giống hệt trong file Excel
+        function calculateAllMetrics() {
+            const d2 = parseFloat(state.weightD2);
+            const e2 = parseFloat(state.weightE2);
+            const validD2 = Number.isNaN(d2) ? 0 : d2;
+            const validE2 = Number.isNaN(e2) ? 0 : e2;
+
+            let totalCredits = 0;
+            let weightedSumGpa4 = 0;
+            let weightedSumGpa10 = 0;
+            let validCourseCount = 0;
+
+            const rowMetrics = state.courses.map((course, index) => {
+                const excelRow = index + 3; // Bắt đầu từ dòng 3 trong Excel
+                const rawCredits = parseFloat(course.credits);
+                const rawD = parseFloat(course.scoreD);
+                const rawE = parseFloat(course.scoreE);
+
+                const hasCredits = !Number.isNaN(rawCredits) && rawCredits > 0;
+                const hasScores = !Number.isNaN(rawD) || !Number.isNaN(rawE);
+
+                // Nếu người dùng đã nhập số tín chỉ, cộng vào Tổng số TC (=SUM(B3:Bn))
+                const bVal = !Number.isNaN(rawCredits) && rawCredits >= 0 ? rawCredits : 0;
+                totalCredits += bVal;
+
+                // Nếu dòng có nhập điểm thành phần hoặc điểm thi KTHP thì tính F và G
+                let fVal = null;
+                let gVal = null;
+
+                if (hasScores) {
+                    const dVal = Number.isNaN(rawD) ? 0 : rawD;
+                    const eVal = Number.isNaN(rawE) ? 0 : rawE;
+                    // Công thức ô F: =D3*$D$2 + E3*$E$2
+                    fVal = dVal * validD2 + eVal * validE2;
+                    // Công thức ô G: =F3*4/10
+                    gVal = (fVal * 4) / 10;
+
+                    if (hasCredits) {
+                        weightedSumGpa4 += gVal * bVal;
+                        weightedSumGpa10 += fVal * bVal;
+                        validCourseCount++;
+                    }
+                }
+
+                return {
+                    excelRow,
+                    bVal,
+                    fVal,
+                    gVal,
+                    hasScores,
+                    hasCredits
+                };
+            });
+
+            const semesterGpa4 = totalCredits > 0 ? weightedSumGpa4 / totalCredits : 0;
+            const semesterGpa10 = totalCredits > 0 ? weightedSumGpa10 / totalCredits : 0;
+
+            return {
+                validD2,
+                validE2,
+                totalCredits,
+                semesterGpa4,
+                semesterGpa10,
+                validCourseCount,
+                rowMetrics
+            };
+        }
+
+        // Cập nhật các ô kết quả công thức trong bảng mà không làm mất focus ô đang gõ
+        function updateCalculatedUI() {
+            const metrics = calculateAllMetrics();
+            const rowCount = state.courses.length;
+
+            // 1. Cập nhật từng dòng cho cột F (TỔNG) và cột G (GPA MÔN HỌC)
+            metrics.rowMetrics.forEach((rm, idx) => {
+                const cellF = document.getElementById(`cell_F_${idx}`);
+                const cellG = document.getElementById(`cell_G_${idx}`);
+
+                if (cellF) {
+                    cellF.textContent = rm.fVal !== null ? formatExcelNumber(rm.fVal, 2) : '-';
+                }
+
+                if (cellG) {
+                    cellG.textContent = rm.gVal !== null ? formatExcelNumber(rm.gVal, 2) : '-';
+                }
+            });
+
+            // 2. Cập nhật 3 ô gộp dọc (C3: Tổng số TC, H3: GPA Hệ 4, I3: GPA Hệ 10)
+            const mergedC3 = document.getElementById('merged_C3');
+            const mergedH3 = document.getElementById('merged_H3');
+            const mergedI3 = document.getElementById('merged_I3');
+
+            if (mergedC3) {
+                mergedC3.setAttribute('rowspan', String(Math.max(1, rowCount)));
+                const valEl = mergedC3.querySelector('.merged-value');
+                if (valEl) valEl.textContent = formatExcelNumber(metrics.totalCredits, 2);
+            }
+
+            if (mergedH3) {
+                mergedH3.setAttribute('rowspan', String(Math.max(1, rowCount)));
+                const valEl = mergedH3.querySelector('.merged-value');
+                const subEl = mergedH3.querySelector('.merged-sub');
+                if (valEl) {
+                    valEl.textContent = metrics.totalCredits > 0 && metrics.validCourseCount > 0
+                        ? metrics.semesterGpa4.toFixed(2)
+                        : '0.00';
+                }
+                if (subEl) {
+                    subEl.textContent = metrics.totalCredits > 0 && metrics.validCourseCount > 0
+                        ? `Chính xác: ${formatExcelNumber(metrics.semesterGpa4, 4)}`
+                        : 'Nhập TC & Điểm';
+                }
+            }
+
+            if (mergedI3) {
+                mergedI3.setAttribute('rowspan', String(Math.max(1, rowCount)));
+                const valEl = mergedI3.querySelector('.merged-value');
+                const subEl = mergedI3.querySelector('.merged-sub');
+                if (valEl) {
+                    valEl.textContent = metrics.totalCredits > 0 && metrics.validCourseCount > 0
+                        ? formatExcelNumber(metrics.semesterGpa10, 3)
+                        : '0.00';
+                }
+                if (subEl) {
+                    subEl.textContent = metrics.totalCredits > 0 && metrics.validCourseCount > 0
+                        ? `Làm tròn: ${metrics.semesterGpa10.toFixed(2)}`
+                        : 'Nhập TC & Điểm';
+                }
+            }
+        }
+
+        // Render toàn bộ cấu trúc bảng
+        function renderTableStructure() {
+            const tbody = document.getElementById('spreadsheetBody');
+            tbody.innerHTML = '';
+
+            // Đồng bộ giá trị ô D2, E2
+            const inputD2 = document.getElementById('weightD2');
+            const inputE2 = document.getElementById('weightE2');
+            if (inputD2) inputD2.value = state.weightD2;
+            if (inputE2) inputE2.value = state.weightE2;
+
+            const rowCount = state.courses.length;
+
+            state.courses.forEach((course, index) => {
+                const excelRow = index + 3; // Hàng trong Excel bắt đầu từ 3
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/80 transition-colors group';
+
+                // Cột chỉ số dòng Excel (3, 4, 5...)
+                const tdRowNum = document.createElement('td');
+                tdRowNum.className = 'bg-slate-100 text-slate-500 font-mono text-xs text-center font-semibold select-none py-2';
+                tdRowNum.textContent = excelRow;
+                tr.appendChild(tdRowNum);
+
+                // Cột A: MÔN (Input Text)
+                const tdName = document.createElement('td');
+                tdName.className = 'p-0 bg-white';
+                tdName.innerHTML = `
+                    <input type="text"
+                        data-row="${index}" data-col="A" data-cell="A${excelRow}"
+                        value="${escapeHtml(course.name)}"
+                        placeholder="Nhập mã & tên môn học (VD: Giải tích 1)..."
+                        class="cell-input px-3 py-2.5 text-slate-800 font-medium placeholder:text-slate-300 placeholder:font-normal">
+                `;
+                tr.appendChild(tdName);
+
+                // Cột B: SỐ TC (Input Number)
+                const tdCredits = document.createElement('td');
+                tdCredits.className = 'p-0 bg-white';
+                tdCredits.innerHTML = `
+                    <input type="number" step="1" min="0" max="30"
+                        data-row="${index}" data-col="B" data-cell="B${excelRow}"
+                        value="${escapeHtml(course.credits)}"
+                        placeholder="TC"
+                        class="cell-input px-2 py-2.5 text-center font-mono font-semibold text-slate-800 placeholder:text-slate-300 placeholder:font-normal">
+                `;
+                tr.appendChild(tdCredits);
+
+                // Cột C: TỔNG SỐ TC (Chỉ tạo ở dòng đầu tiên index === 0 và dùng rowspan gộp toàn bộ dòng giống Excel)
+                if (index === 0) {
+                    const tdTotalCredits = document.createElement('td');
+                    tdTotalCredits.id = 'merged_C3';
+                    tdTotalCredits.setAttribute('rowspan', String(rowCount));
+                    tdTotalCredits.className = 'calculated-cell bg-emerald-50/40 text-center align-middle p-3 select-none';
+                    tdTotalCredits.innerHTML = `
+                        <div class="flex flex-col items-center justify-center">
+                            <span class="merged-value text-2xl sm:text-3xl font-extrabold font-mono text-emerald-800">0</span>
+                            <span class="text-[11px] text-emerald-600 font-medium mt-1">Tín chỉ tích lũy</span>
+                        </div>
+                    `;
+                    tr.appendChild(tdTotalCredits);
+                }
+
+                // Cột D: ĐIỂM THÀNH PHẦN (Input Number 0 - 10)
+                const tdScoreD = document.createElement('td');
+                tdScoreD.className = 'p-0 bg-white';
+                tdScoreD.innerHTML = `
+                    <input type="number" step="0.1" min="0" max="10"
+                        data-row="${index}" data-col="D" data-cell="D${excelRow}"
+                        value="${escapeHtml(course.scoreD)}"
+                        placeholder="0.0 - 10"
+                        class="cell-input px-2 py-2.5 text-center font-mono font-semibold text-blue-700 placeholder:text-slate-300 placeholder:font-normal">
+                `;
+                tr.appendChild(tdScoreD);
+
+                // Cột E: ĐIỂM THI KTHP (Input Number 0 - 10)
+                const tdScoreE = document.createElement('td');
+                tdScoreE.className = 'p-0 bg-white';
+                tdScoreE.innerHTML = `
+                    <input type="number" step="0.1" min="0" max="10"
+                        data-row="${index}" data-col="E" data-cell="E${excelRow}"
+                        value="${escapeHtml(course.scoreE)}"
+                        placeholder="0.0 - 10"
+                        class="cell-input px-2 py-2.5 text-center font-mono font-semibold text-blue-700 placeholder:text-slate-300 placeholder:font-normal">
+                `;
+                tr.appendChild(tdScoreE);
+
+                // Cột F: TỔNG (=D*D2 + E*E2)
+                const tdTotalF = document.createElement('td');
+                tdTotalF.id = `cell_F_${index}`;
+                tdTotalF.className = 'calculated-cell bg-emerald-50/30 text-center font-mono font-bold text-slate-800 py-2.5 px-2 select-none';
+                tdTotalF.textContent = '-';
+                tr.appendChild(tdTotalF);
+
+                // Cột G: GPA MÔN HỌC (=F*4/10)
+                const tdGpaCourse = document.createElement('td');
+                tdGpaCourse.id = `cell_G_${index}`;
+                tdGpaCourse.className = 'calculated-cell bg-emerald-50/30 text-center font-mono font-bold text-emerald-700 py-2.5 px-2 select-none';
+                tdGpaCourse.textContent = '-';
+                tr.appendChild(tdGpaCourse);
+
+                // Cột H: GPA HỌC KỲ HỆ 4 (Chỉ tạo ở dòng đầu tiên index === 0 và dùng rowspan gộp toàn bộ dòng)
+                if (index === 0) {
+                    const tdGpa4 = document.createElement('td');
+                    tdGpa4.id = 'merged_H3';
+                    tdGpa4.setAttribute('rowspan', String(rowCount));
+                    tdGpa4.className = 'calculated-cell bg-amber-50/50 text-center align-middle p-3 select-none';
+                    tdGpa4.innerHTML = `
+                        <div class="flex flex-col items-center justify-center">
+                            <span class="merged-value text-2xl sm:text-3xl font-extrabold font-mono text-amber-700">0.00</span>
+                            <span class="merged-sub text-[11px] text-amber-800/80 font-mono mt-1">Nhập TC & Điểm</span>
+                        </div>
+                    `;
+                    tr.appendChild(tdGpa4);
+                }
+
+                // Cột I: GPA HỌC KỲ HỆ 10 (Chỉ tạo ở dòng đầu tiên index === 0 và dùng rowspan gộp toàn bộ dòng)
+                if (index === 0) {
+                    const tdGpa10 = document.createElement('td');
+                    tdGpa10.id = 'merged_I3';
+                    tdGpa10.setAttribute('rowspan', String(rowCount));
+                    tdGpa10.className = 'calculated-cell bg-indigo-50/50 text-center align-middle p-3 select-none';
+                    tdGpa10.innerHTML = `
+                        <div class="flex flex-col items-center justify-center">
+                            <span class="merged-value text-2xl sm:text-3xl font-extrabold font-mono text-indigo-700">0.00</span>
+                            <span class="merged-sub text-[11px] text-indigo-800/80 font-mono mt-1">Nhập TC & Điểm</span>
+                        </div>
+                    `;
+                    tr.appendChild(tdGpa10);
+                }
+
+                // Cột J: Nút xóa dòng môn học
+                const tdAction = document.createElement('td');
+                tdAction.className = 'text-center align-middle p-1 bg-white';
+                tdAction.innerHTML = `
+                    <button type="button" data-delete-index="${index}"
+                        class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition inline-flex items-center justify-center"
+                        title="Xóa dòng môn học thứ ${index + 1}">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                `;
+                tr.appendChild(tdAction);
+
+                tbody.appendChild(tr);
+            });
+
+            // Gắn sự kiện lắng nghe cho tất cả các ô input trong bảng
+            attachTableInputEvents();
+            // Tính toán và cập nhật kết quả ngay lập tức
+            updateCalculatedUI();
+        }
+
+        // Bảo vệ chuỗi khi render vào thuộc tính value
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        // Gắn sự kiện gõ phím, điều hướng mũi tên giống Excel và xóa dòng
+        function attachTableInputEvents() {
+            const tbody = document.getElementById('spreadsheetBody');
+
+            // Sự kiện khi người dùng gõ vào các ô MÔN, SỐ TC, ĐIỂM THÀNH PHẦN, ĐIỂM THI KTHP
+            tbody.querySelectorAll('input.cell-input').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const rowIndex = parseInt(input.dataset.row, 10);
+                    const col = input.dataset.col;
+                    const value = e.target.value;
+
+                    if (col === 'A') state.courses[rowIndex].name = value;
+                    if (col === 'B') state.courses[rowIndex].credits = value;
+                    if (col === 'D') state.courses[rowIndex].scoreD = value;
+                    if (col === 'E') state.courses[rowIndex].scoreE = value;
+
+                    updateCalculatedUI();
+                    saveState();
+                });
+
+                // Điều hướng bàn phím bằng Enter hoặc mũi tên Lên/Xuống
+                input.addEventListener('keydown', (e) => {
+                    const rowIndex = parseInt(input.dataset.row, 10);
+                    const col = input.dataset.col;
+                    const colsOrder = ['A', 'B', 'D', 'E'];
+                    const colIdx = colsOrder.indexOf(col);
+
+                    if (e.key === 'Enter' || e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        const nextRow = rowIndex + 1;
+                        const target = tbody.querySelector(`input[data-row="${nextRow}"][data-col="${col}"]`);
+                        if (target) {
+                            target.focus();
+                            target.select();
+                        } else if (e.key === 'Enter') {
+                            // Nếu đang ở dòng cuối cùng và nhấn Enter, tự động thêm 1 dòng mới
+                            addRows(1, col);
+                        }
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        const prevRow = rowIndex - 1;
+                        const target = tbody.querySelector(`input[data-row="${prevRow}"][data-col="${col}"]`);
+                        if (target) {
+                            target.focus();
+                            target.select();
+                        }
+                    } else if (e.key === 'ArrowRight' && input.selectionStart === input.value.length) {
+                        if (colIdx < colsOrder.length - 1) {
+                            const target = tbody.querySelector(`input[data-row="${rowIndex}"][data-col="${colsOrder[colIdx + 1]}"]`);
+                            if (target) {
+                                e.preventDefault();
+                                target.focus();
+                                target.select();
+                            }
+                        }
+                    } else if (e.key === 'ArrowLeft' && (input.selectionStart === 0 || input.type === 'number')) {
+                        if (colIdx > 0) {
+                            const target = tbody.querySelector(`input[data-row="${rowIndex}"][data-col="${colsOrder[colIdx - 1]}"]`);
+                            if (target) {
+                                e.preventDefault();
+                                target.focus();
+                                target.select();
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Sự kiện nút xóa từng dòng
+            tbody.querySelectorAll('button[data-delete-index]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.deleteIndex, 10);
+                    if (state.courses.length <= 1) {
+                        state.courses[0] = { id: 'row_' + Date.now(), name: '', credits: '', scoreD: '', scoreE: '' };
+                    } else {
+                        state.courses.splice(idx, 1);
+                    }
+                    renderTableStructure();
+                    saveState();
+                });
+            });
+        }
+
+        // Thêm n dòng môn học mới
+        function addRows(count = 1, focusCol = 'A') {
+            const firstNewRowIndex = state.courses.length;
+            const newRows = createBlankCourses(count);
+            state.courses.push(...newRows);
+            renderTableStructure();
+            saveState();
+
+            const tbody = document.getElementById('spreadsheetBody');
+            const target = tbody.querySelector(`input[data-row="${firstNewRowIndex}"][data-col="${focusCol}"]`);
+            if (target) {
+                target.focus();
+            }
+        }
+
+        // Khởi tạo các sự kiện cố định trên trang
+        function initApp() {
+            loadState();
+            renderTableStructure();
+
+            // Sự kiện thay đổi trọng số D2 & E2
+            const inputD2 = document.getElementById('weightD2');
+            const inputE2 = document.getElementById('weightE2');
+
+            inputD2.addEventListener('input', (e) => {
+                state.weightD2 = e.target.value;
+                updateCalculatedUI();
+                saveState();
+            });
+
+            inputE2.addEventListener('input', (e) => {
+                state.weightE2 = e.target.value;
+                updateCalculatedUI();
+                saveState();
+            });
+
+            // Nút thêm 1 dòng và 5 dòng
+            document.getElementById('btnAddRow').addEventListener('click', () => addRows(1));
+            document.getElementById('btnAdd5Rows').addEventListener('click', () => addRows(5));
+
+            // Nút làm trống toàn bộ để người dùng tự nhập mới
+            document.getElementById('btnClearAll').addEventListener('click', () => {
+                state.weightD2 = 0.5;
+                state.weightE2 = 0.5;
+                state.courses = createBlankCourses(5);
+                renderTableStructure();
+                saveState();
+                const firstInput = document.querySelector('input[data-row="0"][data-col="A"]');
+                if (firstInput) firstInput.focus();
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
