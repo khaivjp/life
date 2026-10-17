@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792248801003,
-  "updatedAtText": "21:53:21 17/10/2026",
+  "updatedAt": 1792248806752,
+  "updatedAtText": "21:53:26 17/10/2026",
   "state": {
     "tasks": [
       {
@@ -664,7 +664,7 @@
         "id": 2,
         "name": "LAW207\t Pháp luật đại cương",
         "tc": "2",
-        "dtp": "",
+        "dtp": "8.2",
         "kthp": ""
       },
       {
