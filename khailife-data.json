@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792248770618,
-  "updatedAtText": "21:52:50 17/10/2026",
+  "updatedAt": 1792248774809,
+  "updatedAtText": "21:52:54 17/10/2026",
   "state": {
     "tasks": [
       {
@@ -663,14 +663,14 @@
       {
         "id": 2,
         "name": "LAW207\t Pháp luật đại cương",
-        "tc": "",
+        "tc": "2",
         "dtp": "",
         "kthp": ""
       },
       {
         "id": 3,
         "name": "MAT356\tToán cho công nghệ thông tin",
-        "tc": "",
+        "tc": "2",
         "dtp": "",
         "kthp": ""
       },
