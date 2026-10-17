@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792248912939,
-  "updatedAtText": "21:55:12 17/10/2026",
+  "updatedAt": 1792248930434,
+  "updatedAtText": "21:55:30 17/10/2026",
   "state": {
     "tasks": [
       {
@@ -672,7 +672,7 @@
         "name": "MAT356\tToán cho công nghệ thông tin",
         "tc": "3",
         "dtp": "9",
-        "kthp": ""
+        "kthp": "9"
       },
       {
         "id": 4,
