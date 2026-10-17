@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KhaiLife — Quản Lý Cá Nhân & Sudoku</title>
+    <title>KhaiLife — Quản Lý Cá Nhân, GPA & Sudoku</title>
 
     <!-- ==========================================================================
          CẤU HÌNH LOGO WEB & ICON KHI THÊM VÀO MÀN HÌNH CHÍNH IPHONE (iOS)
@@ -126,6 +126,60 @@
             font-weight: 800;
         }
         .dark .sdk-note-item.sdk-note-highlight { color: #38bdf8; }
+
+        /* ==========================================================================
+           BẢNG TÍNH GPA EXCEL (SỔ LÀM VIỆC 1)
+           ========================================================================== */
+        .gpa-sheet-table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 880px;
+            table-layout: fixed;
+        }
+        .gpa-sheet-table th,
+        .gpa-sheet-table td {
+            border: 1px solid #cbd5e1;
+            padding: 0;
+            position: relative;
+        }
+        .dark .gpa-sheet-table th,
+        .dark .gpa-sheet-table td {
+            border-color: #334155;
+        }
+        .gpa-col-ref {
+            background-color: #f1f5f9;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            height: 24px;
+            user-select: none;
+        }
+        .dark .gpa-col-ref {
+            background-color: #1e293b;
+            color: #94a3b8;
+        }
+        .gpa-cell-input {
+            width: 100%;
+            height: 100%;
+            min-height: 40px;
+            padding: 8px 10px;
+            border: 2px solid transparent;
+            outline: none;
+            background: transparent;
+            font-size: 13px;
+            color: inherit;
+            transition: all 0.12s ease;
+        }
+        .gpa-cell-input:focus {
+            background-color: #ffffff;
+            border-color: #10b981;
+            box-shadow: inset 0 0 0 1px #10b981;
+            z-index: 10;
+        }
+        .dark .gpa-cell-input:focus {
+            background-color: #0f172a;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen font-sans text-sm antialiased selection:bg-indigo-500 selection:text-white">
@@ -168,7 +222,7 @@
                         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                             2. Kho chứa (username/repo) <span class="text-rose-500">*</span>
                         </label>
-                        <input type="text" id="gitRepoInput" required placeholder="VD: khai2007/khailife"
+                        <input type="text" id="gitRepoInput" required placeholder="VD: khaivjp/lifesync"
                             class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono">
                     </div>
                     <div>
@@ -233,7 +287,7 @@
     <div id="menuBackdrop" onclick="closeAppMenu()" class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-[2px] hidden opacity-0 transition-opacity duration-200"></div>
 
     <aside id="appSidebar" class="fixed top-0 left-0 bottom-0 z-50 w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-2xl transform -translate-x-full transition-transform duration-200 flex flex-col justify-between">
-        <div>
+        <div class="overflow-y-auto">
             <!-- Sidebar Header -->
             <div class="h-14 px-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
                 <div class="flex items-center gap-2.5">
@@ -282,9 +336,25 @@
                     </button>
                 </div>
 
+                <!-- 2. Học tập & Tín chỉ (BẢNG TÍNH GPA) -->
+                <div class="pt-2 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Học tập & Tín chỉ</div>
+
+                <button onclick="switchMainSection('gpa')" id="navBtnGpa" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <span class="flex items-center gap-2.5">
+                        <div class="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-extrabold text-[11px] shadow-sm">
+                            <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-bold leading-tight">Bảng tính GPA</div>
+                            <div class="text-[10px] font-normal text-slate-400">Tự động tính Hệ 4 & Hệ 10</div>
+                        </div>
+                    </span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Nhập điểm</span>
+                </button>
+
+                <!-- 3. Giải trí & Rèn luyện trí não (SUDOKU) -->
                 <div class="pt-2 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Giải trí & Rèn luyện trí não</div>
 
-                <!-- 2. Trò chơi Sudoku (Sudoku.com) -->
                 <button onclick="switchMainSection('sudoku')" id="navBtnSudoku" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                     <span class="flex items-center gap-2.5">
                         <div class="w-6 h-6 rounded-lg bg-[#0072e3] text-white flex items-center justify-center font-extrabold text-[11px] shadow-sm">9</div>
@@ -296,7 +366,7 @@
                     <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-[#0072e3] dark:bg-blue-950 dark:text-blue-300">Chơi ngay</span>
                 </button>
 
-                <!-- 3. Đồng bộ Git & Cá nhân hóa -->
+                <!-- 4. Đồng bộ Git & Cá nhân hóa -->
                 <div class="pt-3 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Đồng bộ & Cá nhân hóa</div>
                 <button onclick="closeAppMenu(); openGitModal();" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50/80 hover:bg-emerald-100 dark:bg-emerald-950/50 transition">
                     <span class="flex items-center gap-2.5">
@@ -327,7 +397,7 @@
         <div class="max-w-7xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between gap-2">
             <!-- Nút Mục lục + Logo Ảnh của bạn -->
             <div class="flex items-center gap-2">
-                <button onclick="toggleAppMenu()" title="Mở Mục lục & Trò chơi Sudoku" class="relative group w-9 h-9 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 flex items-center justify-center text-white shadow-sm ring-2 ring-indigo-500/30 hover:ring-indigo-500 transition cursor-pointer overflow-hidden">
+                <button onclick="toggleAppMenu()" title="Mở Mục lục KhaiLife" class="relative group w-9 h-9 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 flex items-center justify-center text-white shadow-sm ring-2 ring-indigo-500/30 hover:ring-indigo-500 transition cursor-pointer overflow-hidden">
                     <img id="headerLogoImg" src="logo.jpg" alt="Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('headerFallbackIcon').style.display='flex';">
                     <span id="headerFallbackIcon" style="display:none;" class="w-full h-full items-center justify-center">
                         <i data-lucide="layers" class="w-4 h-4"></i>
@@ -829,6 +899,102 @@
         </div>
     </section>
 
+    <!-- ==========================================================================
+         PHẦN 3: BẢNG TÍNH GPA HỌC KỲ (TỐI GIẢN - TỰ NHẬP MÔN HỌC & ĐIỂM SỐ)
+         ========================================================================== -->
+    <section id="gpaContainer" class="hidden max-w-7xl mx-auto px-2 sm:px-6 py-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-300 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="gpa-sheet-table">
+                    <colgroup>
+                        <col style="width: 38px;">
+                        <col style="width: 27%;">
+                        <col style="width: 8%;">
+                        <col style="width: 10%;">
+                        <col style="width: 12%;">
+                        <col style="width: 12%;">
+                        <col style="width: 8%;">
+                        <col style="width: 9%;">
+                        <col style="width: 10%;">
+                        <col style="width: 10%;">
+                        <col style="width: 42px;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="gpa-col-ref">#</th>
+                            <th class="gpa-col-ref">A</th>
+                            <th class="gpa-col-ref">B</th>
+                            <th class="gpa-col-ref">C</th>
+                            <th class="gpa-col-ref">D</th>
+                            <th class="gpa-col-ref">E</th>
+                            <th class="gpa-col-ref">F</th>
+                            <th class="gpa-col-ref">G</th>
+                            <th class="gpa-col-ref">H</th>
+                            <th class="gpa-col-ref">I</th>
+                            <th class="gpa-col-ref">Xóa</th>
+                        </tr>
+                        <!-- Hàng 1: Tiêu đề cột -->
+                        <tr class="bg-slate-50 dark:bg-slate-800/80 text-slate-800 dark:text-slate-100 text-xs">
+                            <th class="gpa-col-ref">1</th>
+                            <th rowspan="2" class="p-2 text-center font-extrabold">MÔN</th>
+                            <th rowspan="2" class="p-2 text-center font-extrabold">SỐ TC</th>
+                            <th rowspan="2" class="p-2 text-center font-extrabold bg-emerald-50/70 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-300">TỔNG SỐ TC</th>
+                            <th class="p-2 text-center font-extrabold">ĐIỂM THÀNH PHẦN</th>
+                            <th class="p-2 text-center font-extrabold">ĐIỂM THI KTHP</th>
+                            <th rowspan="2" class="p-2 text-center font-extrabold bg-emerald-50/70 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-300">TỔNG</th>
+                            <th rowspan="2" class="p-2 text-center font-extrabold bg-emerald-50/70 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-300">GPA MÔN HỌC</th>
+                            <th rowspan="2" class="p-2 text-center font-extrabold bg-amber-50/80 dark:bg-amber-950/30 text-amber-900 dark:text-amber-300">GPA HỌC KỲ HỆ 4</th>
+                            <th rowspan="2" class="p-2 text-center font-extrabold bg-indigo-50/80 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-300">GPA HỌC KỲ HỆ 10</th>
+                            <th rowspan="2" class="gpa-col-ref">⚙</th>
+                        </tr>
+                        <!-- Hàng 2: Trọng số D2 & E2 -->
+                        <tr class="bg-blue-50/40 dark:bg-slate-800/40">
+                            <th class="gpa-col-ref">2</th>
+                            <td class="p-1.5 text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <span class="text-[11px] font-semibold text-slate-500">Hệ số:</span>
+                                    <input id="gpaInputD2" type="number" step="0.05" min="0" max="1" value="0.5"
+                                        oninput="onGpaWeightChange()"
+                                        class="w-16 px-2 py-1 text-center font-mono font-bold text-xs text-blue-700 dark:text-blue-300 bg-white dark:bg-slate-900 border border-blue-300 dark:border-blue-700 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                </div>
+                            </td>
+                            <td class="p-1.5 text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <span class="text-[11px] font-semibold text-slate-500">Hệ số:</span>
+                                    <input id="gpaInputE2" type="number" step="0.05" min="0" max="1" value="0.5"
+                                        oninput="onGpaWeightChange()"
+                                        class="w-16 px-2 py-1 text-center font-mono font-bold text-xs text-blue-700 dark:text-blue-300 bg-white dark:bg-slate-900 border border-blue-300 dark:border-blue-700 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                </div>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody id="gpaSheetBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Thanh nút thao tác tối giản dưới bảng -->
+            <div class="px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="switchMainSection('dashboard')" class="px-3 py-1.5 rounded-lg bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition">
+                        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                        <span>Quay lại Quản lý</span>
+                    </button>
+                    <button onclick="addGpaCourseRow()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs">
+                        + Thêm 1 môn học
+                    </button>
+                    <button onclick="addMultipleGpaRows(5)" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 text-slate-700 dark:text-slate-200 text-xs font-semibold border border-slate-300 dark:border-slate-700 transition">
+                        + Thêm 5 dòng
+                    </button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="clearAllGpaRows()" class="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 text-xs font-semibold border border-rose-200 dark:border-rose-800 transition">
+                        Làm trống
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <script>
         /* ==========================================================================
            0. XỬ LÝ LOGO WEB & ICON MÀN HÌNH CHÍNH IPHONE
@@ -1042,7 +1208,7 @@
                     throw new Error(`Mã lỗi GitHub: ${getRes.status}`);
                 }
 
-                // 2. Đóng gói toàn bộ dữ liệu ứng dụng
+                // 2. Đóng gói toàn bộ dữ liệu ứng dụng (Bao gồm cả Bảng tính GPA)
                 const nowStr = new Date().toLocaleString('vi-VN');
                 const payload = {
                     updatedAt: Date.now(),
@@ -1051,6 +1217,7 @@
                     customEvents: customEvents,
                     savedBackup: getSavedBackup(),
                     sudoku: sdkState,
+                    gpa: gpaState,
                     appLogo: localStorage.getItem(APP_LOGO_KEY) || null
                 };
 
@@ -1112,7 +1279,6 @@
 
                 if (res.status === 404) {
                     isGitSyncing = false;
-                    // Nếu trên Git chưa có file dữ liệu thì tự động tạo mới bằng dữ liệu hiện tại
                     return await gitPushData(manual, 'Khởi tạo dữ liệu KhaiLife trên Git');
                 }
 
@@ -1139,6 +1305,14 @@
                     sdkState = payload.sudoku;
                     localStorage.setItem(SUDOKU_SAVE_KEY, JSON.stringify(sdkState));
                 }
+                if (payload.gpa && Array.isArray(payload.gpa.courses)) {
+                    gpaState = payload.gpa;
+                    localStorage.setItem(GPA_STORAGE_KEY, JSON.stringify(gpaState));
+                    const d2El = document.getElementById('gpaInputD2');
+                    const e2El = document.getElementById('gpaInputE2');
+                    if (d2El) d2El.value = gpaState.weightD2;
+                    if (e2El) e2El.value = gpaState.weightE2;
+                }
                 if (payload.appLogo) {
                     localStorage.setItem(APP_LOGO_KEY, payload.appLogo);
                     applySavedAppLogo();
@@ -1148,6 +1322,7 @@
                 updateBackupBadgeUI();
                 renderAll();
                 if (activeMainSection === 'sudoku') renderSudokuAll();
+                if (activeMainSection === 'gpa') renderGpaSheet();
 
                 setGitUIStatus('ok', `Đã đồng bộ từ Git (${payload.updatedAtText || 'Mới nhất'})`);
                 if (manual) toast('Đã tải dữ liệu mới nhất từ Git về máy!');
@@ -1263,24 +1438,35 @@
             activeMainSection = sec;
             const dash = document.getElementById('dashboardContainer');
             const sdk = document.getElementById('sudokuContainer');
+            const gpa = document.getElementById('gpaContainer');
             const btnDash = document.getElementById('navBtnDashboard');
             const btnSdk = document.getElementById('navBtnSudoku');
+            const btnGpa = document.getElementById('navBtnGpa');
 
             const activeClass = 'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold bg-indigo-50 text-indigo-600 dark:bg-indigo-950/70 dark:text-indigo-300 transition';
             const inactiveClass = 'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition';
 
+            dash.classList.add('hidden');
+            sdk.classList.add('hidden');
+            if (gpa) gpa.classList.add('hidden');
+
+            btnDash.className = inactiveClass;
+            btnSdk.className = inactiveClass;
+            if (btnGpa) btnGpa.className = inactiveClass;
+
             if (sec === 'sudoku') {
-                dash.classList.add('hidden');
                 sdk.classList.remove('hidden');
-                btnDash.className = inactiveClass;
                 btnSdk.className = activeClass;
                 ensureSudokuInitialized();
                 startSudokuTimerLoop();
+            } else if (sec === 'gpa') {
+                if (gpa) gpa.classList.remove('hidden');
+                if (btnGpa) btnGpa.className = activeClass;
+                stopSudokuTimerLoop();
+                renderGpaSheet();
             } else {
-                sdk.classList.add('hidden');
                 dash.classList.remove('hidden');
                 btnDash.className = activeClass;
-                btnSdk.className = inactiveClass;
                 stopSudokuTimerLoop();
             }
             closeAppMenu();
@@ -2766,6 +2952,266 @@
         });
 
         /* ==========================================================================
+           6.5. BỘ MÁY BẢNG TÍNH GPA HỌC KỲ (SỔ LÀM VIỆC 1)
+           ========================================================================== */
+        const GPA_STORAGE_KEY = 'so_lam_viec_1_gpa_v2';
+        let gpaState = {
+            weightD2: 0.5,
+            weightE2: 0.5,
+            courses: [
+                { id: 1, name: '', tc: '', dtp: '', kthp: '' },
+                { id: 2, name: '', tc: '', dtp: '', kthp: '' },
+                { id: 3, name: '', tc: '', dtp: '', kthp: '' },
+                { id: 4, name: '', tc: '', dtp: '', kthp: '' },
+                { id: 5, name: '', tc: '', dtp: '', kthp: '' }
+            ]
+        };
+
+        function loadGpaState() {
+            try {
+                const raw = localStorage.getItem(GPA_STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && Array.isArray(parsed.courses) && parsed.courses.length > 0) {
+                        gpaState = parsed;
+                    }
+                }
+            } catch {}
+            const d2El = document.getElementById('gpaInputD2');
+            const e2El = document.getElementById('gpaInputE2');
+            if (d2El) d2El.value = gpaState.weightD2;
+            if (e2El) e2El.value = gpaState.weightE2;
+        }
+
+        function saveGpaState(syncGit = true) {
+            localStorage.setItem(GPA_STORAGE_KEY, JSON.stringify(gpaState));
+            if (syncGit) scheduleGitAutoPush('Cập nhật bảng điểm GPA');
+        }
+
+        function parseGpaNum(v) {
+            if (v === '' || v === null || v === undefined) return NaN;
+            const normalized = String(v).replace(',', '.').trim();
+            const n = Number(normalized);
+            return Number.isFinite(n) ? n : NaN;
+        }
+
+        function fmtGpaNum(val, maxDec = 3) {
+            if (!Number.isFinite(val)) return '-';
+            return Number(val.toFixed(maxDec)).toString();
+        }
+
+        function computeGpaFormulas() {
+            const d2 = Number.isFinite(parseGpaNum(gpaState.weightD2)) ? parseGpaNum(gpaState.weightD2) : 0.5;
+            const e2 = Number.isFinite(parseGpaNum(gpaState.weightE2)) ? parseGpaNum(gpaState.weightE2) : 0.5;
+
+            let sumTC = 0;
+            let weightedSumF = 0;
+            let weightedSumG = 0;
+            let validCreditsForGPA = 0;
+
+            const rowMetrics = gpaState.courses.map((c, idx) => {
+                const excelRow = idx + 3;
+                const tc = parseGpaNum(c.tc);
+                const dtp = parseGpaNum(c.dtp);
+                const kthp = parseGpaNum(c.kthp);
+
+                const hasTC = Number.isFinite(tc) && tc > 0;
+                const hasScores = Number.isFinite(dtp) && Number.isFinite(kthp);
+
+                if (hasTC) sumTC += tc;
+
+                let fVal = NaN;
+                let gVal = NaN;
+
+                if (hasScores) {
+                    fVal = dtp * d2 + kthp * e2;
+                    gVal = (fVal * 4) / 10;
+                }
+
+                if (hasTC && hasScores) {
+                    weightedSumF += fVal * tc;
+                    weightedSumG += gVal * tc;
+                    validCreditsForGPA += tc;
+                }
+
+                return { excelRow, tc, dtp, kthp, fVal, gVal, hasTC, hasScores };
+            });
+
+            const gpaHe10 = validCreditsForGPA > 0 ? (weightedSumF / validCreditsForGPA) : NaN;
+            const gpaHe4 = validCreditsForGPA > 0 ? (weightedSumG / validCreditsForGPA) : NaN;
+
+            return { sumTC, gpaHe4, gpaHe10, rowMetrics };
+        }
+
+        function renderGpaSheet() {
+            const tbody = document.getElementById('gpaSheetBody');
+            if (!tbody) return;
+            const calc = computeGpaFormulas();
+            const rowCount = Math.max(gpaState.courses.length, 1);
+
+            tbody.innerHTML = gpaState.courses.map((course, idx) => {
+                const m = calc.rowMetrics[idx];
+                const excelRow = m.excelRow;
+
+                const mergedC3 = idx === 0 ? `
+                    <td rowspan="${rowCount}" class="bg-emerald-50/60 dark:bg-emerald-950/20 text-center align-middle p-2">
+                        <div id="gpaCellC3Val" class="font-mono text-2xl font-extrabold text-emerald-700 dark:text-emerald-400">${calc.sumTC}</div>
+                        <div class="text-[10px] font-semibold text-emerald-600 mt-0.5">Tín chỉ</div>
+                    </td>
+                ` : '';
+
+                const mergedH3 = idx === 0 ? `
+                    <td rowspan="${rowCount}" class="bg-amber-50/60 dark:bg-amber-950/20 text-center align-middle p-2">
+                        <div id="gpaCellH3Val" class="font-mono text-2xl font-black text-amber-700 dark:text-amber-400">
+                            ${Number.isFinite(calc.gpaHe4) ? fmtGpaNum(calc.gpaHe4, 2) : '0.00'}
+                        </div>
+                        <div class="text-[10px] font-semibold text-amber-700/80 dark:text-amber-400/80 mt-1">Hệ 4</div>
+                    </td>
+                ` : '';
+
+                const mergedI3 = idx === 0 ? `
+                    <td rowspan="${rowCount}" class="bg-indigo-50/60 dark:bg-indigo-950/20 text-center align-middle p-2">
+                        <div id="gpaCellI3Val" class="font-mono text-2xl font-black text-indigo-700 dark:text-indigo-400">
+                            ${Number.isFinite(calc.gpaHe10) ? fmtGpaNum(calc.gpaHe10, 3) : '0.00'}
+                        </div>
+                        <div class="text-[10px] font-semibold text-indigo-700/80 dark:text-indigo-400/80 mt-1">Hệ 10</div>
+                    </td>
+                ` : '';
+
+                return `
+                    <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+                        <td class="gpa-col-ref">${excelRow}</td>
+                        <td>
+                            <input type="text" value="${esc(course.name)}"
+                                placeholder="Nhập tên môn học..."
+                                oninput="onGpaCellEdit(${idx}, 'name', this.value)"
+                                class="gpa-cell-input font-medium">
+                        </td>
+                        <td>
+                            <input type="number" step="1" min="0" max="30" value="${course.tc}"
+                                placeholder="TC"
+                                oninput="onGpaCellEdit(${idx}, 'tc', this.value)"
+                                class="gpa-cell-input text-center font-mono font-bold">
+                        </td>
+                        ${mergedC3}
+                        <td>
+                            <input type="number" step="0.1" min="0" max="10" value="${course.dtp}"
+                                placeholder="0.0 - 10"
+                                oninput="onGpaCellEdit(${idx}, 'dtp', this.value)"
+                                class="gpa-cell-input text-center font-mono">
+                        </td>
+                        <td>
+                            <input type="number" step="0.1" min="0" max="10" value="${course.kthp}"
+                                placeholder="0.0 - 10"
+                                oninput="onGpaCellEdit(${idx}, 'kthp', this.value)"
+                                class="gpa-cell-input text-center font-mono">
+                        </td>
+                        <td class="bg-emerald-50/30 dark:bg-emerald-950/10 text-center align-middle">
+                            <span id="gpaCellF_${idx}" class="font-mono font-bold text-sm ${Number.isFinite(m.fVal) ? 'text-slate-800 dark:text-slate-100' : 'text-slate-300 dark:text-slate-600'}">
+                                ${Number.isFinite(m.fVal) ? fmtGpaNum(m.fVal, 2) : '-'}
+                            </span>
+                        </td>
+                        <td class="bg-emerald-50/30 dark:bg-emerald-950/10 text-center align-middle">
+                            <span id="gpaCellG_${idx}" class="font-mono font-bold text-sm ${Number.isFinite(m.gVal) ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-300 dark:text-slate-600'}">
+                                ${Number.isFinite(m.gVal) ? fmtGpaNum(m.gVal, 2) : '-'}
+                            </span>
+                        </td>
+                        ${mergedH3}
+                        ${mergedI3}
+                        <td class="text-center align-middle">
+                            <button onclick="removeGpaCourseRow(${idx})" class="p-1.5 text-slate-300 hover:text-rose-600 transition" title="Xóa dòng">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5 mx-auto"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function refreshGpaCalculatedCells() {
+            const calc = computeGpaFormulas();
+            const c3El = document.getElementById('gpaCellC3Val');
+            if (c3El) c3El.textContent = calc.sumTC;
+
+            const h3El = document.getElementById('gpaCellH3Val');
+            if (h3El) h3El.textContent = Number.isFinite(calc.gpaHe4) ? fmtGpaNum(calc.gpaHe4, 2) : '0.00';
+
+            const i3El = document.getElementById('gpaCellI3Val');
+            if (i3El) i3El.textContent = Number.isFinite(calc.gpaHe10) ? fmtGpaNum(calc.gpaHe10, 3) : '0.00';
+
+            calc.rowMetrics.forEach((m, idx) => {
+                const fEl = document.getElementById(`gpaCellF_${idx}`);
+                const gEl = document.getElementById(`gpaCellG_${idx}`);
+                if (fEl) {
+                    fEl.textContent = Number.isFinite(m.fVal) ? fmtGpaNum(m.fVal, 2) : '-';
+                    fEl.className = `font-mono font-bold text-sm ${Number.isFinite(m.fVal) ? 'text-slate-800 dark:text-slate-100' : 'text-slate-300 dark:text-slate-600'}`;
+                }
+                if (gEl) {
+                    gEl.textContent = Number.isFinite(m.gVal) ? fmtGpaNum(m.gVal, 2) : '-';
+                    gEl.className = `font-mono font-bold text-sm ${Number.isFinite(m.gVal) ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-300 dark:text-slate-600'}`;
+                }
+            });
+        }
+
+        function onGpaCellEdit(idx, field, val) {
+            if (!gpaState.courses[idx]) return;
+            gpaState.courses[idx][field] = val;
+            saveGpaState(true);
+            refreshGpaCalculatedCells();
+        }
+
+        function onGpaWeightChange() {
+            const d2Val = parseGpaNum(document.getElementById('gpaInputD2').value);
+            const e2Val = parseGpaNum(document.getElementById('gpaInputE2').value);
+            gpaState.weightD2 = Number.isFinite(d2Val) ? d2Val : 0;
+            gpaState.weightE2 = Number.isFinite(e2Val) ? e2Val : 0;
+            saveGpaState(true);
+            refreshGpaCalculatedCells();
+        }
+
+        function addGpaCourseRow() {
+            gpaState.courses.push({ id: Date.now() + Math.random(), name: '', tc: '', dtp: '', kthp: '' });
+            saveGpaState(true);
+            renderGpaSheet();
+        }
+
+        function addMultipleGpaRows(count = 5) {
+            for (let i = 0; i < count; i++) {
+                gpaState.courses.push({ id: Date.now() + i + Math.random(), name: '', tc: '', dtp: '', kthp: '' });
+            }
+            saveGpaState(true);
+            renderGpaSheet();
+        }
+
+        function removeGpaCourseRow(idx) {
+            if (gpaState.courses.length <= 1) {
+                gpaState.courses[0] = { id: Date.now(), name: '', tc: '', dtp: '', kthp: '' };
+            } else {
+                gpaState.courses.splice(idx, 1);
+            }
+            saveGpaState(true);
+            renderGpaSheet();
+        }
+
+        function clearAllGpaRows() {
+            gpaState.weightD2 = 0.5;
+            gpaState.weightE2 = 0.5;
+            gpaState.courses = [
+                { id: 1, name: '', tc: '', dtp: '', kthp: '' },
+                { id: 2, name: '', tc: '', dtp: '', kthp: '' },
+                { id: 3, name: '', tc: '', dtp: '', kthp: '' },
+                { id: 4, name: '', tc: '', dtp: '', kthp: '' },
+                { id: 5, name: '', tc: '', dtp: '', kthp: '' }
+            ];
+            document.getElementById('gpaInputD2').value = 0.5;
+            document.getElementById('gpaInputE2').value = 0.5;
+            saveGpaState(true);
+            renderGpaSheet();
+            toast('Đã làm trống bảng tính GPA');
+        }
+
+        /* ==========================================================================
            7. GIAO DIỆN SÁNG / TỐI & KHỞI TẠO
            ========================================================================== */
         function toggleTheme() {
@@ -2787,6 +3233,7 @@
             }
             applySavedAppLogo();
             loadState();
+            loadGpaState();
             renderAll();
 
             // Tự động tải dữ liệu mới nhất từ Git ngay khi mở ứng dụng
