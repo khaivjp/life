@@ -1,8 +1,15 @@
 {
-  "updatedAt": 1792266467885,
-  "updatedAtText": "02:47:47 18/10/2026",
+  "updatedAt": 1792266482857,
+  "updatedAtText": "02:48:02 18/10/2026",
   "state": {
-    "tasks": [],
+    "tasks": [
+      {
+        "id": 1792266480931,
+        "title": "SQL",
+        "prio": "Cao",
+        "done": false
+      }
+    ],
     "finance": [
       {
         "id": 1792212293894,
