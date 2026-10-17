@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792166607414,
-  "updatedAtText": "23:03:27 16/10/2026",
+  "updatedAt": 1792212295869,
+  "updatedAtText": "11:44:55 17/10/2026",
   "state": {
     "tasks": [
       {
@@ -11,6 +11,12 @@
       }
     ],
     "finance": [
+      {
+        "id": 1792212293894,
+        "desc": "Tiền hàng",
+        "amount": 4000,
+        "type": "expense"
+      },
       {
         "id": 1792166096653,
         "desc": "ĐANG TIẾT KIỆM",
