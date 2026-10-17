@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792248717841,
-  "updatedAtText": "21:51:57 17/10/2026",
+  "updatedAt": 1792248735253,
+  "updatedAtText": "21:52:15 17/10/2026",
   "state": {
     "tasks": [
       {
@@ -655,7 +655,7 @@
     "courses": [
       {
         "id": 1,
-        "name": "",
+        "name": "INT343\t\tQuản lý hệ thống máy tính",
         "tc": "",
         "dtp": "",
         "kthp": ""
