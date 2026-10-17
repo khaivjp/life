@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792248820358,
-  "updatedAtText": "21:53:40 17/10/2026",
+  "updatedAt": 1792248832643,
+  "updatedAtText": "21:53:52 17/10/2026",
   "state": {
     "tasks": [
       {
@@ -658,7 +658,7 @@
         "name": "INT343\tQuản lý hệ thống máy tính",
         "tc": "3",
         "dtp": "9.4",
-        "kthp": ""
+        "kthp": "8"
       },
       {
         "id": 2,
