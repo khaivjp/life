@@ -1,13 +1,13 @@
 {
-  "updatedAt": 1792212295869,
-  "updatedAtText": "11:44:55 17/10/2026",
+  "updatedAt": 1792225669446,
+  "updatedAtText": "15:27:49 17/10/2026",
   "state": {
     "tasks": [
       {
         "id": 1792166460767,
         "title": "HỌC OPENQUIZ",
         "prio": "Cao",
-        "done": false
+        "done": true
       }
     ],
     "finance": [
