@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792248685707,
-  "updatedAtText": "21:51:25 17/10/2026",
+  "updatedAt": 1792248717841,
+  "updatedAtText": "21:51:57 17/10/2026",
   "state": {
     "tasks": [
       {
@@ -650,7 +650,7 @@
     "status": "playing"
   },
   "gpa": {
-    "weightD2": 0,
+    "weightD2": 0.5,
     "weightE2": 0.5,
     "courses": [
       {
