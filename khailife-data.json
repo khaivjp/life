@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792301908730,
-  "updatedAtText": "12:38:28 18/10/2026",
+  "updatedAt": 1792301912457,
+  "updatedAtText": "12:38:32 18/10/2026",
   "state": {
     "tasks": [
       {
@@ -24,14 +24,6 @@
         "type": "expense",
         "createdAt": "2026-10-18T05:22:34.304Z",
         "timeText": "12:22 - 18/10/2026"
-      },
-      {
-        "id": 1792212293894,
-        "desc": "Tiền hàng",
-        "amount": 4000,
-        "type": "expense",
-        "createdAt": "2026-10-17T04:44:53.894Z",
-        "timeText": "11:44 - 17/10/2026"
       }
     ],
     "tkbRows": [
@@ -127,14 +119,6 @@
             "type": "expense",
             "createdAt": "2026-10-18T05:22:34.304Z",
             "timeText": "12:22 - 18/10/2026"
-          },
-          {
-            "id": 1792212293894,
-            "desc": "Tiền hàng",
-            "amount": 4000,
-            "type": "expense",
-            "createdAt": "2026-10-17T04:44:53.894Z",
-            "timeText": "11:44 - 17/10/2026"
           }
         ]
       }
