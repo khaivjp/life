@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792300956648,
-  "updatedAtText": "12:22:36 18/10/2026",
+  "updatedAt": 1792301908730,
+  "updatedAtText": "12:38:28 18/10/2026",
   "state": {
     "tasks": [
       {
@@ -21,19 +21,17 @@
         "id": 1792300954304,
         "desc": "Hàng",
         "amount": 5000,
-        "type": "expense"
+        "type": "expense",
+        "createdAt": "2026-10-18T05:22:34.304Z",
+        "timeText": "12:22 - 18/10/2026"
       },
       {
         "id": 1792212293894,
         "desc": "Tiền hàng",
         "amount": 4000,
-        "type": "expense"
-      },
-      {
-        "id": 1792166096653,
-        "desc": "ĐANG TIẾT KIỆM",
-        "amount": 12023000,
-        "type": "income"
+        "type": "expense",
+        "createdAt": "2026-10-17T04:44:53.894Z",
+        "timeText": "11:44 - 17/10/2026"
       }
     ],
     "tkbRows": [
@@ -117,7 +115,32 @@
         "gv": "N.K.Trung",
         "range": "23/11/26 đến 04/01/27"
       }
-    ]
+    ],
+    "financeMonths": {
+      "2026-10": {
+        "initialBalance": 0,
+        "items": [
+          {
+            "id": 1792300954304,
+            "desc": "Hàng",
+            "amount": 5000,
+            "type": "expense",
+            "createdAt": "2026-10-18T05:22:34.304Z",
+            "timeText": "12:22 - 18/10/2026"
+          },
+          {
+            "id": 1792212293894,
+            "desc": "Tiền hàng",
+            "amount": 4000,
+            "type": "expense",
+            "createdAt": "2026-10-17T04:44:53.894Z",
+            "timeText": "11:44 - 17/10/2026"
+          }
+        ]
+      }
+    },
+    "financeCurrentMonth": "2026-10",
+    "financeInitialBalance": 0
   },
   "customEvents": {
     "2026-10-28": [
