@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792301944055,
-  "updatedAtText": "12:39:04 18/10/2026",
+  "updatedAt": 1792301953658,
+  "updatedAtText": "12:39:13 18/10/2026",
   "state": {
     "tasks": [
       {
@@ -101,12 +101,12 @@
     ],
     "financeMonths": {
       "2026-10": {
-        "initialBalance": 1023000,
+        "initialBalance": 12023000,
         "items": []
       }
     },
     "financeCurrentMonth": "2026-10",
-    "financeInitialBalance": 1023000
+    "financeInitialBalance": 12023000
   },
   "customEvents": {
     "2026-10-28": [
