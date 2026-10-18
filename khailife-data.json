@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792301983089,
-  "updatedAtText": "12:39:43 18/10/2026",
+  "updatedAt": 1792314798952,
+  "updatedAtText": "16:13:18 18/10/2026",
   "state": {
     "tasks": [
       {
@@ -17,6 +17,14 @@
       }
     ],
     "finance": [
+      {
+        "id": 1792314796721,
+        "desc": "Tiền mẹ cho",
+        "amount": 8000,
+        "type": "income",
+        "createdAt": "2026-10-18T09:12:00.000Z",
+        "timeText": "16:12 - 18/10/2026"
+      },
       {
         "id": 1792301980993,
         "desc": "TIỀN HÀNG",
@@ -112,6 +120,14 @@
       "2026-10": {
         "initialBalance": 12023000,
         "items": [
+          {
+            "id": 1792314796721,
+            "desc": "Tiền mẹ cho",
+            "amount": 8000,
+            "type": "income",
+            "createdAt": "2026-10-18T09:12:00.000Z",
+            "timeText": "16:12 - 18/10/2026"
+          },
           {
             "id": 1792301980993,
             "desc": "TIỀN HÀNG",
