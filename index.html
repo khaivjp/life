@@ -454,7 +454,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
             <!-- 1. NHIỆM VỤ -->
-            <section id="secTasks" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[360px]">
+            <section id="secTasks" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[470px]">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
                         <i data-lucide="check-square" class="w-4 h-4 text-indigo-500"></i>
@@ -485,43 +485,82 @@
                 <div id="taskList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
             </section>
 
-            <!-- 2. THU - CHI -->
-            <section id="secFinance" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[360px]">
-                <div class="flex items-center justify-between mb-3">
+            <!-- 2. THU - CHI (CÓ SỐ DƯ BAN ĐẦU, NGÀY GIỜ TỪNG MỤC & RESET MÙNG 1 HÀNG THÁNG + LƯU LẠI THÁNG CŨ) -->
+            <section id="secFinance" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[470px]">
+                <!-- Header + Bộ chọn tháng (Tự động reset ngày 01 hàng tháng & lưu trữ tháng cũ) -->
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                     <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
                         <i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i>
                         <span>Thu - Chi</span>
+                        <select id="finMonthSelect" onchange="onChangeFinMonth(this.value)" title="Xem thu chi theo tháng (Tự động reset ngày 01 hàng tháng)"
+                            class="ml-1 px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold border border-emerald-200/70 dark:border-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+                        </select>
                     </div>
                     <div class="flex items-center gap-2 text-xs">
-                        <span class="text-emerald-600 dark:text-emerald-400 font-semibold">+<span id="sumInc">0</span></span>
+                        <span title="Tổng Thu trong tháng" class="text-emerald-600 dark:text-emerald-400 font-bold">+<span id="sumInc">0 ₫</span></span>
                         <span class="text-slate-300 dark:text-slate-700">|</span>
-                        <span class="text-rose-600 dark:text-rose-400 font-semibold">-<span id="sumExp">0</span></span>
+                        <span title="Tổng Chi trong tháng" class="text-rose-600 dark:text-rose-400 font-bold">-<span id="sumExp">0 ₫</span></span>
                     </div>
                 </div>
 
-                <!-- Add Transaction -->
-                <form id="finForm" class="space-y-2 mb-3">
+                <!-- Mục Nhập Số Dư Ban Đầu & Số Dư Còn Lại Trong Tháng -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2.5 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-800">
+                    <div class="flex items-center justify-between sm:justify-start gap-1.5">
+                        <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 shrink-0">Số dư đầu (<span id="finInitMonthLabel">--/----</span>):</span>
+                        <div class="flex items-center gap-1 flex-1 max-w-[165px]">
+                            <input type="number" id="finInitialBalanceInput" step="1000" placeholder="Nhập số dư đầu..."
+                                onkeydown="if(event.key==='Enter'){event.preventDefault();saveInitialBalance();}"
+                                class="w-full px-2 py-1 text-xs font-bold text-indigo-700 dark:text-indigo-300 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <button type="button" onclick="saveInitialBalance()" title="Lưu số dư ban đầu của tháng"
+                                class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold transition shrink-0 shadow-xs">
+                                Lưu
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between sm:justify-end gap-1.5 text-xs border-t sm:border-t-0 pt-1.5 sm:pt-0 border-slate-200/60 dark:border-slate-700">
+                        <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Số dư cuối:</span>
+                        <span id="finMonthRemaining" class="font-extrabold text-sm text-emerald-600 dark:text-emerald-400">0 ₫</span>
+                    </div>
+                </div>
+
+                <!-- Thanh thông báo khi đang xem lịch sử tháng cũ -->
+                <div id="finHistoryNotice" class="hidden mb-2 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/70 flex items-center justify-between text-[11px]">
+                    <span class="font-semibold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
+                        <i data-lucide="archive" class="w-3.5 h-3.5"></i>
+                        <span>Đang xem lưu trữ: <b id="finHistoryMonthName"></b></span>
+                    </span>
+                    <button type="button" onclick="switchToCurrentFinMonth()" class="font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
+                        Về tháng hiện tại
+                    </button>
+                </div>
+
+                <!-- Form Thêm Khoản Thu - Chi kèm Ngày Giờ -->
+                <form id="finForm" class="space-y-2 mb-2.5">
                     <div class="flex gap-1.5">
                         <div class="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl text-xs font-semibold shrink-0">
                             <button type="button" onclick="setFinType('expense')" id="btnExp" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white">Chi</button>
                             <button type="button" onclick="setFinType('income')" id="btnInc" class="px-2.5 py-1 rounded-lg text-slate-500">Thu</button>
                         </div>
-                        <input type="text" id="finDesc" required placeholder="Khoản thu/chi..."
+                        <input type="text" id="finDesc" required placeholder="Khoản thu/chi (VD: Ăn sáng, Đổ xăng, Tiền thưởng...)"
                             class="flex-1 min-w-0 px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
-                    <div class="flex gap-1.5 items-center">
-                        <input type="number" id="finAmount" required min="1000" step="500" placeholder="Số tiền (VNĐ)"
-                            class="flex-1 px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <button type="button" onclick="setAmt(25000)" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] hover:bg-slate-200">25k</button>
-                        <button type="button" onclick="setAmt(50000)" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] hover:bg-slate-200">50k</button>
-                        <button type="button" onclick="setAmt(100000)" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] hover:bg-slate-200">100k</button>
-                        <button type="submit" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                        </button>
+                    <div class="flex flex-wrap sm:flex-nowrap gap-1.5 items-center">
+                        <input type="number" id="finAmount" required min="500" step="500" placeholder="Số tiền (VNĐ)"
+                            class="flex-1 min-w-[105px] px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <input type="datetime-local" id="finDateTime" title="Ngày giờ thu/chi (Để trống sẽ tự lấy ngày giờ hiện tại)"
+                            class="w-[146px] px-2 py-1.5 text-[11px] font-medium rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button type="button" onclick="setAmt(25000)" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-medium hover:bg-slate-200 dark:hover:bg-slate-700">25k</button>
+                            <button type="button" onclick="setAmt(50000)" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-medium hover:bg-slate-200 dark:hover:bg-slate-700">50k</button>
+                            <button type="button" onclick="setAmt(100000)" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-medium hover:bg-slate-200 dark:hover:bg-slate-700">100k</button>
+                            <button type="submit" title="Thêm khoản Thu/Chi" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition shadow-xs">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                            </button>
+                        </div>
                     </div>
                 </form>
 
-                <!-- Finance List -->
+                <!-- Danh sách Thu - Chi & Lịch sử các tháng trước -->
                 <div id="finList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
             </section>
 
@@ -1292,6 +1331,7 @@
 
                 if (payload.state) {
                     state = payload.state;
+                    ensureFinanceMonthlyStructure();
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
                 }
                 if (payload.customEvents) {
@@ -1385,9 +1425,12 @@
                 { id: 2, title: 'Làm bài tập Cơ sở dữ liệu', prio: 'TB', done: true }
             ],
             finance: [
-                { id: 1, desc: 'Trợ cấp tháng', amount: 2500000, type: 'income' },
-                { id: 2, desc: 'Ăn trưa & Cà phê', amount: 65000, type: 'expense' }
+                { id: 1, desc: 'Trợ cấp tháng', amount: 2500000, type: 'income', createdAt: new Date().toISOString() },
+                { id: 2, desc: 'Ăn trưa & Cà phê', amount: 65000, type: 'expense', createdAt: new Date().toISOString() }
             ],
+            financeInitialBalance: 0,
+            financeCurrentMonth: `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`,
+            financeMonths: {},
             tkbRows: JSON.parse(JSON.stringify(DEFAULT_EXCEL_ROWS))
         };
 
@@ -1396,6 +1439,7 @@
         let expandedDays = [];
         let taskFilter = 'all';
         let finType = 'expense';
+        let selectedFinMonth = '';
         let selectedSchedColor = 'indigo';
         let currentTkbView = 'day';
         let activeMainSection = 'dashboard';
@@ -1575,6 +1619,7 @@
                 customEvents = {};
             }
 
+            ensureFinanceMonthlyStructure();
             buildCalendarSessions();
             updateBackupBadgeUI();
 
@@ -1688,6 +1733,194 @@
             `).join('');
         }
 
+        /* ==========================================================================
+           4.5. QUẢN LÝ THU - CHI THEO THÁNG, SỐ DƯ BAN ĐẦU, NGÀY GIỜ & RESET MÙNG 1
+           ========================================================================== */
+        function getCurrentMonthKey() {
+            const now = new Date();
+            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        function fmtMonthKeyVN(mk) {
+            if (!mk || !mk.includes('-')) return mk || '';
+            const [y, m] = mk.split('-');
+            return `Tháng ${m}/${y}`;
+        }
+
+        function fmtMonthShortVN(mk) {
+            if (!mk || !mk.includes('-')) return '--/----';
+            const [y, m] = mk.split('-');
+            return `T${m}/${y}`;
+        }
+
+        function fmtFinDateTimeVN(dtInput, fallbackId) {
+            let d = null;
+            if (dtInput) {
+                const parsed = new Date(dtInput);
+                if (!isNaN(parsed.getTime())) d = parsed;
+            }
+            if (!d && typeof fallbackId === 'number' && fallbackId > 1000000000000) {
+                const parsed = new Date(fallbackId);
+                if (!isNaN(parsed.getTime())) d = parsed;
+            }
+            if (!d) {
+                if (typeof dtInput === 'string' && dtInput.trim()) return dtInput.trim();
+                d = new Date();
+            }
+            const hh = String(d.getHours()).padStart(2, '0');
+            const mm = String(d.getMinutes()).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            const mo = String(d.getMonth() + 1).padStart(2, '0');
+            const yyyy = d.getFullYear();
+            return `${hh}:${mm} - ${dd}/${mo}/${yyyy}`;
+        }
+
+        function getLocalDateTimeValue(dateObj = new Date()) {
+            const y = dateObj.getFullYear();
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            const hh = String(dateObj.getHours()).padStart(2, '0');
+            const mm = String(dateObj.getMinutes()).padStart(2, '0');
+            return `${y}-${m}-${d}T${hh}:${mm}`;
+        }
+
+        function resetFinDateTimeInput() {
+            const dtEl = document.getElementById('finDateTime');
+            if (!dtEl) return;
+            const curMk = getCurrentMonthKey();
+            if (!selectedFinMonth || selectedFinMonth === curMk) {
+                dtEl.value = getLocalDateTimeValue(new Date());
+            } else {
+                const [y, m] = selectedFinMonth.split('-');
+                const now = new Date();
+                const hh = String(now.getHours()).padStart(2, '0');
+                const mm = String(now.getMinutes()).padStart(2, '0');
+                dtEl.value = `${y}-${m}-01T${hh}:${mm}`;
+            }
+        }
+
+        // Đảm bảo cấu trúc lưu trữ theo từng tháng & tự động Reset khi bước sang ngày mùng 1 tháng mới
+        function ensureFinanceMonthlyStructure() {
+            const curMk = getCurrentMonthKey();
+            if (!state.financeMonths || typeof state.financeMonths !== 'object') {
+                state.financeMonths = {};
+            }
+
+            // Chuyển đổi dữ liệu cũ (nếu có) vào đúng tháng và gắn ngày giờ đầy đủ
+            if (Array.isArray(state.finance) && state.finance.length > 0 && Object.keys(state.financeMonths).length === 0) {
+                const initMonth = state.financeCurrentMonth || curMk;
+                const migratedItems = state.finance.map(item => {
+                    let createdIso = item.createdAt || item.dateTime || '';
+                    if (!createdIso) {
+                        const d = (typeof item.id === 'number' && item.id > 1000000000000) ? new Date(item.id) : new Date();
+                        createdIso = d.toISOString();
+                    }
+                    return {
+                        id: item.id || Date.now() + Math.random(),
+                        desc: item.desc || 'Khoản thu/chi',
+                        amount: Number(item.amount) || 0,
+                        type: item.type === 'income' ? 'income' : 'expense',
+                        createdAt: createdIso,
+                        timeText: item.timeText || fmtFinDateTimeVN(createdIso, item.id)
+                    };
+                });
+                state.financeMonths[initMonth] = {
+                    initialBalance: Number(state.financeInitialBalance) || 0,
+                    items: migratedItems
+                };
+            }
+
+            // Kiểm tra mỗi mục trong tất cả các tháng đều có trường hiển thị ngày giờ
+            Object.keys(state.financeMonths).forEach(mk => {
+                const mObj = state.financeMonths[mk];
+                if (!mObj || typeof mObj !== 'object') {
+                    state.financeMonths[mk] = { initialBalance: 0, items: [] };
+                    return;
+                }
+                mObj.initialBalance = Number(mObj.initialBalance) || 0;
+                if (!Array.isArray(mObj.items)) mObj.items = [];
+                mObj.items.forEach(item => {
+                    if (!item.createdAt) {
+                        const d = (typeof item.id === 'number' && item.id > 1000000000000) ? new Date(item.id) : new Date();
+                        item.createdAt = d.toISOString();
+                    }
+                    if (!item.timeText) {
+                        item.timeText = fmtFinDateTimeVN(item.createdAt, item.id);
+                    }
+                });
+            });
+
+            // Nếu bước sang tháng mới (ngày mùng 1 hàng tháng):
+            // Giữ nguyên toàn bộ lịch sử Thu - Chi của tháng cũ trong state.financeMonths[tháng_cũ]
+            // và khởi tạo danh sách Thu - Chi trống (Reset = 0) cho tháng mới
+            const prevTrackedMonth = state.financeCurrentMonth;
+            if (prevTrackedMonth && prevTrackedMonth !== curMk) {
+                if (!state.financeMonths[curMk]) {
+                    state.financeMonths[curMk] = {
+                        initialBalance: 0,
+                        items: []
+                    };
+                }
+                state.financeCurrentMonth = curMk;
+                selectedFinMonth = curMk;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                toast(`Sang tháng mới (${fmtMonthShortVN(curMk)}): Đã lưu trữ ${fmtMonthShortVN(prevTrackedMonth)} và reset Thu - Chi tháng mới!`);
+            }
+
+            if (!state.financeMonths[curMk]) {
+                state.financeMonths[curMk] = {
+                    initialBalance: Number(state.financeInitialBalance) || 0,
+                    items: []
+                };
+            }
+
+            state.financeCurrentMonth = curMk;
+            if (!selectedFinMonth || !state.financeMonths[selectedFinMonth]) {
+                selectedFinMonth = curMk;
+            }
+
+            // Đồng bộ mảng state.finance với tháng hiện tại để tương thích hoàn toàn
+            state.finance = state.financeMonths[curMk].items;
+            state.financeInitialBalance = state.financeMonths[curMk].initialBalance;
+        }
+
+        function getActiveFinMonthObj(mk = selectedFinMonth) {
+            ensureFinanceMonthlyStructure();
+            const targetMk = mk || getCurrentMonthKey();
+            if (!state.financeMonths[targetMk]) {
+                state.financeMonths[targetMk] = { initialBalance: 0, items: [] };
+            }
+            return state.financeMonths[targetMk];
+        }
+
+        function onChangeFinMonth(mk) {
+            if (!mk) return;
+            selectedFinMonth = mk;
+            resetFinDateTimeInput();
+            renderFinance();
+        }
+
+        function switchToCurrentFinMonth() {
+            selectedFinMonth = getCurrentMonthKey();
+            resetFinDateTimeInput();
+            renderFinance();
+        }
+
+        function saveInitialBalance() {
+            const inputEl = document.getElementById('finInitialBalanceInput');
+            if (!inputEl) return;
+            const val = Number(inputEl.value) || 0;
+            const mObj = getActiveFinMonthObj(selectedFinMonth);
+            mObj.initialBalance = val;
+
+            const curMk = getCurrentMonthKey();
+            if (selectedFinMonth === curMk) {
+                state.financeInitialBalance = val;
+            }
+            saveState(`Cập nhật số dư ban đầu ${fmtMonthShortVN(selectedFinMonth)}: ${fmtVND(val)}`);
+            toast(`Đã lưu số dư ban đầu ${fmtMonthShortVN(selectedFinMonth)}: ${fmtVND(val)}`);
+        }
+
         function setFinType(type) {
             finType = type;
             document.getElementById('btnExp').className = type === 'expense' ? 'px-2.5 py-1 rounded-lg bg-rose-600 text-white' : 'px-2.5 py-1 rounded-lg text-slate-500';
@@ -1700,44 +1933,208 @@
 
         document.getElementById('finForm').addEventListener('submit', e => {
             e.preventDefault();
+            ensureFinanceMonthlyStructure();
+
             const desc = document.getElementById('finDesc').value.trim();
             const amount = Number(document.getElementById('finAmount').value);
+            const dtVal = document.getElementById('finDateTime').value;
             if (!desc || amount <= 0) return;
-            state.finance.unshift({ id: Date.now(), desc, amount, type: finType });
+
+            let txDate = dtVal ? new Date(dtVal) : new Date();
+            if (isNaN(txDate.getTime())) txDate = new Date();
+
+            // Xác định tháng của khoản thu/chi dựa theo ngày giờ đã chọn (hoặc tháng đang xem)
+            const txMonthKey = dtVal
+                ? `${txDate.getFullYear()}-${String(txDate.getMonth() + 1).padStart(2, '0')}`
+                : (selectedFinMonth || getCurrentMonthKey());
+
+            if (!state.financeMonths[txMonthKey]) {
+                state.financeMonths[txMonthKey] = { initialBalance: 0, items: [] };
+            }
+
+            const newItem = {
+                id: Date.now(),
+                desc,
+                amount,
+                type: finType,
+                createdAt: txDate.toISOString(),
+                timeText: fmtFinDateTimeVN(txDate)
+            };
+
+            state.financeMonths[txMonthKey].items.unshift(newItem);
+            selectedFinMonth = txMonthKey;
+
+            const curMk = getCurrentMonthKey();
+            state.finance = state.financeMonths[curMk].items;
+
             document.getElementById('finDesc').value = '';
             document.getElementById('finAmount').value = '';
-            saveState('Cập nhật khoản Thu - Chi');
+            resetFinDateTimeInput();
+
+            saveState(`Thêm khoản ${finType === 'income' ? 'Thu' : 'Chi'}: ${desc}`);
+            toast(`Đã thêm khoản ${finType === 'income' ? 'Thu' : 'Chi'} (${newItem.timeText})`);
         });
 
-        function delFin(id) {
-            state.finance = state.finance.filter(x => x.id !== id);
+        function delFin(id, monthKey = selectedFinMonth) {
+            ensureFinanceMonthlyStructure();
+            const targetMk = monthKey || selectedFinMonth || getCurrentMonthKey();
+            if (!state.financeMonths[targetMk]) return;
+
+            state.financeMonths[targetMk].items = state.financeMonths[targetMk].items.filter(x => String(x.id) !== String(id));
+            const curMk = getCurrentMonthKey();
+            state.finance = state.financeMonths[curMk].items;
+
             saveState('Xóa khoản Thu - Chi');
         }
 
         function renderFinance() {
-            const inc = state.finance.filter(x => x.type === 'income').reduce((s, x) => s + Number(x.amount), 0);
-            const exp = state.finance.filter(x => x.type === 'expense').reduce((s, x) => s + Number(x.amount), 0);
-            document.getElementById('sumInc').textContent = fmtVND(inc);
-            document.getElementById('sumExp').textContent = fmtVND(exp);
-            document.getElementById('kpiBalance').textContent = fmtVND(inc - exp);
+            ensureFinanceMonthlyStructure();
+            const curMk = getCurrentMonthKey();
+            if (!selectedFinMonth) selectedFinMonth = curMk;
 
-            const box = document.getElementById('finList');
-            if (!state.finance.length) {
-                box.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">Trống</p>`;
-                return;
+            // Danh sách các tháng (sắp xếp từ mới nhất -> cũ nhất)
+            const allMonthKeys = Array.from(new Set([curMk, ...Object.keys(state.financeMonths)])).sort((a, b) => b.localeCompare(a));
+
+            const monthSelect = document.getElementById('finMonthSelect');
+            if (monthSelect) {
+                monthSelect.innerHTML = allMonthKeys.map(mk => {
+                    const mData = state.financeMonths[mk] || { items: [] };
+                    const count = Array.isArray(mData.items) ? mData.items.length : 0;
+                    const label = mk === curMk ? `${fmtMonthKeyVN(mk)} (Hiện tại)` : `${fmtMonthKeyVN(mk)} (${count} mục)`;
+                    return `<option value="${esc(mk)}" ${mk === selectedFinMonth ? 'selected' : ''}>${esc(label)}</option>`;
+                }).join('');
             }
 
-            box.innerHTML = state.finance.map(f => `
-                <div class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-800">
-                    <span class="text-xs font-medium truncate">${esc(f.desc)}</span>
-                    <div class="flex items-center gap-2 shrink-0">
-                        <span class="text-xs font-bold ${f.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
-                            ${f.type === 'income' ? '+' : '-'}${fmtVND(f.amount)}
-                        </span>
-                        <button onclick="delFin(${f.id})" class="text-slate-400 hover:text-rose-500">×</button>
+            // Tính toán số liệu của Tháng đang chọn
+            const activeObj = getActiveFinMonthObj(selectedFinMonth);
+            const initBal = Number(activeObj.initialBalance) || 0;
+            const items = Array.isArray(activeObj.items) ? activeObj.items : [];
+
+            const inc = items.filter(x => x.type === 'income').reduce((s, x) => s + Number(x.amount), 0);
+            const exp = items.filter(x => x.type === 'expense').reduce((s, x) => s + Number(x.amount), 0);
+            const endBal = initBal + inc - exp;
+
+            // Tính số dư của Tháng hiện tại cho thanh KPI Header trên cùng
+            const curObj = getActiveFinMonthObj(curMk);
+            const curInit = Number(curObj.initialBalance) || 0;
+            const curInc = (curObj.items || []).filter(x => x.type === 'income').reduce((s, x) => s + Number(x.amount), 0);
+            const curExp = (curObj.items || []).filter(x => x.type === 'expense').reduce((s, x) => s + Number(x.amount), 0);
+            const curTotalBal = curInit + curInc - curExp;
+
+            document.getElementById('sumInc').textContent = fmtVND(inc);
+            document.getElementById('sumExp').textContent = fmtVND(exp);
+            document.getElementById('kpiBalance').textContent = fmtVND(curTotalBal);
+
+            const initMonthLabel = document.getElementById('finInitMonthLabel');
+            if (initMonthLabel) initMonthLabel.textContent = fmtMonthShortVN(selectedFinMonth);
+
+            const initInput = document.getElementById('finInitialBalanceInput');
+            if (initInput && document.activeElement !== initInput) {
+                initInput.value = initBal !== 0 ? initBal : '';
+            }
+
+            const remEl = document.getElementById('finMonthRemaining');
+            if (remEl) {
+                remEl.textContent = fmtVND(endBal);
+                remEl.className = `font-extrabold text-sm ${endBal >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`;
+            }
+
+            // Hiển thị thông báo nếu đang xem tháng cũ
+            const histNotice = document.getElementById('finHistoryNotice');
+            const histName = document.getElementById('finHistoryMonthName');
+            if (histNotice && histName) {
+                if (selectedFinMonth !== curMk) {
+                    histNotice.classList.remove('hidden');
+                    histName.textContent = fmtMonthKeyVN(selectedFinMonth);
+                } else {
+                    histNotice.classList.add('hidden');
+                }
+            }
+
+            const dtEl = document.getElementById('finDateTime');
+            if (dtEl && !dtEl.value) {
+                resetFinDateTimeInput();
+            }
+
+            const box = document.getElementById('finList');
+            let listHtml = '';
+
+            if (!items.length) {
+                listHtml = `
+                    <div class="text-center py-6 px-3 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
+                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Chưa có khoản thu/chi nào trong ${esc(fmtMonthKeyVN(selectedFinMonth))}</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Mức Thu - Chi tự động reset về 0 vào ngày 01 hàng tháng. Dữ liệu các tháng trước luôn được lưu lại.</p>
                     </div>
-                </div>
-            `).join('');
+                `;
+            } else {
+                listHtml = items.map(f => {
+                    const timeDisplay = f.timeText || fmtFinDateTimeVN(f.createdAt, f.id);
+                    const isInc = f.type === 'income';
+                    return `
+                        <div class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase ${isInc ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300'}">
+                                        ${isInc ? 'Thu' : 'Chi'}
+                                    </span>
+                                    <span class="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate">${esc(f.desc)}</span>
+                                </div>
+                                <div class="flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-400 mt-0.5 font-medium">
+                                    <i data-lucide="clock" class="w-3 h-3 text-slate-400"></i>
+                                    <span>${esc(timeDisplay)}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="text-xs font-extrabold ${isInc ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">
+                                    ${isInc ? '+' : '-'}${fmtVND(f.amount)}
+                                </span>
+                                <button onclick="delFin('${esc(f.id)}', '${esc(selectedFinMonth)}')" title="Xóa mục này" class="w-6 h-6 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition">
+                                    ×
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Hiển thị bảng tóm tắt Lịch sử các tháng cũ đã lưu (nếu có nhiều hơn 1 tháng)
+            const archivedMonths = allMonthKeys.filter(mk => mk !== selectedFinMonth);
+            if (archivedMonths.length > 0) {
+                const archiveRows = archivedMonths.map(mk => {
+                    const mObj = state.financeMonths[mk] || { initialBalance: 0, items: [] };
+                    const mInit = Number(mObj.initialBalance) || 0;
+                    const mInc = (mObj.items || []).filter(x => x.type === 'income').reduce((s, x) => s + Number(x.amount), 0);
+                    const mExp = (mObj.items || []).filter(x => x.type === 'expense').reduce((s, x) => s + Number(x.amount), 0);
+                    const mEnd = mInit + mInc - mExp;
+                    return `
+                        <div onclick="onChangeFinMonth('${esc(mk)}')" class="cursor-pointer flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg bg-indigo-50/50 hover:bg-indigo-100/70 dark:bg-slate-800/90 dark:hover:bg-slate-800 border border-indigo-100 dark:border-slate-700 text-[11px] transition">
+                            <div class="font-bold text-indigo-900 dark:text-indigo-300 flex items-center gap-1.5">
+                                <i data-lucide="folder-clock" class="w-3.5 h-3.5 text-indigo-500"></i>
+                                <span>${esc(fmtMonthKeyVN(mk))}</span>
+                                <span class="text-[10px] font-normal text-slate-400">(${(mObj.items || []).length} giao dịch)</span>
+                            </div>
+                            <div class="flex items-center gap-2 font-semibold">
+                                <span class="text-emerald-600 dark:text-emerald-400">+${fmtVND(mInc)}</span>
+                                <span class="text-rose-600 dark:text-rose-400">-${fmtVND(mExp)}</span>
+                                <span class="font-bold text-slate-700 dark:text-slate-200">Dư: ${fmtVND(mEnd)}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                listHtml += `
+                    <div class="pt-2.5 mt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5">
+                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                            <span>Lịch sử thu chi các tháng đã lưu</span>
+                            <span>Bấm để xem</span>
+                        </div>
+                        ${archiveRows}
+                    </div>
+                `;
+            }
+
+            box.innerHTML = listHtml;
+            lucide.createIcons();
         }
 
         /* ==========================================================================
@@ -1852,7 +2249,8 @@
                 calYear = y;
                 calMonth = m - 1;
                 if (wasOnOldToday) selectedDate = currentToday;
-                renderCalendar();
+                ensureFinanceMonthlyStructure();
+                renderAll();
                 toast(`Đã bước sang ngày mới: ${fmtKeyVN(currentToday)}`);
             }
         }
@@ -3253,3 +3651,5 @@
     </script>
 </body>
 </html>
+TGB-v2.html
+Đang hiển thị TGB-v2.html.
