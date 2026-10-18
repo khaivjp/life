@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792301912457,
-  "updatedAtText": "12:38:32 18/10/2026",
+  "updatedAt": 1792301937887,
+  "updatedAtText": "12:38:57 18/10/2026",
   "state": {
     "tasks": [
       {
@@ -16,16 +16,7 @@
         "done": false
       }
     ],
-    "finance": [
-      {
-        "id": 1792300954304,
-        "desc": "Hàng",
-        "amount": 5000,
-        "type": "expense",
-        "createdAt": "2026-10-18T05:22:34.304Z",
-        "timeText": "12:22 - 18/10/2026"
-      }
-    ],
+    "finance": [],
     "tkbRows": [
       {
         "code": "INT304",
@@ -111,16 +102,7 @@
     "financeMonths": {
       "2026-10": {
         "initialBalance": 0,
-        "items": [
-          {
-            "id": 1792300954304,
-            "desc": "Hàng",
-            "amount": 5000,
-            "type": "expense",
-            "createdAt": "2026-10-18T05:22:34.304Z",
-            "timeText": "12:22 - 18/10/2026"
-          }
-        ]
+        "items": []
       }
     },
     "financeCurrentMonth": "2026-10",
