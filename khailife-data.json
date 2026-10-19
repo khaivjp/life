@@ -1,16 +1,16 @@
 {
-  "updatedAt": 1792423443183,
-  "updatedAtText": "22:24:03 19/10/2026",
+  "updatedAt": 1792423447820,
+  "updatedAtText": "22:24:07 19/10/2026",
   "state": {
     "tasks": [
       {
         "id": 1792423440807,
         "title": "EXERCISE AT 5 P.M",
         "prio": "TB",
-        "done": false,
+        "done": true,
         "daily": true,
-        "count": 0,
-        "lastDoneDate": ""
+        "count": 2,
+        "lastDoneDate": "2026-10-19"
       },
       {
         "id": 1792423426593,
