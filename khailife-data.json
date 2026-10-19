@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792329167428,
-  "updatedAtText": "20:12:47 18/10/2026",
+  "updatedAt": 1792415102091,
+  "updatedAtText": "20:05:02 19/10/2026",
   "state": {
     "tasks": [
       {
@@ -17,6 +17,14 @@
       }
     ],
     "finance": [
+      {
+        "id": 1792415099584,
+        "desc": "Em Trí đóng lãi",
+        "amount": 110000,
+        "type": "income",
+        "createdAt": "2026-10-19T13:04:00.000Z",
+        "timeText": "20:04 - 19/10/2026"
+      },
       {
         "id": 1792314796721,
         "desc": "Tiền mẹ cho",
@@ -120,6 +128,14 @@
       "2026-10": {
         "initialBalance": 12023000,
         "items": [
+          {
+            "id": 1792415099584,
+            "desc": "Em Trí đóng lãi",
+            "amount": 110000,
+            "type": "income",
+            "createdAt": "2026-10-19T13:04:00.000Z",
+            "timeText": "20:04 - 19/10/2026"
+          },
           {
             "id": 1792314796721,
             "desc": "Tiền mẹ cho",
