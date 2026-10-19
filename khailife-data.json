@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792423384028,
-  "updatedAtText": "22:23:04 19/10/2026",
+  "updatedAt": 1792423389008,
+  "updatedAtText": "22:23:09 19/10/2026",
   "state": {
     "tasks": [
       {
@@ -9,7 +9,7 @@
         "prio": "Cao",
         "done": false,
         "daily": true,
-        "count": 5,
+        "count": 23,
         "lastDoneDate": "2026-10-19"
       },
       {
