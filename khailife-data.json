@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792507209213,
-  "updatedAtText": "21:40:09 20/10/2026",
+  "updatedAt": 1792538485568,
+  "updatedAtText": "06:21:25 21/10/2026",
   "state": {
     "tasks": [
       {
@@ -16,7 +16,7 @@
         "id": 1792423440807,
         "title": "EXERCISE AT 5 P.M",
         "prio": "TB",
-        "done": true,
+        "done": false,
         "daily": true,
         "count": 2,
         "lastDoneDate": "2026-10-20"
@@ -25,10 +25,10 @@
         "id": 1792423426593,
         "title": "EXERCISE AT 5 A.M",
         "prio": "TB",
-        "done": false,
+        "done": true,
         "daily": true,
-        "count": 1,
-        "lastDoneDate": "2026-10-19"
+        "count": 2,
+        "lastDoneDate": "2026-10-21"
       },
       {
         "id": 1792266495986,
@@ -205,7 +205,7 @@
     },
     "financeCurrentMonth": "2026-10",
     "financeInitialBalance": 12023000,
-    "tasksLastResetDate": "2026-10-20"
+    "tasksLastResetDate": "2026-10-21"
   },
   "customEvents": {
     "2026-10-28": [
