@@ -1,8 +1,17 @@
 {
-  "updatedAt": 1792469311583,
-  "updatedAtText": "11:08:31 20/10/2026",
+  "updatedAt": 1792495337507,
+  "updatedAtText": "18:22:17 20/10/2026",
   "state": {
     "tasks": [
+      {
+        "id": 1792495334951,
+        "title": "Tiết Kiệm là quyết sách, Ăn Uống là phải quất sạch",
+        "prio": "TB",
+        "done": false,
+        "daily": true,
+        "count": 0,
+        "lastDoneDate": ""
+      },
       {
         "id": 1792423440807,
         "title": "EXERCISE AT 5 P.M",
