@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792469300107,
-  "updatedAtText": "11:08:20 20/10/2026",
+  "updatedAt": 1792469311583,
+  "updatedAtText": "11:08:31 20/10/2026",
   "state": {
     "tasks": [
       {
@@ -41,8 +41,8 @@
     ],
     "finance": [
       {
-        "id": 1792469297292,
-        "desc": "Thuộc",
+        "id": 1792469309151,
+        "desc": "Thuốc",
         "amount": 18000,
         "type": "expense",
         "createdAt": "2026-10-20T04:08:00.000Z",
@@ -160,8 +160,8 @@
         "initialBalance": 12023000,
         "items": [
           {
-            "id": 1792469297292,
-            "desc": "Thuộc",
+            "id": 1792469309151,
+            "desc": "Thuốc",
             "amount": 18000,
             "type": "expense",
             "createdAt": "2026-10-20T04:08:00.000Z",
