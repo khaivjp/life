@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792504274338,
-  "updatedAtText": "20:51:14 20/10/2026",
+  "updatedAt": 1792504307225,
+  "updatedAtText": "20:51:47 20/10/2026",
   "state": {
     "tasks": [
       {
@@ -252,6 +252,25 @@
         "gv": "Trắc nghiệm (THI)",
         "color": "rose"
       }
+    ],
+    "2026-10-24": [
+      {
+        "id": "cust_1792504304863_2skq",
+        "code": "CUSTOM",
+        "name": "Đi Phong bì hộ Hạnh 200k",
+        "start": 6,
+        "periods": [
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "periodLabel": "Tiết 6-10",
+        "room": "Tự chọn",
+        "gv": "Cá nhân",
+        "color": "indigo"
+      }
     ]
   },
   "savedBackup": {
@@ -399,6 +418,25 @@
           "room": "NDH301",
           "gv": "Trắc nghiệm (THI)",
           "color": "rose"
+        }
+      ],
+      "2026-10-24": [
+        {
+          "id": "cust_1792504304863_2skq",
+          "code": "CUSTOM",
+          "name": "Đi Phong bì hộ Hạnh 200k",
+          "start": 6,
+          "periods": [
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "periodLabel": "Tiết 6-10",
+          "room": "Tự chọn",
+          "gv": "Cá nhân",
+          "color": "indigo"
         }
       ]
     },
