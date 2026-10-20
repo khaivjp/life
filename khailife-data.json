@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792495337507,
-  "updatedAtText": "18:22:17 20/10/2026",
+  "updatedAt": 1792504274338,
+  "updatedAtText": "20:51:14 20/10/2026",
   "state": {
     "tasks": [
       {
@@ -16,10 +16,10 @@
         "id": 1792423440807,
         "title": "EXERCISE AT 5 P.M",
         "prio": "TB",
-        "done": false,
+        "done": true,
         "daily": true,
-        "count": 1,
-        "lastDoneDate": "2026-10-19"
+        "count": 2,
+        "lastDoneDate": "2026-10-20"
       },
       {
         "id": 1792423426593,
