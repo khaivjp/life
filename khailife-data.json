@@ -1,14 +1,8 @@
 {
-  "updatedAt": 1792691900954,
-  "updatedAtText": "00:58:20 23/10/2026",
+  "updatedAt": 1792691907911,
+  "updatedAtText": "00:58:27 23/10/2026",
   "state": {
     "tasks": [
-      {
-        "id": 1792691897982,
-        "title": "APTIS B1 Tôi Đang Tới Đây",
-        "prio": "TB",
-        "createdAt": "2026-10-22T17:58:17.982Z"
-      },
       {
         "id": 1792495334951,
         "title": "Tiết Kiệm là quyết sách, Ăn Uống là phải quất sạch",
