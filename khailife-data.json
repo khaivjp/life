@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792688394275,
-  "updatedAtText": "23:59:54 22/10/2026",
+  "updatedAt": 1792688416132,
+  "updatedAtText": "00:00:16 23/10/2026",
   "state": {
     "tasks": [
       {
@@ -196,7 +196,7 @@
     },
     "financeCurrentMonth": "2026-10",
     "financeInitialBalance": 12023000,
-    "tasksLastResetDate": "2026-10-22"
+    "tasksLastResetDate": "2026-10-23"
   },
   "customEvents": {
     "2026-10-28": [
