@@ -1,44 +1,8 @@
 {
-  "updatedAt": 1792688516138,
-  "updatedAtText": "00:01:56 23/10/2026",
+  "updatedAt": 1792688579921,
+  "updatedAtText": "00:02:59 23/10/2026",
   "state": {
     "tasks": [
-      {
-        "id": 1792688513618,
-        "title": "Listening 25p",
-        "prio": "TB",
-        "done": false,
-        "daily": true,
-        "count": 0,
-        "lastDoneDate": ""
-      },
-      {
-        "id": 1792688463802,
-        "title": "Writing 25p",
-        "prio": "TB",
-        "done": false,
-        "daily": true,
-        "count": 0,
-        "lastDoneDate": ""
-      },
-      {
-        "id": 1792688441280,
-        "title": "Speaking 25p",
-        "prio": "TB",
-        "done": false,
-        "daily": true,
-        "count": 0,
-        "lastDoneDate": ""
-      },
-      {
-        "id": 1792688428858,
-        "title": "Reading 20p",
-        "prio": "TB",
-        "done": false,
-        "daily": true,
-        "count": 0,
-        "lastDoneDate": ""
-      },
       {
         "id": 1792495334951,
         "title": "Tiết Kiệm là quyết sách, Ăn Uống là phải quất sạch",
