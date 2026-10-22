@@ -1,8 +1,17 @@
 {
-  "updatedAt": 1792688416132,
-  "updatedAtText": "00:00:16 23/10/2026",
+  "updatedAt": 1792688431237,
+  "updatedAtText": "00:00:31 23/10/2026",
   "state": {
     "tasks": [
+      {
+        "id": 1792688428858,
+        "title": "Reading 20p",
+        "prio": "TB",
+        "done": false,
+        "daily": true,
+        "count": 0,
+        "lastDoneDate": ""
+      },
       {
         "id": 1792495334951,
         "title": "Tiết Kiệm là quyết sách, Ăn Uống là phải quất sạch",
