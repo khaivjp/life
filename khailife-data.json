@@ -1,8 +1,17 @@
 {
-  "updatedAt": 1792688431237,
-  "updatedAtText": "00:00:31 23/10/2026",
+  "updatedAt": 1792688444220,
+  "updatedAtText": "00:00:44 23/10/2026",
   "state": {
     "tasks": [
+      {
+        "id": 1792688441280,
+        "title": "Speaking 25p",
+        "prio": "TB",
+        "done": false,
+        "daily": true,
+        "count": 0,
+        "lastDoneDate": ""
+      },
       {
         "id": 1792688428858,
         "title": "Reading 20p",
