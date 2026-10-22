@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792685221238,
-  "updatedAtText": "23:07:01 22/10/2026",
+  "updatedAt": 1792688394275,
+  "updatedAtText": "23:59:54 22/10/2026",
   "state": {
     "tasks": [
       {
@@ -29,15 +29,6 @@
         "daily": true,
         "count": 2,
         "lastDoneDate": "2026-10-21"
-      },
-      {
-        "id": 1792266495986,
-        "title": "ENGLISH QUIZIZ 1.5h",
-        "prio": "Cao",
-        "done": true,
-        "daily": true,
-        "count": 24,
-        "lastDoneDate": "2026-10-22"
       },
       {
         "id": 1792266480931,
