@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792693494256,
-  "updatedAtText": "01:24:54 23/10/2026",
+  "updatedAt": 1792730145191,
+  "updatedAtText": "11:35:45 23/10/2026",
   "state": {
     "tasks": [
       {
@@ -46,6 +46,14 @@
       }
     ],
     "finance": [
+      {
+        "id": 1792730143048,
+        "desc": "Xăng",
+        "amount": 70000,
+        "type": "expense",
+        "createdAt": "2026-10-23T04:35:00.000Z",
+        "timeText": "11:35 - 23/10/2026"
+      },
       {
         "id": 1792693491688,
         "desc": "SIM CODE",
@@ -173,6 +181,14 @@
       "2026-10": {
         "initialBalance": 12023000,
         "items": [
+          {
+            "id": 1792730143048,
+            "desc": "Xăng",
+            "amount": 70000,
+            "type": "expense",
+            "createdAt": "2026-10-23T04:35:00.000Z",
+            "timeText": "11:35 - 23/10/2026"
+          },
           {
             "id": 1792693491688,
             "desc": "SIM CODE",
