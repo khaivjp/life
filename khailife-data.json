@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792730145191,
-  "updatedAtText": "11:35:45 23/10/2026",
+  "updatedAt": 1792753806484,
+  "updatedAtText": "18:10:06 23/10/2026",
   "state": {
     "tasks": [
       {
@@ -46,6 +46,14 @@
       }
     ],
     "finance": [
+      {
+        "id": 1792753799112,
+        "desc": "Tóc",
+        "amount": 30000,
+        "type": "expense",
+        "createdAt": "2026-10-23T11:09:00.000Z",
+        "timeText": "18:09 - 23/10/2026"
+      },
       {
         "id": 1792730143048,
         "desc": "Xăng",
@@ -181,6 +189,14 @@
       "2026-10": {
         "initialBalance": 12023000,
         "items": [
+          {
+            "id": 1792753799112,
+            "desc": "Tóc",
+            "amount": 30000,
+            "type": "expense",
+            "createdAt": "2026-10-23T11:09:00.000Z",
+            "timeText": "18:09 - 23/10/2026"
+          },
           {
             "id": 1792730143048,
             "desc": "Xăng",
