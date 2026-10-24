@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792802337130,
-  "updatedAtText": "07:38:57 24/10/2026",
+  "updatedAt": 1792855692220,
+  "updatedAtText": "22:28:12 24/10/2026",
   "state": {
     "tasks": [
       {
@@ -46,6 +46,14 @@
       }
     ],
     "finance": [
+      {
+        "id": 1792855689689,
+        "desc": "Mừng",
+        "amount": 500000,
+        "type": "expense",
+        "createdAt": "2026-10-24T15:27:00.000Z",
+        "timeText": "22:27 - 24/10/2026"
+      },
       {
         "id": 1792753799112,
         "desc": "Tóc",
@@ -189,6 +197,14 @@
       "2026-10": {
         "initialBalance": 12023000,
         "items": [
+          {
+            "id": 1792855689689,
+            "desc": "Mừng",
+            "amount": 500000,
+            "type": "expense",
+            "createdAt": "2026-10-24T15:27:00.000Z",
+            "timeText": "22:27 - 24/10/2026"
+          },
           {
             "id": 1792753799112,
             "desc": "Tóc",
