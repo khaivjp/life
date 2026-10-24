@@ -1,6 +1,6 @@
 {
-  "updatedAt": 1792802324617,
-  "updatedAtText": "07:38:44 24/10/2026",
+  "updatedAt": 1792802329380,
+  "updatedAtText": "07:38:49 24/10/2026",
   "state": {
     "tasks": [
       {
@@ -7602,14 +7602,14 @@
         "name": "INT343\tQuản lý hệ thống máy tính",
         "tc": "3",
         "dtp": "9.4",
-        "kthp": "7"
+        "kthp": ""
       },
       {
         "id": 2,
         "name": "LAW207\t Pháp luật đại cương",
         "tc": "2",
         "dtp": "8.2",
-        "kthp": "7.8"
+        "kthp": ""
       },
       {
         "id": 3,
