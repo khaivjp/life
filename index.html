@@ -204,8 +204,8 @@
   .sdk-cell.sdk-related { background-color:#f0fdf4 !important; }
   .dark .sdk-cell.sdk-related { background-color:#052e16 !important; }
   /* Neater, consistent card style */
-  #secTasks, #secFinanceQuick, #secTkb, .panel, .card, .sidebar { border-radius:18px !important; }
-  #secTasks, #secFinanceQuick, #secTkb { box-shadow:0 3px 14px rgba(21,128,61,.045); }
+  #secTasks, #secTkb, .panel, .card, .sidebar { border-radius:18px !important; }
+  #secTasks, #secTkb { box-shadow:0 3px 14px rgba(21,128,61,.045); }
 
   [class*="bg-rose-600"], [class*="bg-rose-500"], [class*="bg-red-600"], [class*="bg-red-500"] { background-color:#15803d !important; }
   [class*="hover:bg-rose-"], [class*="hover:bg-red-"] { }
@@ -364,24 +364,11 @@
                         <i data-lucide="list" class="w-3.5 h-3.5 text-indigo-500"></i>
                         <span>Nhiệm vụ nên làm</span>
                     </button>
-                    <button onclick="jumpToSection('secFinanceQuick')" class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 transition">
-                        <i data-lucide="wallet" class="w-3.5 h-3.5 text-emerald-500"></i>
-                        <span>Thu - Chi nhanh hôm nay</span>
-                    </button>
                     <button onclick="jumpToSection('secTkb')" class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 transition">
                         <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#15803d]"></i>
                         <span>Thời khóa biểu</span>
                     </button>
                 </div>
-
-                <button onclick="switchMainSection('finance')" id="navBtnFinance" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                    <span class="flex items-center gap-2.5">
-                        <div class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-sm"><i data-lucide="wallet-cards" class="w-3.5 h-3.5"></i></div>
-                        <div class="text-left"><div class="font-bold leading-tight">Thu – Chi BeeRich</div><div class="text-[10px] font-normal text-slate-400">Lịch, giao dịch, tài sản và thống kê</div></div>
-                    </span>
-                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">Chi tiết</span>
-                </button>
-
                 <!-- Lộ trình học Aptis ESOL -->
                 <button onclick="switchMainSection('aptis')" id="navBtnAptis" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                     <span class="flex items-center gap-2.5">
@@ -448,7 +435,7 @@
         <!-- Sidebar Footer -->
         <div class="p-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
             <span>Bấm biểu tượng góc trái để mở</span>
-            <span class="font-semibold text-indigo-500">v3.3 BeeRich Finance</span>
+            <span class="font-semibold text-indigo-500">v3.4 Finance separated</span>
         </div>
     </aside>
 
@@ -481,10 +468,6 @@
                     <span class="text-slate-400">Việc:</span>
                     <span id="kpiTasks" class="font-bold text-indigo-600 dark:text-indigo-400">0/0</span>
                 </div>
-                <div class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 flex items-center gap-2">
-                    <span class="text-slate-400">Số dư:</span>
-                    <span id="kpiBalance" class="font-bold text-emerald-600 dark:text-emerald-400">0 ₫</span>
-                </div>
             </div>
 
             <!-- Quick Actions (Nút Đồng bộ Git + Khôi phục + Giao diện) -->
@@ -506,12 +489,12 @@
     </header>
 
     <!-- ==========================================================================
-         PHẦN 1: GIAO DIỆN QUẢN LÝ CÁ NHÂN (NHIỆM VỤ, THU - CHI, TKB)
+         PHẦN 1: GIAO DIỆN QUẢN LÝ CÁ NHÂN (NHIỆM VỤ, TKB)
          ========================================================================== -->
     <main id="dashboardContainer" class="max-w-7xl mx-auto px-3 sm:px-6 py-4 space-y-4">
 
-        <!-- TOP 2 COLUMNS: TASKS | FINANCE -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- TASKS: finance is now a separate standalone app -->
+        <div class="grid grid-cols-1 gap-4">
 
             <!-- 1. NHIỆM VỤ NÊN LÀM (DANH SÁCH CÁ NHÂN, KHÔNG CHECK-IN / KHÔNG TỰ RESET) -->
             <section id="secTasks" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[470px]">
@@ -540,132 +523,6 @@
 
                 <!-- Danh sách không có trạng thái hoàn thành, bộ đếm hay tự làm mới -->
                 <div id="taskList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
-            </section>
-
-            <!-- 2. THU - CHI (CÓ SỐ DƯ BAN ĐẦU, NGÀY GIỜ TỪNG MỤC & RESET MÙNG 1 HÀNG THÁNG + LƯU LẠI THÁNG CŨ) -->
-            <section id="secFinanceQuick" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col min-h-[350px]">
-                <div class="flex items-center justify-between gap-2 mb-3">
-                    <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
-                        <i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i>
-                        <span>Số dư hiện có</span>
-                    </div>
-                    <button type="button" onclick="switchMainSection('finance')" class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline whitespace-nowrap">Xem chi tiết →</button>
-                </div>
-                <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700 p-4 mb-3">
-                    <div class="flex items-center justify-between gap-2">
-                        <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Tiền đang có</span>
-                        <button type="button" onclick="toggleKhaiQuickBalanceVisibility()" id="khaiQuickBalanceEye" class="px-2 py-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500" title="Ẩn/hiện số dư" aria-label="Ẩn/hiện số dư">◉</button>
-                    </div>
-                    <div id="khaiQuickBalance" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-1">1.570.349 ₫</div>
-                    <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Khoản thu tự cộng, khoản chi tự trừ số dư.</div>
-                </div>
-                <div class="mb-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/70 p-3 flex items-center justify-between gap-3">
-                    <div class="min-w-0">
-                        <div class="text-[11px] font-semibold text-emerald-800 dark:text-emerald-300">Chênh lệch thu – chi tháng này</div>
-                        <div id="khaiQuickMonthLabel" class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Tháng hiện tại · Thu trừ Chi</div>
-                    </div>
-                    <div id="khaiQuickMonthNet" class="font-extrabold text-lg text-slate-700 dark:text-slate-200 whitespace-nowrap">0 ₫</div>
-                </div>
-                <form id="khaiQuickFinForm" class="space-y-2.5 mb-3">
-                    <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold w-max">
-                        <button type="button" id="khaiQuickTypeExpense" onclick="setKhaiQuickFinanceType('expense')" class="px-4 py-1.5 rounded-lg bg-rose-600 text-white">Chi</button>
-                        <button type="button" id="khaiQuickTypeIncome" onclick="setKhaiQuickFinanceType('income')" class="px-4 py-1.5 rounded-lg text-slate-500 dark:text-slate-300">Thu</button>
-                    </div>
-                    <div class="flex gap-1.5">
-                        <input id="khaiQuickFinDesc" type="text" maxlength="100" required placeholder="Tên khoản thu/chi hôm nay..." class="flex-1 min-w-0 px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <input id="khaiQuickFinAmount" type="number" min="1" step="1" required placeholder="Số tiền" class="w-28 px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <button type="submit" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs" title="Lưu giao dịch hôm nay"><i data-lucide="plus" class="w-4 h-4"></i></button>
-                    </div>
-                    <div class="flex items-center justify-between gap-2">
-                        <span class="text-[10px] text-slate-400">Ngày giao dịch: <b id="khaiQuickTodayLabel">hôm nay</b></span>
-                        <button type="button" onclick="switchMainSection('finance')" class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Mở lịch sử đầy đủ</button>
-                    </div>
-                </form>
-                <div class="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-2.5 mb-1.5">
-                    <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Giao dịch hôm nay</span>
-                    <span id="khaiQuickTodayCount" class="text-[10px] text-slate-400">0 khoản</span>
-                </div>
-                <div id="khaiQuickTodayList" class="flex-1 min-h-[42px] max-h-40 overflow-y-auto space-y-1.5 pr-1">
-                    <div class="text-xs text-slate-400 py-3">Đang tải dữ liệu Thu – Chi…</div>
-                </div>
-            </section>
-
-            <section id="legacyFinanceSection" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col h-[470px]">
-                <!-- Header + Bộ chọn tháng (Tự động reset ngày 01 hàng tháng & lưu trữ tháng cũ) -->
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-                    <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
-                        <i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i>
-                        <span>Thu - Chi</span>
-                        <select id="finMonthSelect" onchange="onChangeFinMonth(this.value)" title="Xem thu chi theo tháng (Tự động reset ngày 01 hàng tháng)"
-                            class="ml-1 px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold border border-emerald-200/70 dark:border-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
-                        </select>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs">
-                        <span title="Tổng Thu trong tháng" class="text-emerald-600 dark:text-emerald-400 font-bold">+<span id="sumInc">0 ₫</span></span>
-                        <span class="text-slate-300 dark:text-slate-700">|</span>
-                        <span title="Tổng Chi trong tháng" class="text-rose-600 dark:text-rose-400 font-bold">-<span id="sumExp">0 ₫</span></span>
-                    </div>
-                </div>
-
-                <!-- Mục Nhập Số Dư Ban Đầu & Số Dư Còn Lại Trong Tháng -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2.5 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-800">
-                    <div class="flex items-center justify-between sm:justify-start gap-1.5">
-                        <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 shrink-0">Số dư đầu (<span id="finInitMonthLabel">--/----</span>):</span>
-                        <div class="flex items-center gap-1 flex-1 max-w-[165px]">
-                            <input type="number" id="finInitialBalanceInput" step="1000" placeholder="Nhập số dư đầu..."
-                                onkeydown="if(event.key==='Enter'){event.preventDefault();saveInitialBalance();}"
-                                class="w-full px-2 py-1 text-xs font-bold text-indigo-700 dark:text-indigo-300 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            <button type="button" onclick="saveInitialBalance()" title="Lưu số dư ban đầu của tháng"
-                                class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold transition shrink-0 shadow-xs">
-                                Lưu
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between sm:justify-end gap-1.5 text-xs border-t sm:border-t-0 pt-1.5 sm:pt-0 border-slate-200/60 dark:border-slate-700">
-                        <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Số dư cuối:</span>
-                        <span id="finMonthRemaining" class="font-extrabold text-sm text-emerald-600 dark:text-emerald-400">0 ₫</span>
-                    </div>
-                </div>
-
-                <!-- Thanh thông báo khi đang xem lịch sử tháng cũ -->
-                <div id="finHistoryNotice" class="hidden mb-2 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/70 flex items-center justify-between text-[11px]">
-                    <span class="font-semibold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
-                        <i data-lucide="archive" class="w-3.5 h-3.5"></i>
-                        <span>Đang xem lưu trữ: <b id="finHistoryMonthName"></b></span>
-                    </span>
-                    <button type="button" onclick="switchToCurrentFinMonth()" class="font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
-                        Về tháng hiện tại
-                    </button>
-                </div>
-
-                <!-- Form Thêm Khoản Thu - Chi kèm Ngày Giờ -->
-                <form id="finForm" class="space-y-2 mb-2.5">
-                    <div class="flex gap-1.5">
-                        <div class="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl text-xs font-semibold shrink-0">
-                            <button type="button" onclick="setFinType('expense')" id="btnExp" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white">Chi</button>
-                            <button type="button" onclick="setFinType('income')" id="btnInc" class="px-2.5 py-1 rounded-lg text-slate-500">Thu</button>
-                        </div>
-                        <input type="text" id="finDesc" required placeholder="Khoản thu/chi (VD: Ăn sáng, Đổ xăng, Tiền thưởng...)"
-                            class="flex-1 min-w-0 px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    </div>
-                    <div class="flex flex-wrap sm:flex-nowrap gap-1.5 items-center">
-                        <input type="number" id="finAmount" required min="500" step="500" placeholder="Số tiền (VNĐ)"
-                            class="flex-1 min-w-[105px] px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <input type="datetime-local" id="finDateTime" title="Ngày giờ thu/chi (Để trống sẽ tự lấy ngày giờ hiện tại)"
-                            class="w-[146px] px-2 py-1.5 text-[11px] font-medium rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <div class="flex items-center gap-1 shrink-0">
-                            <button type="button" onclick="setAmt(25000)" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-medium hover:bg-slate-200 dark:hover:bg-slate-700">25k</button>
-                            <button type="button" onclick="setAmt(50000)" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-medium hover:bg-slate-200 dark:hover:bg-slate-700">50k</button>
-                            <button type="button" onclick="setAmt(100000)" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-medium hover:bg-slate-200 dark:hover:bg-slate-700">100k</button>
-                            <button type="submit" title="Thêm khoản Thu/Chi" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition shadow-xs">
-                                <i data-lucide="plus" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-
-                <!-- Danh sách Thu - Chi & Lịch sử các tháng trước -->
-                <div id="finList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
             </section>
 
         </div>
@@ -916,13 +773,7 @@
         </section>
 
     </main>
-
-    <!-- BeeRich được nhúng trong iframe riêng để giữ nguyên HTML/CSS/JavaScript gốc và tránh xung đột KhaiLife. -->
-    <section id="financeContainer" class="hidden fixed top-14 inset-x-0 bottom-0 z-20 overflow-hidden bg-slate-50 dark:bg-slate-950" aria-label="Quản lý Thu – Chi BeeRich">
-        <iframe id="beerichFinanceFrame" title="BeeRich — Quản lý Thu Chi cá nhân" class="block w-full h-full border-0 bg-white" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-    </section>
-
-    <!-- ==========================================================================
+<!-- ==========================================================================
          PHẦN 2: TRÒ CHƠI SUDOKU (CHUẨN GIAO DIỆN SUDOKU.COM)
          ========================================================================== -->
     <!-- ==========================================================================
@@ -1342,8 +1193,7 @@
                 if (payload.state) {
                     state = payload.state;
                     ensureTasksStructure();
-                    ensureFinanceMonthlyStructure();
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
                 }
                 if (payload.customEvents) {
                     customEvents = payload.customEvents;
@@ -1436,21 +1286,12 @@
                 { id: 2, title: 'Làm bài tập Cơ sở dữ liệu', prio: 'TB', done: true, daily: true, count: 1 }
             ],
             tasksLastResetDate: '',
-            finance: [
-                { id: 1, desc: 'Trợ cấp tháng', amount: 2500000, type: 'income', createdAt: new Date().toISOString() },
-                { id: 2, desc: 'Ăn trưa & Cà phê', amount: 65000, type: 'expense', createdAt: new Date().toISOString() }
-            ],
-            financeInitialBalance: 0,
-            financeCurrentMonth: `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`,
-            financeMonths: {},
             tkbRows: JSON.parse(JSON.stringify(DEFAULT_EXCEL_ROWS))
         };
 
         let state = {};
         let customEvents = {};
         let expandedDays = [];
-        let finType = 'expense';
-        let selectedFinMonth = '';
         let selectedSchedColor = 'indigo';
         let currentTkbView = 'day';
         let activeMainSection = 'dashboard';
@@ -1495,8 +1336,6 @@
             const brainGym = document.getElementById('brainGymContainer');
             const gpa = document.getElementById('gpaContainer');
             const aptis = document.getElementById('aptisContainer');
-            const finance = document.getElementById('financeContainer');
-            const btnFinance = document.getElementById('navBtnFinance');
             const btnDash = document.getElementById('navBtnDashboard');
             const btnBrainGym = document.getElementById('navBtnBrainGym');
             const btnGpa = document.getElementById('navBtnGpa');
@@ -1509,10 +1348,8 @@
             if (brainGym) brainGym.classList.add('hidden');
             if (gpa) gpa.classList.add('hidden');
             if (aptis) aptis.classList.add('hidden');
-            if (finance) finance.classList.add('hidden');
 
             btnDash.className = inactiveClass;
-            if (btnFinance) btnFinance.className = inactiveClass;
             if (btnBrainGym) btnBrainGym.className = inactiveClass;
             if (btnGpa) btnGpa.className = inactiveClass;
             if (btnAptis) btnAptis.className = inactiveClass;
@@ -1531,11 +1368,6 @@
                 if (btnAptis) btnAptis.className = activeClass;
                 stopSudokuTimerLoop();
                 initAptisFrame();
-            } else if (sec === 'finance') {
-                if (finance) finance.classList.remove('hidden');
-                if (btnFinance) btnFinance.className = activeClass;
-                stopSudokuTimerLoop();
-                requestKhaiFinanceSnapshot();
             } else {
                 dash.classList.remove('hidden');
                 btnDash.className = activeClass;
@@ -1648,7 +1480,6 @@
             }
 
             ensureTasksStructure();
-            ensureFinanceMonthlyStructure();
             buildCalendarSessions();
             updateBackupBadgeUI();
 
@@ -1760,410 +1591,6 @@
                 </div>
             `).join('');
 
-            lucide.createIcons();
-        }
-
-        /* ========================================================================== 
-           4.5. QUẢN LÝ THU - CHI THEO THÁNG, SỐ DƯ BAN ĐẦU, NGÀY GIỜ & RESET MÙNG 1
-           ========================================================================== */
-        function getCurrentMonthKey() {
-            const now = new Date();
-            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-        }
-
-        function fmtMonthKeyVN(mk) {
-            if (!mk || !mk.includes('-')) return mk || '';
-            const [y, m] = mk.split('-');
-            return `Tháng ${m}/${y}`;
-        }
-
-        function fmtMonthShortVN(mk) {
-            if (!mk || !mk.includes('-')) return '--/----';
-            const [y, m] = mk.split('-');
-            return `T${m}/${y}`;
-        }
-
-        function fmtFinDateTimeVN(dtInput, fallbackId) {
-            let d = null;
-            if (dtInput) {
-                const parsed = new Date(dtInput);
-                if (!isNaN(parsed.getTime())) d = parsed;
-            }
-            if (!d && typeof fallbackId === 'number' && fallbackId > 1000000000000) {
-                const parsed = new Date(fallbackId);
-                if (!isNaN(parsed.getTime())) d = parsed;
-            }
-            if (!d) {
-                if (typeof dtInput === 'string' && dtInput.trim()) return dtInput.trim();
-                d = new Date();
-            }
-            const hh = String(d.getHours()).padStart(2, '0');
-            const mm = String(d.getMinutes()).padStart(2, '0');
-            const dd = String(d.getDate()).padStart(2, '0');
-            const mo = String(d.getMonth() + 1).padStart(2, '0');
-            const yyyy = d.getFullYear();
-            return `${hh}:${mm} - ${dd}/${mo}/${yyyy}`;
-        }
-
-        function getLocalDateTimeValue(dateObj = new Date()) {
-            const y = dateObj.getFullYear();
-            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const d = String(dateObj.getDate()).padStart(2, '0');
-            const hh = String(dateObj.getHours()).padStart(2, '0');
-            const mm = String(dateObj.getMinutes()).padStart(2, '0');
-            return `${y}-${m}-${d}T${hh}:${mm}`;
-        }
-
-        function resetFinDateTimeInput() {
-            const dtEl = document.getElementById('finDateTime');
-            if (!dtEl) return;
-            const curMk = getCurrentMonthKey();
-            if (!selectedFinMonth || selectedFinMonth === curMk) {
-                dtEl.value = getLocalDateTimeValue(new Date());
-            } else {
-                const [y, m] = selectedFinMonth.split('-');
-                const now = new Date();
-                const hh = String(now.getHours()).padStart(2, '0');
-                const mm = String(now.getMinutes()).padStart(2, '0');
-                dtEl.value = `${y}-${m}-01T${hh}:${mm}`;
-            }
-        }
-
-        // Đảm bảo cấu trúc lưu trữ theo từng tháng & tự động Reset khi bước sang ngày mùng 1 tháng mới
-        function ensureFinanceMonthlyStructure() {
-            const curMk = getCurrentMonthKey();
-            if (!state.financeMonths || typeof state.financeMonths !== 'object') {
-                state.financeMonths = {};
-            }
-
-            // Chuyển đổi dữ liệu cũ (nếu có) vào đúng tháng và gắn ngày giờ đầy đủ
-            if (Array.isArray(state.finance) && state.finance.length > 0 && Object.keys(state.financeMonths).length === 0) {
-                const initMonth = state.financeCurrentMonth || curMk;
-                const migratedItems = state.finance.map(item => {
-                    let createdIso = item.createdAt || item.dateTime || '';
-                    if (!createdIso) {
-                        const d = (typeof item.id === 'number' && item.id > 1000000000000) ? new Date(item.id) : new Date();
-                        createdIso = d.toISOString();
-                    }
-                    return {
-                        id: item.id || Date.now() + Math.random(),
-                        desc: item.desc || 'Khoản thu/chi',
-                        amount: Number(item.amount) || 0,
-                        type: item.type === 'income' ? 'income' : 'expense',
-                        createdAt: createdIso,
-                        timeText: item.timeText || fmtFinDateTimeVN(createdIso, item.id)
-                    };
-                });
-                state.financeMonths[initMonth] = {
-                    initialBalance: Number(state.financeInitialBalance) || 0,
-                    items: migratedItems
-                };
-            }
-
-            // Kiểm tra mỗi mục trong tất cả các tháng đều có trường hiển thị ngày giờ
-            Object.keys(state.financeMonths).forEach(mk => {
-                const mObj = state.financeMonths[mk];
-                if (!mObj || typeof mObj !== 'object') {
-                    state.financeMonths[mk] = { initialBalance: 0, items: [] };
-                    return;
-                }
-                mObj.initialBalance = Number(mObj.initialBalance) || 0;
-                if (!Array.isArray(mObj.items)) mObj.items = [];
-                mObj.items.forEach(item => {
-                    if (!item.createdAt) {
-                        const d = (typeof item.id === 'number' && item.id > 1000000000000) ? new Date(item.id) : new Date();
-                        item.createdAt = d.toISOString();
-                    }
-                    if (!item.timeText) {
-                        item.timeText = fmtFinDateTimeVN(item.createdAt, item.id);
-                    }
-                });
-            });
-
-            // Nếu bước sang tháng mới (ngày mùng 1 hàng tháng):
-            // Giữ nguyên toàn bộ lịch sử Thu - Chi của tháng cũ trong state.financeMonths[tháng_cũ]
-            // và khởi tạo danh sách Thu - Chi trống (Reset = 0) cho tháng mới
-            const prevTrackedMonth = state.financeCurrentMonth;
-            if (prevTrackedMonth && prevTrackedMonth !== curMk) {
-                if (!state.financeMonths[curMk]) {
-                    state.financeMonths[curMk] = {
-                        initialBalance: 0,
-                        items: []
-                    };
-                }
-                state.financeCurrentMonth = curMk;
-                selectedFinMonth = curMk;
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-                toast(`Sang tháng mới (${fmtMonthShortVN(curMk)}): Đã lưu trữ ${fmtMonthShortVN(prevTrackedMonth)} và reset Thu - Chi tháng mới!`);
-            }
-
-            if (!state.financeMonths[curMk]) {
-                state.financeMonths[curMk] = {
-                    initialBalance: Number(state.financeInitialBalance) || 0,
-                    items: []
-                };
-            }
-
-            state.financeCurrentMonth = curMk;
-            if (!selectedFinMonth || !state.financeMonths[selectedFinMonth]) {
-                selectedFinMonth = curMk;
-            }
-
-            // Đồng bộ mảng state.finance với tháng hiện tại để tương thích hoàn toàn
-            state.finance = state.financeMonths[curMk].items;
-            state.financeInitialBalance = state.financeMonths[curMk].initialBalance;
-        }
-
-        function getActiveFinMonthObj(mk = selectedFinMonth) {
-            ensureFinanceMonthlyStructure();
-            const targetMk = mk || getCurrentMonthKey();
-            if (!state.financeMonths[targetMk]) {
-                state.financeMonths[targetMk] = { initialBalance: 0, items: [] };
-            }
-            return state.financeMonths[targetMk];
-        }
-
-        function onChangeFinMonth(mk) {
-            if (!mk) return;
-            selectedFinMonth = mk;
-            resetFinDateTimeInput();
-            renderFinance();
-        }
-
-        function switchToCurrentFinMonth() {
-            selectedFinMonth = getCurrentMonthKey();
-            resetFinDateTimeInput();
-            renderFinance();
-        }
-
-        function saveInitialBalance() {
-            const inputEl = document.getElementById('finInitialBalanceInput');
-            if (!inputEl) return;
-            const val = Number(inputEl.value) || 0;
-            const mObj = getActiveFinMonthObj(selectedFinMonth);
-            mObj.initialBalance = val;
-
-            const curMk = getCurrentMonthKey();
-            if (selectedFinMonth === curMk) {
-                state.financeInitialBalance = val;
-            }
-            saveState(`Cập nhật số dư ban đầu ${fmtMonthShortVN(selectedFinMonth)}: ${fmtVND(val)}`);
-            toast(`Đã lưu số dư ban đầu ${fmtMonthShortVN(selectedFinMonth)}: ${fmtVND(val)}`);
-        }
-
-        function setFinType(type) {
-            finType = type;
-            document.getElementById('btnExp').className = type === 'expense' ? 'px-2.5 py-1 rounded-lg bg-rose-600 text-white' : 'px-2.5 py-1 rounded-lg text-slate-500';
-            document.getElementById('btnInc').className = type === 'income' ? 'px-2.5 py-1 rounded-lg bg-emerald-600 text-white' : 'px-2.5 py-1 rounded-lg text-slate-500';
-        }
-
-        function setAmt(val) {
-            document.getElementById('finAmount').value = val;
-        }
-
-        document.getElementById('finForm').addEventListener('submit', e => {
-            e.preventDefault();
-            ensureFinanceMonthlyStructure();
-
-            const desc = document.getElementById('finDesc').value.trim();
-            const amount = Number(document.getElementById('finAmount').value);
-            const dtVal = document.getElementById('finDateTime').value;
-            if (!desc || amount <= 0) return;
-
-            let txDate = dtVal ? new Date(dtVal) : new Date();
-            if (isNaN(txDate.getTime())) txDate = new Date();
-
-            // Xác định tháng của khoản thu/chi dựa theo ngày giờ đã chọn (hoặc tháng đang xem)
-            const txMonthKey = dtVal
-                ? `${txDate.getFullYear()}-${String(txDate.getMonth() + 1).padStart(2, '0')}`
-                : (selectedFinMonth || getCurrentMonthKey());
-
-            if (!state.financeMonths[txMonthKey]) {
-                state.financeMonths[txMonthKey] = { initialBalance: 0, items: [] };
-            }
-
-            const newItem = {
-                id: Date.now(),
-                desc,
-                amount,
-                type: finType,
-                createdAt: txDate.toISOString(),
-                timeText: fmtFinDateTimeVN(txDate)
-            };
-
-            state.financeMonths[txMonthKey].items.unshift(newItem);
-            selectedFinMonth = txMonthKey;
-
-            const curMk = getCurrentMonthKey();
-            state.finance = state.financeMonths[curMk].items;
-
-            document.getElementById('finDesc').value = '';
-            document.getElementById('finAmount').value = '';
-            resetFinDateTimeInput();
-
-            saveState(`Thêm khoản ${finType === 'income' ? 'Thu' : 'Chi'}: ${desc}`);
-            toast(`Đã thêm khoản ${finType === 'income' ? 'Thu' : 'Chi'} (${newItem.timeText})`);
-        });
-
-        function delFin(id, monthKey = selectedFinMonth) {
-            ensureFinanceMonthlyStructure();
-            const targetMk = monthKey || selectedFinMonth || getCurrentMonthKey();
-            if (!state.financeMonths[targetMk]) return;
-
-            state.financeMonths[targetMk].items = state.financeMonths[targetMk].items.filter(x => String(x.id) !== String(id));
-            const curMk = getCurrentMonthKey();
-            state.finance = state.financeMonths[curMk].items;
-
-            saveState('Xóa khoản Thu - Chi');
-        }
-
-        function renderFinance() {
-            ensureFinanceMonthlyStructure();
-            const curMk = getCurrentMonthKey();
-            if (!selectedFinMonth) selectedFinMonth = curMk;
-
-            // Danh sách các tháng (sắp xếp từ mới nhất -> cũ nhất)
-            const allMonthKeys = Array.from(new Set([curMk, ...Object.keys(state.financeMonths)])).sort((a, b) => b.localeCompare(a));
-
-            const monthSelect = document.getElementById('finMonthSelect');
-            if (monthSelect) {
-                monthSelect.innerHTML = allMonthKeys.map(mk => {
-                    const mData = state.financeMonths[mk] || { items: [] };
-                    const count = Array.isArray(mData.items) ? mData.items.length : 0;
-                    const label = mk === curMk ? `${fmtMonthKeyVN(mk)} (Hiện tại)` : `${fmtMonthKeyVN(mk)} (${count} mục)`;
-                    return `<option value="${esc(mk)}" ${mk === selectedFinMonth ? 'selected' : ''}>${esc(label)}</option>`;
-                }).join('');
-            }
-
-            // Tính toán số liệu của Tháng đang chọn
-            const activeObj = getActiveFinMonthObj(selectedFinMonth);
-            const initBal = Number(activeObj.initialBalance) || 0;
-            const items = Array.isArray(activeObj.items) ? activeObj.items : [];
-
-            const inc = items.filter(x => x.type === 'income').reduce((s, x) => s + Number(x.amount), 0);
-            const exp = items.filter(x => x.type === 'expense').reduce((s, x) => s + Number(x.amount), 0);
-            const endBal = initBal + inc - exp;
-
-            // Tính số dư của Tháng hiện tại cho thanh KPI Header trên cùng
-            const curObj = getActiveFinMonthObj(curMk);
-            const curInit = Number(curObj.initialBalance) || 0;
-            const curInc = (curObj.items || []).filter(x => x.type === 'income').reduce((s, x) => s + Number(x.amount), 0);
-            const curExp = (curObj.items || []).filter(x => x.type === 'expense').reduce((s, x) => s + Number(x.amount), 0);
-            const curTotalBal = curInit + curInc - curExp;
-
-            document.getElementById('sumInc').textContent = fmtVND(inc);
-            document.getElementById('sumExp').textContent = fmtVND(exp);
-            // Số dư KPI được cập nhật bởi dữ liệu BeeRich qua bridge.
-
-            const initMonthLabel = document.getElementById('finInitMonthLabel');
-            if (initMonthLabel) initMonthLabel.textContent = fmtMonthShortVN(selectedFinMonth);
-
-            const initInput = document.getElementById('finInitialBalanceInput');
-            if (initInput && document.activeElement !== initInput) {
-                initInput.value = initBal !== 0 ? initBal : '';
-            }
-
-            const remEl = document.getElementById('finMonthRemaining');
-            if (remEl) {
-                remEl.textContent = fmtVND(endBal);
-                remEl.className = `font-extrabold text-sm ${endBal >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`;
-            }
-
-            // Hiển thị thông báo nếu đang xem tháng cũ
-            const histNotice = document.getElementById('finHistoryNotice');
-            const histName = document.getElementById('finHistoryMonthName');
-            if (histNotice && histName) {
-                if (selectedFinMonth !== curMk) {
-                    histNotice.classList.remove('hidden');
-                    histName.textContent = fmtMonthKeyVN(selectedFinMonth);
-                } else {
-                    histNotice.classList.add('hidden');
-                }
-            }
-
-            const dtEl = document.getElementById('finDateTime');
-            if (dtEl && !dtEl.value) {
-                resetFinDateTimeInput();
-            }
-
-            const box = document.getElementById('finList');
-            let listHtml = '';
-
-            if (!items.length) {
-                listHtml = `
-                    <div class="text-center py-6 px-3 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
-                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Chưa có khoản thu/chi nào trong ${esc(fmtMonthKeyVN(selectedFinMonth))}</p>
-                        <p class="text-[11px] text-slate-400 mt-0.5">Mức Thu - Chi tự động reset về 0 vào ngày 01 hàng tháng. Dữ liệu các tháng trước luôn được lưu lại.</p>
-                    </div>
-                `;
-            } else {
-                listHtml = items.map(f => {
-                    const timeDisplay = f.timeText || fmtFinDateTimeVN(f.createdAt, f.id);
-                    const isInc = f.type === 'income';
-                    return `
-                        <div class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition">
-                            <div class="min-w-0 flex-1">
-                                <div class="flex items-center gap-1.5">
-                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase ${isInc ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300'}">
-                                        ${isInc ? 'Thu' : 'Chi'}
-                                    </span>
-                                    <span class="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate">${esc(f.desc)}</span>
-                                </div>
-                                <div class="flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-400 mt-0.5 font-medium">
-                                    <i data-lucide="clock" class="w-3 h-3 text-slate-400"></i>
-                                    <span>${esc(timeDisplay)}</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2 shrink-0">
-                                <span class="text-xs font-extrabold ${isInc ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">
-                                    ${isInc ? '+' : '-'}${fmtVND(f.amount)}
-                                </span>
-                                <button onclick="delFin('${esc(f.id)}', '${esc(selectedFinMonth)}')" title="Xóa mục này" class="w-6 h-6 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition">
-                                    ×
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            // Hiển thị bảng tóm tắt Lịch sử các tháng cũ đã lưu (nếu có nhiều hơn 1 tháng)
-            const archivedMonths = allMonthKeys.filter(mk => mk !== selectedFinMonth);
-            if (archivedMonths.length > 0) {
-                const archiveRows = archivedMonths.map(mk => {
-                    const mObj = state.financeMonths[mk] || { initialBalance: 0, items: [] };
-                    const mInit = Number(mObj.initialBalance) || 0;
-                    const mInc = (mObj.items || []).filter(x => x.type === 'income').reduce((s, x) => s + Number(x.amount), 0);
-                    const mExp = (mObj.items || []).filter(x => x.type === 'expense').reduce((s, x) => s + Number(x.amount), 0);
-                    const mEnd = mInit + mInc - mExp;
-                    return `
-                        <div onclick="onChangeFinMonth('${esc(mk)}')" class="cursor-pointer flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg bg-indigo-50/50 hover:bg-indigo-100/70 dark:bg-slate-800/90 dark:hover:bg-slate-800 border border-indigo-100 dark:border-slate-700 text-[11px] transition">
-                            <div class="font-bold text-indigo-900 dark:text-indigo-300 flex items-center gap-1.5">
-                                <i data-lucide="folder-clock" class="w-3.5 h-3.5 text-indigo-500"></i>
-                                <span>${esc(fmtMonthKeyVN(mk))}</span>
-                                <span class="text-[10px] font-normal text-slate-400">(${(mObj.items || []).length} giao dịch)</span>
-                            </div>
-                            <div class="flex items-center gap-2 font-semibold">
-                                <span class="text-emerald-600 dark:text-emerald-400">+${fmtVND(mInc)}</span>
-                                <span class="text-rose-600 dark:text-rose-400">-${fmtVND(mExp)}</span>
-                                <span class="font-bold text-slate-700 dark:text-slate-200">Dư: ${fmtVND(mEnd)}</span>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                listHtml += `
-                    <div class="pt-2.5 mt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5">
-                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
-                            <span>Lịch sử thu chi các tháng đã lưu</span>
-                            <span>Bấm để xem</span>
-                        </div>
-                        ${archiveRows}
-                    </div>
-                `;
-            }
-
-            box.innerHTML = listHtml;
             lucide.createIcons();
         }
 
@@ -2280,8 +1707,7 @@
                 calMonth = m - 1;
                 if (wasOnOldToday) selectedDate = currentToday;
                 ensureTasksStructure();
-                ensureFinanceMonthlyStructure();
-                renderAll();
+                    renderAll();
                 toast(`Đã bước sang ngày mới: ${fmtKeyVN(currentToday)}`);
             }
         }
@@ -3651,7 +3077,6 @@
 
         function renderAll() {
             renderTasks();
-            renderFinance();
             renderCalendar();
             lucide.createIcons();
         }
@@ -3699,108 +3124,7 @@
         };
     </script>
 
-<script>
-(function(){
-  const financeFrame = document.getElementById('beerichFinanceFrame');
-  let financeFrameReady = false;
-  let pendingFinanceMessages = [];
-  let quickFinanceType = 'expense';
-  let latestFinance = {currentMoney:1570349, hideCurrentMoney:false, savings:0, gold:14850000, transactions:[]};
-  const quickVND = n => new Intl.NumberFormat('vi-VN',{maximumFractionDigits:0}).format(Number(n)||0) + ' ₫';
-  const todayKey = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
-  const safeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function postToBeeRich(message){
-    if (financeFrameReady && financeFrame && financeFrame.contentWindow) financeFrame.contentWindow.postMessage(message, '*');
-    else pendingFinanceMessages.push(message);
-  }
-  function makeLegacyFinanceMessage(){
-    let months={}, legacy=[];
-    try { if(typeof state === 'object' && state){ months=state.financeMonths || {}; legacy=Array.isArray(state.finance)?state.finance:[]; } } catch(e) {}
-    let safeMonths={};
-    try { safeMonths=JSON.parse(JSON.stringify(months||{})); } catch(e) { safeMonths={}; }
-    return {type:'KHAI_GET_FINANCES',payload:{legacyFinanceMonths:safeMonths,legacyFinance:legacy}};
-  }
-  window.requestKhaiFinanceSnapshot = function(){ postToBeeRich(makeLegacyFinanceMessage()); };
-  window.setKhaiQuickFinanceType = function(type){
-    quickFinanceType = type === 'income' ? 'income' : 'expense';
-    const exp=document.getElementById('khaiQuickTypeExpense'), inc=document.getElementById('khaiQuickTypeIncome');
-    if(exp){ exp.className = quickFinanceType==='expense' ? 'px-4 py-1.5 rounded-lg bg-rose-600 text-white' : 'px-4 py-1.5 rounded-lg text-slate-500 dark:text-slate-300'; }
-    if(inc){ inc.className = quickFinanceType==='income' ? 'px-4 py-1.5 rounded-lg bg-emerald-600 text-white' : 'px-4 py-1.5 rounded-lg text-slate-500 dark:text-slate-300'; }
-    const desc=document.getElementById('khaiQuickFinDesc');
-    if(desc) desc.placeholder = quickFinanceType==='income' ? 'Tên khoản thu hôm nay...' : 'Tên khoản chi hôm nay...';
-  };
-  window.toggleKhaiQuickBalanceVisibility = function(){ postToBeeRich({type:'KHAI_TOGGLE_BALANCE_VISIBILITY'}); };
-  function renderQuickFinance(){
-    const balance=document.getElementById('khaiQuickBalance');
-    const eye=document.getElementById('khaiQuickBalanceEye');
-    if(balance) balance.textContent=latestFinance.hideCurrentMoney ? '••••••••' : quickVND(latestFinance.currentMoney);
-    if(eye){ eye.textContent=latestFinance.hideCurrentMoney ? '◉̸' : '◉'; eye.setAttribute('aria-label',latestFinance.hideCurrentMoney?'Hiện số dư':'Ẩn số dư'); }
-    const today=todayKey();
-    const list=Array.isArray(latestFinance.transactions)?latestFinance.transactions:[];
-    const todays=list.filter(t=>t && t.date===today);
-    const now=new Date();
-    const monthPrefix=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-`;
-    const monthly=list.filter(t=>t && typeof t.date==='string' && t.date.startsWith(monthPrefix));
-    const totals=monthly.reduce((a,t)=>{ const amount=Number(t.amount)||0; if(t.type==='income') a.income+=amount; else if(t.type==='expense') a.expense+=amount; return a; },{income:0,expense:0});
-    const net=totals.income-totals.expense;
-    const netEl=document.getElementById('khaiQuickMonthNet');
-    if(netEl){
-      netEl.textContent=(net>0?'+':net<0?'−':'')+quickVND(Math.abs(net));
-      netEl.className='font-extrabold text-lg mt-1 whitespace-nowrap '+(net>0?'text-emerald-600 dark:text-emerald-400':net<0?'text-rose-600 dark:text-rose-400':'text-slate-700 dark:text-slate-200');
-    }
-    const monthLabel=document.getElementById('khaiQuickMonthLabel');
-    if(monthLabel) monthLabel.textContent=`Tháng ${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()} · Thu − Chi`;
-    const label=document.getElementById('khaiQuickTodayLabel');
-    if(label){ const d=new Date(); label.textContent=`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; }
-    const count=document.getElementById('khaiQuickTodayCount'); if(count) count.textContent=`${todays.length} khoản`;
-    const txList=document.getElementById('khaiQuickTodayList');
-    if(txList){
-      if(!todays.length) txList.innerHTML='<div class="text-xs text-slate-400 py-3">Hôm nay chưa có giao dịch. Thêm khoản thu/chi ở trên để bắt đầu.</div>';
-      else txList.innerHTML=[...todays].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).map(t=>{
-        const income=t.type==='income';
-        const amount=(income?'+':'−')+quickVND(t.amount);
-        return `<div class="flex items-center gap-2 py-2 border-b border-slate-100 dark:border-slate-800 last:border-0"><span class="w-7 h-7 shrink-0 rounded-lg flex items-center justify-center text-xs font-extrabold ${income?'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300':'bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300'}">${income?'＋':'−'}</span><span class="flex-1 min-w-0 text-xs font-semibold text-slate-700 dark:text-slate-200 truncate">${safeText(t.name)}</span><span class="text-xs font-bold whitespace-nowrap ${income?'text-emerald-600 dark:text-emerald-400':'text-rose-600 dark:text-rose-400'}">${amount}</span></div>`;
-      }).join('');
-    }
-    const kpi=document.getElementById('kpiBalance'); if(kpi) kpi.textContent=quickVND(latestFinance.currentMoney);
-  }
-  window.addEventListener('message', function(event){
-    if(!financeFrame || event.source !== financeFrame.contentWindow) return;
-    const msg=event.data || {};
-    if(msg.type==='KHAI_FINANCES_UPDATED' && msg.payload){
-      latestFinance={...latestFinance,...msg.payload};
-      renderQuickFinance();
-    } else if(msg.type==='KHAI_FINANCE_TX_ADDED'){
-      if(typeof toast==='function') toast('Đã lưu giao dịch và cập nhật số dư.');
-    } else if(msg.type==='KHAI_FINANCE_TX_ERROR'){
-      if(typeof toast==='function') toast(msg.message || 'Không thể lưu giao dịch.');
-    }
-  });
-  if(financeFrame){
-    financeFrame.addEventListener('load',function(){
-      financeFrameReady=true;
-      financeFrame.contentWindow.postMessage(makeLegacyFinanceMessage(),'*');
-      const queued=pendingFinanceMessages; pendingFinanceMessages=[];
-      queued.forEach(msg=>financeFrame.contentWindow.postMessage(msg,'*'));
-    });
-    const encoded='PCFkb2N0eXBlIGh0bWw+CjxodG1sIGxhbmc9InZpIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9InV0Zi04IiAvPgo8bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLCBpbml0aWFsLXNjYWxlPTEsIHZpZXdwb3J0LWZpdD1jb3ZlciIgLz4KPG1ldGEgbmFtZT0idGhlbWUtY29sb3IiIGNvbnRlbnQ9IiNmMGZkZjQiIC8+Cjx0aXRsZT5RdeG6o24gbMO9IHRp4buBbiBjw6EgbmjDom48L3RpdGxlPgo8c3R5bGU+CiAgOnJvb3R7LS1ibHVlOiMxNTgwM2Q7LS1ibHVlMjojMTZhMzRhOy0taW5rOiMxNzI2MWI7LS1tdXRlZDojNjU3NTY5Oy0tc29mdDojZjVmYmY2Oy0tbGluZTojZGZlZWUyOy0tcmVkOiMxNTgwM2Q7LS10ZWFsOiMxNmEzNGE7LS1zaGFkb3c6MCA2cHggMThweCByZ2JhKDIyLDEwMSw1MiwuMDcpfQogICp7Ym94LXNpemluZzpib3JkZXItYm94fQogIGJvZHl7bWFyZ2luOjA7YmFja2dyb3VuZDojZjdmOGZiO2NvbG9yOnZhcigtLWluayk7Zm9udC1mYW1pbHk6LWFwcGxlLXN5c3RlbSxCbGlua01hY1N5c3RlbUZvbnQsIlNlZ29lIFVJIixSb2JvdG8sQXJpYWwsc2Fucy1zZXJpZjtmb250LXNpemU6MTZweDstd2Via2l0LWZvbnQtc21vb3RoaW5nOmFudGlhbGlhc2VkfQogIGJ1dHRvbntmb250OmluaGVyaXQ7Y3Vyc29yOnBvaW50ZXJ9YnV0dG9uOmZvY3VzLXZpc2libGV7b3V0bGluZTozcHggc29saWQgIzlkYjdmZjtvdXRsaW5lLW9mZnNldDozcHh9CiAgLmFwcHt3aWR0aDptaW4oMTAwJSw1MjBweCk7bWluLWhlaWdodDoxMDBkdmg7bWFyZ2luOjAgYXV0bztiYWNrZ3JvdW5kOiNmYWZiZmU7cG9zaXRpb246cmVsYXRpdmU7cGFkZGluZzpjYWxjKDIwcHggKyBlbnYoc2FmZS1hcmVhLWluc2V0LXRvcCkpIDIwcHggY2FsYygxMDhweCArIGVudihzYWZlLWFyZWEtaW5zZXQtYm90dG9tKSk7b3ZlcmZsb3c6aGlkZGVufQogIC5zdGF0dXN7aGVpZ2h0OjI3cHg7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtqdXN0aWZ5LWNvbnRlbnQ6c3BhY2UtYmV0d2VlbjtwYWRkaW5nOjAgN3B4IDhweDtjb2xvcjojMTAxMzFhO2ZvbnQtd2VpZ2h0OjcwMDtmb250LXNpemU6MTZweDtsZXR0ZXItc3BhY2luZzouMXB4fQogIC5zdGF0dXMtcmlnaHR7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6OHB4O2ZvbnQtc2l6ZToxNHB4fS5zaWduYWx7Zm9udC1zaXplOjE3cHg7bGV0dGVyLXNwYWNpbmc6LTNweH0uYmF0dGVyeXtib3JkZXI6MS41cHggc29saWQgI2E2YTliMTtib3JkZXItcmFkaXVzOjVweDtwYWRkaW5nOjFweCA0cHg7Zm9udC1zaXplOjEycHg7cG9zaXRpb246cmVsYXRpdmV9LmJhdHRlcnk6YWZ0ZXJ7Y29udGVudDoiIjtwb3NpdGlvbjphYnNvbHV0ZTtyaWdodDotNHB4O3RvcDo0cHg7d2lkdGg6M3B4O2hlaWdodDo2cHg7YmFja2dyb3VuZDojYTZhOWIxO2JvcmRlci1yYWRpdXM6MCAycHggMnB4IDB9CiAgLmJyYW5kYmFye2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7anVzdGlmeS1jb250ZW50OnNwYWNlLWJldHdlZW47bWFyZ2luOjEwcHggMCAyMnB4fQogIC5icmFuZHtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2dhcDo4cHg7Zm9udC13ZWlnaHQ6NDUwO2ZvbnQtc2l6ZToyNnB4O2xldHRlci1zcGFjaW5nOi0xLjNweDtjb2xvcjojMDgwOTBjfS5icmFuZG1hcmt7d2lkdGg6MzRweDtoZWlnaHQ6MzRweDtkaXNwbGF5OmlubGluZS1ncmlkO3BsYWNlLWl0ZW1zOmNlbnRlcjtjb2xvcjp2YXIoLS1ibHVlKTtmb250LXNpemU6MzBweDtsaW5lLWhlaWdodDoxO2ZvbnQtd2VpZ2h0OjgwMH0KICAuYnJhbmQtYWN0aW9uc3tkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2dhcDoxN3B4fS5zcGFya2xle2JvcmRlcjowO2JhY2tncm91bmQ6dHJhbnNwYXJlbnQ7Y29sb3I6IzE3NTVmNTtmb250LXNpemU6MzFweDtsaW5lLWhlaWdodDoxO3BhZGRpbmc6MH0uY2xvc2V7Ym9yZGVyOjA7YmFja2dyb3VuZDp0cmFuc3BhcmVudDtmb250LXNpemU6MzFweDtmb250LXdlaWdodDozMDA7bGluZS1oZWlnaHQ6MTtjb2xvcjojMTgyMDMzO3BhZGRpbmc6MCAycHh9CiAgLnByb2ZpbGV7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6MTJweDttYXJnaW4tYm90dG9tOjI2cHh9LmF2YXRhcnt3aWR0aDo2MnB4O2hlaWdodDo2MnB4O2ZsZXg6MCAwIDYycHg7Ym9yZGVyLXJhZGl1czo1MCU7ZGlzcGxheTpncmlkO3BsYWNlLWl0ZW1zOmNlbnRlcjtiYWNrZ3JvdW5kOmxpbmVhci1ncmFkaWVudCgxNDBkZWcsI2QxZTJlYiwjYzVkMWQwIDQ2JSwjZjJkNWJjKTtib3JkZXI6MXB4IHNvbGlkICNlNGU5ZjE7b3ZlcmZsb3c6aGlkZGVuO2ZvbnQtc2l6ZToyNXB4fS5wcm9maWxlLWNvcHl7bWluLXdpZHRoOjA7ZmxleDoxfS51c2VybmFtZXtmb250LXNpemU6MTVweDtjb2xvcjojNmQ3YjhkO3doaXRlLXNwYWNlOm5vd3JhcDtvdmVyZmxvdzpoaWRkZW47dGV4dC1vdmVyZmxvdzplbGxpcHNpc30ucmFua3tmb250LXNpemU6MTdweDtmb250LXdlaWdodDo3MDA7Y29sb3I6IzRhNTM2MTttYXJnaW4tdG9wOjVweH0ud2FsbGV0e2JvcmRlcjowO2JvcmRlci1yYWRpdXM6MjRweDtwYWRkaW5nOjlweCAxNnB4O2JhY2tncm91bmQ6dmFyKC0tYmx1ZSk7Y29sb3I6d2hpdGU7Zm9udC13ZWlnaHQ6NjUwO2ZvbnQtc2l6ZToxNHB4O3doaXRlLXNwYWNlOm5vd3JhcH0KICAucGFuZWx7YmFja2dyb3VuZDojZmZmO2JvcmRlcjoxcHggc29saWQgI2VkZjBmNTtib3JkZXItcmFkaXVzOjI1cHg7Ym94LXNoYWRvdzp2YXIoLS1zaGFkb3cpO3BhZGRpbmc6MjRweCAyNHB4IDIycHg7cG9zaXRpb246cmVsYXRpdmV9CiAgLnBhbmVsLWhlYWR7ZGlzcGxheTpmbGV4O2p1c3RpZnktY29udGVudDpzcGFjZS1iZXR3ZWVuO2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6MTBweH0uZXllYnJvd3tmb250LXNpemU6MTlweDtjb2xvcjojNTE1YTY4O2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjhweH0uY2hldnJvbntkaXNwbGF5OmlubGluZS1ibG9jazt3aWR0aDoxMXB4O2hlaWdodDoxMXB4O2JvcmRlci1yaWdodDozcHggc29saWQgY3VycmVudENvbG9yO2JvcmRlci1ib3R0b206M3B4IHNvbGlkIGN1cnJlbnRDb2xvcjt0cmFuc2Zvcm06cm90YXRlKDQ1ZGVnKTttYXJnaW4tdG9wOi02cHh9CiAgLm1vbnRoLWNvbnRyb2x7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6NnB4O2ZsZXgtc2hyaW5rOjB9Lm1vbnRoLWFycm93e3dpZHRoOjM0cHg7aGVpZ2h0OjM2cHg7Ym9yZGVyOjFweCBzb2xpZCAjZTZlYmY1O2JhY2tncm91bmQ6I2Y2ZjhmZjtjb2xvcjp2YXIoLS1ibHVlKTtib3JkZXItcmFkaXVzOjExcHg7Zm9udC1zaXplOjIycHg7bGluZS1oZWlnaHQ6MTtkaXNwbGF5OmdyaWQ7cGxhY2UtaXRlbXM6Y2VudGVyfS5tb250aC1idG57cG9zaXRpb246cmVsYXRpdmU7ZGlzcGxheTpmbGV4O2dhcDo4cHg7YWxpZ24taXRlbXM6Y2VudGVyO2p1c3RpZnktY29udGVudDpjZW50ZXI7YmFja2dyb3VuZDp2YXIoLS1ibHVlKTtjb2xvcjp3aGl0ZTtib3JkZXI6MDtib3JkZXItcmFkaXVzOjEycHg7cGFkZGluZzoxMHB4IDEycHg7Zm9udC1zaXplOjE0cHg7Zm9udC13ZWlnaHQ6NzAwO3doaXRlLXNwYWNlOm5vd3JhcDtvdmVyZmxvdzpoaWRkZW59Lm1vbnRoLXBpY2tlci1vdmVybGF5e3Bvc2l0aW9uOmFic29sdXRlO2luc2V0OjA7d2lkdGg6MTAwJTtoZWlnaHQ6MTAwJTtvcGFjaXR5OjA7Y3Vyc29yOnBvaW50ZXJ9LmNhbGVuZGFyLWljb257Zm9udC1zaXplOjE3cHh9CiAgLnRvdGFse2ZvbnQtc2l6ZTozN3B4O2xldHRlci1zcGFjaW5nOi0xLjJweDtmb250LXdlaWdodDo3NTA7bWFyZ2luOjhweCAwIDNweDtsaW5lLWhlaWdodDoxLjE1fS50cmVuZHtjb2xvcjp2YXIoLS10ZWFsKTtmb250LXdlaWdodDo2MDA7Zm9udC1zaXplOjE2cHg7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6NnB4fS50cmVuZC1hcnJvd3tmb250LXNpemU6MjBweH0KICAucnVsZXtoZWlnaHQ6MXB4O2JhY2tncm91bmQ6I2U0ZTdlYzttYXJnaW46MjRweCAwIDIycHh9LndlZWtkYXlzLC5kYXlze2Rpc3BsYXk6Z3JpZDtncmlkLXRlbXBsYXRlLWNvbHVtbnM6cmVwZWF0KDcsbWlubWF4KDAsMWZyKSk7dGV4dC1hbGlnbjpjZW50ZXJ9LndlZWtkYXlze2NvbG9yOiM2Njc0ODc7Zm9udC1zaXplOjE0cHg7Zm9udC13ZWlnaHQ6NTUwO21hcmdpbi1ib3R0b206MTRweH0uZGF5c3tyb3ctZ2FwOjE1cHh9LmRheXttaW4taGVpZ2h0OjU4cHg7cG9zaXRpb246cmVsYXRpdmU7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtmbGV4LWRpcmVjdGlvbjpjb2x1bW47Ym9yZGVyOjA7YmFja2dyb3VuZDp0cmFuc3BhcmVudDtib3JkZXItcmFkaXVzOjE4cHg7cGFkZGluZzo0cHggMCAycHg7Y29sb3I6IzE1MWIyYTttaW4td2lkdGg6MH0uZGF5IC5udW1iZXJ7Zm9udC13ZWlnaHQ6NTUwO2ZvbnQtc2l6ZToxN3B4O2xpbmUtaGVpZ2h0OjIzcHh9LmRheSAuYW1vdW50e2ZvbnQtc2l6ZToxMnB4O2NvbG9yOnZhcigtLXJlZCk7bWFyZ2luLXRvcDozcHg7d2hpdGUtc3BhY2U6bm93cmFwO2xldHRlci1zcGFjaW5nOi0uMjVweDtsaW5lLWhlaWdodDoxLjF9LmRheSAuYW1vdW50LmluY29tZXtjb2xvcjp2YXIoLS10ZWFsKX0uZGF5IC5hbW91bnQuZXhwZW5zZXtjb2xvcjp2YXIoLS1yZWQpfS5kYXkubXV0ZWR7Y29sb3I6I2I0YjdiZH0uZGF5LnRvZGF5e2JhY2tncm91bmQ6I2YwZjRmY30uZGF5OmFjdGl2ZXtiYWNrZ3JvdW5kOiNlYWYwZmZ9LmNhbGVuZGFyLWZvb3Rlcntib3JkZXItdG9wOjFweCBzb2xpZCAjZTZlOWVmO21hcmdpbi10b3A6MThweDtwYWRkaW5nLXRvcDoxOHB4O2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7anVzdGlmeS1jb250ZW50OnNwYWNlLWJldHdlZW47Z2FwOjEwcHg7Y29sb3I6IzVkNjY3Mztmb250LXNpemU6MTVweH0ub3V0bGluZS1idG57Ym9yZGVyOjEuNXB4IHNvbGlkIHZhcigtLWJsdWUpO2NvbG9yOnZhcigtLWJsdWUpO2JhY2tncm91bmQ6d2hpdGU7Ym9yZGVyLXJhZGl1czoyNHB4O3BhZGRpbmc6OHB4IDE3cHg7Zm9udC13ZWlnaHQ6NjAwO3doaXRlLXNwYWNlOm5vd3JhcH0KICAuZG90c3tkaXNwbGF5OmZsZXg7anVzdGlmeS1jb250ZW50OmNlbnRlcjthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjEycHg7bWFyZ2luOjE2cHggYXV0byAwO2JhY2tncm91bmQ6d2hpdGU7Ym9yZGVyOjFweCBzb2xpZCAjZWRmMGY1O2JvcmRlci1yYWRpdXM6MzBweDt3aWR0aDptYXgtY29udGVudDtwYWRkaW5nOjEwcHggMTdweDtib3gtc2hhZG93OjAgM3B4IDE0cHggcmdiYSgyMCw0MCw4MCwuMDQpfS5kb3R7Ym9yZGVyOjA7YmFja2dyb3VuZDojYWFiNmM3O3dpZHRoOjEycHg7aGVpZ2h0OjEycHg7Ym9yZGVyLXJhZGl1czo1MCU7cGFkZGluZzowfS5kb3QuYWN0aXZle3dpZHRoOjM0cHg7Ym9yZGVyLXJhZGl1czoxMnB4O2JhY2tncm91bmQ6dmFyKC0tYmx1ZSl9CiAgLmluc2lnaHR7Ym9yZGVyOjEuNXB4IHNvbGlkIHZhcigtLWJsdWUpO2JvcmRlci1yYWRpdXM6MjBweDtwYWRkaW5nOjE3cHggMjBweDttYXJnaW4tdG9wOjc0cHg7YmFja2dyb3VuZDpyZ2JhKDI1NSwyNTUsMjU1LC40NSk7Zm9udC1zaXplOjE2cHg7bGluZS1oZWlnaHQ6MS41fS5pbnNpZ2h0LWxpbmt7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6OHB4O2NvbG9yOnZhcigtLWJsdWUpO2ZvbnQtd2VpZ2h0OjY1MDttYXJnaW4tdG9wOjEycHg7Zm9udC1zaXplOjE2cHh9LnJpZ2h0LWFycm93e2ZvbnQtc2l6ZToyNXB4O2ZvbnQtd2VpZ2h0OjMwMDtsaW5lLWhlaWdodDoxfQogIC5ib3R0b20tbmF2e3Bvc2l0aW9uOmZpeGVkO2JvdHRvbTowO2xlZnQ6NTAlO3RyYW5zZm9ybTp0cmFuc2xhdGVYKC01MCUpO3dpZHRoOm1pbigxMDAlLDUyMHB4KTtwYWRkaW5nOjE5cHggMTVweCBjYWxjKDE3cHggKyBlbnYoc2FmZS1hcmVhLWluc2V0LWJvdHRvbSkpO2JhY2tncm91bmQ6cmdiYSgyNTUsMjU1LDI1NSwuOTcpO2JhY2tkcm9wLWZpbHRlcjpibHVyKDE4cHgpO2JvcmRlcjoycHggc29saWQgIzc2ODZmNTtib3JkZXItYm90dG9tOjA7Ym9yZGVyLXJhZGl1czozNHB4IDM0cHggMCAwO2Rpc3BsYXk6Z3JpZDtncmlkLXRlbXBsYXRlLWNvbHVtbnM6cmVwZWF0KDIsMWZyKTtnYXA6OHB4O3otaW5kZXg6MTB9Lm5hdi1pdGVte2JvcmRlcjowO2JhY2tncm91bmQ6dHJhbnNwYXJlbnQ7Ym9yZGVyLXJhZGl1czoxOHB4O21pbi1oZWlnaHQ6NzZweDtjb2xvcjojMTIxOTI3O2Rpc3BsYXk6ZmxleDtmbGV4LWRpcmVjdGlvbjpjb2x1bW47anVzdGlmeS1jb250ZW50OmNlbnRlcjthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjZweDtmb250LXNpemU6MTZweH0ubmF2LWl0ZW0uYWN0aXZle2JhY2tncm91bmQ6dmFyKC0tYmx1ZSk7Y29sb3I6d2hpdGV9Lm5hdi1pY29ue2hlaWdodDoyOHB4O2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Zm9udC1zaXplOjI1cHg7bGluZS1oZWlnaHQ6MX0ubmF2LWxhYmVse2ZvbnQtd2VpZ2h0OjU1MH0KICAuYXNzZXRzLWNhcmR7dGV4dC1hbGlnbjpjZW50ZXI7cGFkZGluZy10b3A6MzBweH0uYXNzZXRzLXRpdGxle2Rpc3BsYXk6ZmxleDtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyO2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6MTBweDtjb2xvcjojNWU2NjcyO2ZvbnQtc2l6ZToyMHB4fS5hc3NldHMtdmFsdWV7Zm9udC1zaXplOjM1cHg7bGV0dGVyLXNwYWNpbmc6LTFweDtmb250LXdlaWdodDo3NjA7bWFyZ2luOjEycHggMCAyOHB4fS5nYXVnZXt3aWR0aDoxNjBweDtoZWlnaHQ6ODBweDttYXJnaW46MCBhdXRvIDI2cHg7cG9zaXRpb246cmVsYXRpdmU7b3ZlcmZsb3c6aGlkZGVufS5nYXVnZTpiZWZvcmV7Y29udGVudDoiIjtwb3NpdGlvbjphYnNvbHV0ZTt3aWR0aDoxNTBweDtoZWlnaHQ6MTUwcHg7bGVmdDo1cHg7dG9wOjA7Ym9yZGVyOjIycHggc29saWQgI2U4ZWRmOTtib3JkZXItYm90dG9tLWNvbG9yOnRyYW5zcGFyZW50O2JvcmRlci1yYWRpdXM6NTAlO3RyYW5zZm9ybTpyb3RhdGUoMGRlZyl9LmdhdWdlOmFmdGVye2NvbnRlbnQ6IiI7cG9zaXRpb246YWJzb2x1dGU7d2lkdGg6MTUwcHg7aGVpZ2h0OjE1MHB4O2xlZnQ6NXB4O3RvcDowO2JvcmRlcjoyMnB4IHNvbGlkICMzNTY3Zjc7Ym9yZGVyLWJvdHRvbS1jb2xvcjp0cmFuc3BhcmVudDtib3JkZXItcmFkaXVzOjUwJTtjbGlwLXBhdGg6aW5zZXQoMCAwIDUwJSAwKX0uZ2F1Z2Ugc3Bhbntwb3NpdGlvbjphYnNvbHV0ZTtsZWZ0OjA7cmlnaHQ6MDtib3R0b206NXB4O3otaW5kZXg6MTtmb250LXNpemU6MjBweDtmb250LXdlaWdodDo3MDB9CiAgLmFzc2V0LWdyaWR7ZGlzcGxheTpncmlkO2dyaWQtdGVtcGxhdGUtY29sdW1uczoxZnIgMWZyO3RleHQtYWxpZ246bGVmdDtnYXA6MjNweCAxNHB4O21hcmdpbi1ib3R0b206MjhweH0uYXNzZXQtaXRlbXttaW4td2lkdGg6MH0uYXNzZXQtbmFtZXtjb2xvcjojNjA2YTc4O2Rpc3BsYXk6ZmxleDtnYXA6OHB4O2FsaWduLWl0ZW1zOmNlbnRlcjtmb250LXNpemU6MTZweDt3aGl0ZS1zcGFjZTpub3dyYXB9LmFzc2V0LW5hbWU6YmVmb3Jle2NvbnRlbnQ6IiI7d2lkdGg6NHB4O2hlaWdodDoxOXB4O2JvcmRlci1yYWRpdXM6NHB4O2JhY2tncm91bmQ6dmFyKC0tYmx1ZSk7ZmxleDowIDAgNHB4fS5hc3NldC1pdGVtOm50aC1jaGlsZCgyKSAuYXNzZXQtbmFtZTpiZWZvcmV7YmFja2dyb3VuZDojNmU5NmZmfS5hc3NldC1pdGVtOm50aC1jaGlsZCgzKSAuYXNzZXQtbmFtZTpiZWZvcmV7YmFja2dyb3VuZDojNGM3NWY5fS5hc3NldC1pdGVtOm50aC1jaGlsZCg0KSAuYXNzZXQtbmFtZTpiZWZvcmV7YmFja2dyb3VuZDojYTdiZGZmfS5hc3NldC1pdGVtOm50aC1jaGlsZCg1KSAuYXNzZXQtbmFtZTpiZWZvcmV7YmFja2dyb3VuZDojYjVjNWVlfS5hc3NldC1pdGVtOm50aC1jaGlsZCg2KSAuYXNzZXQtbmFtZTpiZWZvcmV7YmFja2dyb3VuZDojZDZkZmY3fS5hc3NldC1tb25leXtmb250LXNpemU6MThweDtmb250LXdlaWdodDo1NTA7bWFyZ2luLXRvcDo1cHg7d2hpdGUtc3BhY2U6bm93cmFwfS53aWRlLWJ0bnt3aWR0aDoxMDAlO2JvcmRlcjoxLjVweCBzb2xpZCB2YXIoLS1ibHVlKTtjb2xvcjp2YXIoLS1ibHVlKTtiYWNrZ3JvdW5kOiNmZmY7Ym9yZGVyLXJhZGl1czo0MHB4O3BhZGRpbmc6MTVweCAxMnB4O2ZvbnQtc2l6ZToxOHB4O2ZvbnQtd2VpZ2h0OjYwMDttYXJnaW4tYm90dG9tOjE3cHh9LnByb21ve2JvcmRlci1yYWRpdXM6MjRweDtiYWNrZ3JvdW5kOiNlZWYzZmY7dGV4dC1hbGlnbjpsZWZ0O3BhZGRpbmc6MThweCAxN3B4O2NvbG9yOiMxNjUxZGN9LnByb21vLXRpdGxle2ZvbnQtc2l6ZToxOHB4O2ZvbnQtd2VpZ2h0Ojc1MDttYXJnaW4tYm90dG9tOjlweH0ucHJvbW8tY29weXtmb250LXNpemU6MTVweDtjb2xvcjojNzE3ZDkwO2xpbmUtaGVpZ2h0OjEuNX0ucHJvbW8tbGlua3tjb2xvcjojMTc1MWRjO2ZvbnQtc2l6ZToxNXB4O2ZvbnQtd2VpZ2h0OjY1MDt0ZXh0LWFsaWduOnJpZ2h0O21hcmdpbi10b3A6MTJweH0KICAubW9uZXktY2FyZHtwYWRkaW5nOjI0cHg7bWFyZ2luLWJvdHRvbToxNnB4O2JhY2tncm91bmQ6bGluZWFyLWdyYWRpZW50KDE0NWRlZywjZmZmIDAlLCNmNGY3ZmYgMTAwJSl9CiAgLm1vbnRoLXN0YXRze2Rpc3BsYXk6Z3JpZDtncmlkLXRlbXBsYXRlLWNvbHVtbnM6MWZyIDFmcjtnYXA6MTBweDttYXJnaW46MCAwIDE3cHh9Lm1vbnRoLXN0YXR7cGFkZGluZzoxM3B4IDE0cHg7Ym9yZGVyOjFweCBzb2xpZCAjZTllZGY1O2JvcmRlci1yYWRpdXM6MTVweDtiYWNrZ3JvdW5kOiNmZmY7bWluLXdpZHRoOjB9Lm1vbnRoLXN0YXQtbGFiZWx7Zm9udC1zaXplOjEzcHg7Y29sb3I6IzcyN2Q4Y30ubW9udGgtc3RhdC12YWx1ZXtmb250LXNpemU6MThweDtmb250LXdlaWdodDo3NTA7bWFyZ2luLXRvcDo1cHg7b3ZlcmZsb3ctd3JhcDphbnl3aGVyZX0ubW9udGgtc3RhdC5pbmNvbWUgLm1vbnRoLXN0YXQtdmFsdWV7Y29sb3I6dmFyKC0tdGVhbCl9Lm1vbnRoLXN0YXQuZXhwZW5zZSAubW9udGgtc3RhdC12YWx1ZXtjb2xvcjp2YXIoLS1yZWQpfQogIC5oaXN0b3J5LXBhbmVse21hcmdpbi10b3A6MTZweH0uaGlzdG9yeS1oZWFkaW5ne2ZvbnQtd2VpZ2h0Ojc1MDtmb250LXNpemU6MThweDttYXJnaW4tYm90dG9tOjEwcHh9Lmhpc3RvcnktZW1wdHl7Y29sb3I6Izc3ODI5Mztmb250LXNpemU6MTRweDtsaW5lLWhlaWdodDoxLjU7cGFkZGluZzoxMnB4IDB9LnRyYW5zYWN0aW9uLXJvd3tkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2dhcDoxMHB4O3BhZGRpbmc6MTNweCAwO2JvcmRlci1ib3R0b206MXB4IHNvbGlkIHZhcigtLWxpbmUpfS50cmFuc2FjdGlvbi1yb3c6bGFzdC1jaGlsZHtib3JkZXItYm90dG9tOjB9LnR4LWJhZGdle2ZsZXg6MCAwIDM4cHg7d2lkdGg6MzhweDtoZWlnaHQ6MzhweDtib3JkZXItcmFkaXVzOjEycHg7ZGlzcGxheTpncmlkO3BsYWNlLWl0ZW1zOmNlbnRlcjtmb250LXNpemU6MThweDtmb250LXdlaWdodDo3NTA7YmFja2dyb3VuZDojZWVmM2ZmO2NvbG9yOnZhcigtLWJsdWUpfS50eC1iYWRnZS5pbmNvbWV7YmFja2dyb3VuZDojZThmOGY0O2NvbG9yOnZhcigtLXRlYWwpfS50eC1iYWRnZS5leHBlbnNle2JhY2tncm91bmQ6I2YwZmRmNDtjb2xvcjp2YXIoLS1yZWQpfS50eC1pbmZve21pbi13aWR0aDowO2ZsZXg6MX0udHgtbmFtZXtmb250LXdlaWdodDo2NTA7b3ZlcmZsb3ctd3JhcDphbnl3aGVyZX0udHgtZGF0ZXtjb2xvcjojN2E4NDkzO2ZvbnQtc2l6ZToxMnB4O21hcmdpbi10b3A6NHB4fS50eC1zaWRle3RleHQtYWxpZ246cmlnaHQ7ZmxleC1zaHJpbms6MH0udHgtYW1vdW50e2ZvbnQtd2VpZ2h0Ojc1MDt3aGl0ZS1zcGFjZTpub3dyYXB9LnR4LWFtb3VudC5pbmNvbWV7Y29sb3I6dmFyKC0tdGVhbCl9LnR4LWFtb3VudC5leHBlbnNle2NvbG9yOnZhcigtLXJlZCl9LnR4LWRlbGV0ZXtib3JkZXI6MDtiYWNrZ3JvdW5kOnRyYW5zcGFyZW50O2NvbG9yOiM4Yzk2YTU7cGFkZGluZzo1cHggMCAwO2ZvbnQtc2l6ZToxMnB4O3RleHQtZGVjb3JhdGlvbjp1bmRlcmxpbmV9CiAgLm1vbmV5LWhlYWR7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtqdXN0aWZ5LWNvbnRlbnQ6c3BhY2UtYmV0d2VlbjtnYXA6MTJweDtjb2xvcjojNTk2NTc1O2ZvbnQtc2l6ZToxN3B4O2ZvbnQtd2VpZ2h0OjYwMH0KICAudmlzaWJpbGl0eS1idG57Ym9yZGVyOjA7YmFja2dyb3VuZDojZWRmMmZmO2NvbG9yOiMxNTUwZjU7Ym9yZGVyLXJhZGl1czoxMnB4O3dpZHRoOjQwcHg7aGVpZ2h0OjM4cHg7Zm9udC1zaXplOjIwcHg7ZGlzcGxheTpncmlkO3BsYWNlLWl0ZW1zOmNlbnRlcn0KICAubW9uZXktdmFsdWV7Zm9udC1zaXplOmNsYW1wKDMycHgsOHZ3LDQwcHgpO2ZvbnQtd2VpZ2h0OjgwMDtsZXR0ZXItc3BhY2luZzotMS4xcHg7bGluZS1oZWlnaHQ6MS4yO21hcmdpbjoxNHB4IDAgOHB4O292ZXJmbG93LXdyYXA6YW55d2hlcmV9CiAgLm1vbmV5LW5vdGV7Zm9udC1zaXplOjEzcHg7bGluZS1oZWlnaHQ6MS40NTtjb2xvcjojN2E4NDkzO21hcmdpbi1ib3R0b206MThweH0KICAubW9uZXktYWN0aW9uc3tkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2dhcDoxMHB4O2ZsZXgtd3JhcDp3cmFwfQogIC5hc3NldHMtaGVhZGluZ3tkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6ZmxleC1zdGFydDtqdXN0aWZ5LWNvbnRlbnQ6c3BhY2UtYmV0d2VlbjtnYXA6MTJweDttYXJnaW4tYm90dG9tOjE4cHh9CiAgLmFzc2V0cy1oZWFkaW5nLXRpdGxle2ZvbnQtc2l6ZToyMXB4O2ZvbnQtd2VpZ2h0Ojc1MH0KICAuYXNzZXRzLWhlYWRpbmctc3Vie2NvbG9yOiM3NjgxOTE7Zm9udC1zaXplOjEzcHg7bGluZS1oZWlnaHQ6MS40O21hcmdpbi10b3A6NXB4fQogIC50cmFja2VkLWFzc2V0c3tkaXNwbGF5OmdyaWQ7Z3JpZC10ZW1wbGF0ZS1jb2x1bW5zOjFmciAxZnI7Z2FwOjEycHh9CiAgLnRyYWNrZWQtYXNzZXR7ZGlzcGxheTpmbGV4O2ZsZXgtZGlyZWN0aW9uOmNvbHVtbjthbGlnbi1pdGVtczpmbGV4LXN0YXJ0O3RleHQtYWxpZ246bGVmdDttaW4td2lkdGg6MDttaW4taGVpZ2h0OjEzNXB4O2JvcmRlcjoxcHggc29saWQgI2U5ZWRmNTtib3JkZXItcmFkaXVzOjE4cHg7YmFja2dyb3VuZDojZmJmY2ZmO3BhZGRpbmc6MTZweDtjb2xvcjp2YXIoLS1pbmspfQogIC50cmFja2VkLWFzc2V0OmFjdGl2ZXtiYWNrZ3JvdW5kOiNmMGY0ZmZ9CiAgLnRyYWNrZWQtaWNvbnt3aWR0aDozN3B4O2hlaWdodDozN3B4O2JvcmRlci1yYWRpdXM6MTJweDtiYWNrZ3JvdW5kOiNlZGYyZmY7Y29sb3I6IzE1NTBmNTtkaXNwbGF5OmdyaWQ7cGxhY2UtaXRlbXM6Y2VudGVyO2ZvbnQtc2l6ZToyMXB4O21hcmdpbi1ib3R0b206MTNweH0KICAudHJhY2tlZC1sYWJlbHtmb250LXNpemU6MTRweDtjb2xvcjojNjI2ZDdiO2xpbmUtaGVpZ2h0OjEuMzV9CiAgLnRyYWNrZWQtdmFsdWV7Zm9udC1zaXplOmNsYW1wKDE2cHgsNHZ3LDIwcHgpO2ZvbnQtd2VpZ2h0Ojc1MDttYXJnaW4tdG9wOjdweDtvdmVyZmxvdy13cmFwOmFueXdoZXJlfQogIC50cmFja2VkLWhpbnR7Zm9udC1zaXplOjEycHg7Y29sb3I6IzhiOTVhMzttYXJnaW4tdG9wOjdweH0KICAuc2VjdGlvbi10aXRsZXtmb250LXNpemU6MjRweDtmb250LXdlaWdodDo3NTA7bWFyZ2luOjVweCAwIDdweH0uc2VjdGlvbi1zdWJ7Y29sb3I6IzZhNzU4NTtmb250LXNpemU6MTVweDttYXJnaW4tYm90dG9tOjIwcHh9Lm1pbmktc3RhdHtib3JkZXItcmFkaXVzOjE3cHg7YmFja2dyb3VuZDojZjJmNWZmO3BhZGRpbmc6MTVweDttYXJnaW4tYm90dG9tOjEycHh9Lm1pbmktc3RhdC1sYWJlbHtjb2xvcjojNjg3NDg2O2ZvbnQtc2l6ZToxNHB4fS5taW5pLXN0YXQtdmFsdWV7Zm9udC1zaXplOjI0cHg7Zm9udC13ZWlnaHQ6NzUwO21hcmdpbi10b3A6NXB4fS5zYXZpbmctcm93e2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjEzcHg7cGFkZGluZzoxNnB4IDA7Ym9yZGVyLWJvdHRvbToxcHggc29saWQgdmFyKC0tbGluZSl9LnNhdmluZy1pY29ue3dpZHRoOjQ1cHg7aGVpZ2h0OjQ1cHg7Ym9yZGVyLXJhZGl1czoxNXB4O2JhY2tncm91bmQ6I2VkZjJmZjtkaXNwbGF5OmdyaWQ7cGxhY2UtaXRlbXM6Y2VudGVyO2ZvbnQtc2l6ZToyMnB4fS5zYXZpbmctZGV0YWlse2ZsZXg6MX0uc2F2aW5nLW5hbWV7Zm9udC13ZWlnaHQ6NzAwfS5zYXZpbmctZGVzY3tjb2xvcjojNzM3ZThkO2ZvbnQtc2l6ZToxNHB4O21hcmdpbi10b3A6NHB4fS5zYXZpbmctdmFsdWV7Zm9udC13ZWlnaHQ6NzAwO3RleHQtYWxpZ246cmlnaHQ7d2hpdGUtc3BhY2U6bm93cmFwfQogIC5tb2RhbC1iYWNrZHJvcHtwb3NpdGlvbjpmaXhlZDtpbnNldDowO2JhY2tncm91bmQ6cmdiYSgxMiwyMCwzNywuNCk7ZGlzcGxheTpub25lO2FsaWduLWl0ZW1zOmZsZXgtZW5kO2p1c3RpZnktY29udGVudDpjZW50ZXI7ei1pbmRleDozMDtwYWRkaW5nOjE1cHh9Lm1vZGFsLWJhY2tkcm9wLnNob3d7ZGlzcGxheTpmbGV4fS5tb2RhbHt3aWR0aDptaW4oMTAwJSw0ODBweCk7YmFja2dyb3VuZDp3aGl0ZTtib3JkZXItcmFkaXVzOjI1cHg7cGFkZGluZzoyM3B4O2JveC1zaGFkb3c6MCAyMHB4IDcwcHggcmdiYSgwLDAsMCwuMil9Lm1vZGFsLWhlYWR7ZGlzcGxheTpmbGV4O2p1c3RpZnktY29udGVudDpzcGFjZS1iZXR3ZWVuO2FsaWduLWl0ZW1zOmNlbnRlcjtmb250LXNpemU6MjFweDtmb250LXdlaWdodDo3NTA7bWFyZ2luLWJvdHRvbToxOHB4fS5tb2RhbC1jbG9zZXtib3JkZXI6MDtiYWNrZ3JvdW5kOiNmMWYzZjg7Ym9yZGVyLXJhZGl1czo1MCU7aGVpZ2h0OjM0cHg7d2lkdGg6MzRweDtmb250LXNpemU6MjNweH0uZmllbGR7ZGlzcGxheTpibG9jazttYXJnaW46MTRweCAwO2NvbG9yOiM1MjVkNmM7Zm9udC1zaXplOjE0cHh9LmZpZWxkIGlucHV0LC5maWVsZCBzZWxlY3R7ZGlzcGxheTpibG9jazt3aWR0aDoxMDAlO21hcmdpbi10b3A6N3B4O2JvcmRlcjoxcHggc29saWQgI2RmZTRlZTtib3JkZXItcmFkaXVzOjEycHg7cGFkZGluZzoxM3B4O2ZvbnQ6aW5oZXJpdDtjb2xvcjp2YXIoLS1pbmspO2JhY2tncm91bmQ6d2hpdGV9LnN1Ym1pdC1idG57d2lkdGg6MTAwJTttYXJnaW4tdG9wOjEycHg7Ym9yZGVyOjA7YmFja2dyb3VuZDp2YXIoLS1ibHVlKTtib3JkZXItcmFkaXVzOjE0cHg7Y29sb3I6d2hpdGU7Zm9udC13ZWlnaHQ6NzAwO3BhZGRpbmc6MTRweH0KICBAbWVkaWEobWluLXdpZHRoOjYwMHB4KXtib2R5e3BhZGRpbmc6MjRweCAwfS5hcHB7Ym9yZGVyLXJhZGl1czoyOHB4O21pbi1oZWlnaHQ6Y2FsYygxMDBkdmggLSA0OHB4KTtib3gtc2hhZG93OjAgMTVweCA2MHB4IHJnYmEoMzAsNTAsODAsLjEpfS5ib3R0b20tbmF2e2JvdHRvbToyNHB4O2JvcmRlci1yYWRpdXM6MzBweDt3aWR0aDptaW4oY2FsYygxMDAlIC0gNDBweCksNDgwcHgpO2JvcmRlci1ib3R0b206MnB4IHNvbGlkICM3Njg2ZjV9Lm1vZGFsLWJhY2tkcm9we2FsaWduLWl0ZW1zOmNlbnRlcn19CiAgQG1lZGlhKG1heC13aWR0aDozODBweCl7LmFwcHtwYWRkaW5nLWxlZnQ6MTRweDtwYWRkaW5nLXJpZ2h0OjE0cHh9LnBhbmVse3BhZGRpbmc6MjBweCAxNnB4fS50b3RhbHtmb250LXNpemU6MzJweH0uZGF5IC5hbW91bnR7Zm9udC1zaXplOjExcHh9LmNhbGVuZGFyLWZvb3Rlcntmb250LXNpemU6MTNweH0ub3V0bGluZS1idG57cGFkZGluZzo3cHggMTJweDtmb250LXNpemU6MTNweH0uYnJhbmR7Zm9udC1zaXplOjI0cHh9LnByb2ZpbGV7Z2FwOjlweH0uYXZhdGFye3dpZHRoOjU0cHg7aGVpZ2h0OjU0cHg7ZmxleC1iYXNpczo1NHB4fS51c2VybmFtZXtmb250LXNpemU6MTNweH0ucmFua3tmb250LXNpemU6MTVweH0ud2FsbGV0e3BhZGRpbmc6OHB4IDEycHh9LmV5ZWJyb3d7Zm9udC1zaXplOjE1cHh9LnBhbmVsLWhlYWR7Z2FwOjVweH0ubW9udGgtY29udHJvbHtnYXA6MnB4fS5tb250aC1hcnJvd3t3aWR0aDoyNXB4O2hlaWdodDozMnB4O2ZvbnQtc2l6ZToxOXB4fS5tb250aC1idG57Zm9udC1zaXplOjExcHg7cGFkZGluZzo4cHggNXB4O2dhcDo0cHh9LmNhbGVuZGFyLWljb257Zm9udC1zaXplOjE0cHh9LmFzc2V0LW5hbWV7Zm9udC1zaXplOjE0cHh9LmFzc2V0LW1vbmV5e2ZvbnQtc2l6ZToxNnB4fS5tb250aC1zdGF0LXZhbHVle2ZvbnQtc2l6ZToxNXB4fX0KCiAgLyogS2hhaUxpZmUgdW5pZmllZCBsZWFmLWdyZWVuIHRoZW1lICovCiAgOnJvb3R7LS1ibHVlOiMxNTgwM2QhaW1wb3J0YW50Oy0tYmx1ZTI6IzE2YTM0YSFpbXBvcnRhbnQ7LS1pbms6IzE3MjYxYiFpbXBvcnRhbnQ7LS1tdXRlZDojNjU3NTY5IWltcG9ydGFudDstLXNvZnQ6I2Y1ZmJmNiFpbXBvcnRhbnQ7LS1saW5lOiNkZmVlZTIhaW1wb3J0YW50Oy0tdGVhbDojMTZhMzRhIWltcG9ydGFudDstLXNoYWRvdzowIDVweCAxNnB4IHJnYmEoMjIsMTAxLDUyLC4wNykhaW1wb3J0YW50fQogIGJvZHl7YmFja2dyb3VuZDojZjNmYWY0IWltcG9ydGFudDtjb2xvcjojMTcyNjFifQogIC5hcHB7YmFja2dyb3VuZDojZjhmZGY5IWltcG9ydGFudH0KICAuYnJhbmRtYXJrLC5zcGFya2xlLC5tb250aC1hcnJvdywub3V0bGluZS1idG4sLmluc2lnaHQtbGluaywucHJvbW8tbGlua3tjb2xvcjojMTU4MDNkIWltcG9ydGFudH0KICAud2FsbGV0LC5tb250aC1idG4sLmRvdC5hY3RpdmUsLm5hdi1pdGVtLmFjdGl2ZSwuZ2F1Z2U6YWZ0ZXIsLnN1Ym1pdC1idG57YmFja2dyb3VuZDojMTU4MDNkIWltcG9ydGFudH0KICAubW9udGgtYXJyb3csLm91dGxpbmUtYnRuLC53aWRlLWJ0bntib3JkZXItY29sb3I6Izg2ZWZhYyFpbXBvcnRhbnR9CiAgLm1vbnRoLWFycm93e2JhY2tncm91bmQ6I2YwZmRmNCFpbXBvcnRhbnR9CiAgLmJvdHRvbS1uYXZ7Ym9yZGVyLWNvbG9yOiM4NmVmYWMhaW1wb3J0YW50O2JhY2tncm91bmQ6cmdiYSgyNDgsMjUzLDI0OSwuOTcpIWltcG9ydGFudH0KICAuZGF5LnRvZGF5e2JhY2tncm91bmQ6I2RjZmNlNyFpbXBvcnRhbnR9LmRheTphY3RpdmV7YmFja2dyb3VuZDojYmJmN2QwIWltcG9ydGFudH0KICAuZ2F1Z2U6YmVmb3Jle2JvcmRlci1jb2xvcjojZGNmY2U3IWltcG9ydGFudDtib3JkZXItYm90dG9tLWNvbG9yOnRyYW5zcGFyZW50IWltcG9ydGFudH0KICAuYXNzZXQtaXRlbSAuYXNzZXQtbmFtZTpiZWZvcmV7YmFja2dyb3VuZDojMTZhMzRhIWltcG9ydGFudH0KICAuYXNzZXQtaXRlbTpudGgtY2hpbGQoMikgLmFzc2V0LW5hbWU6YmVmb3JlLC5hc3NldC1pdGVtOm50aC1jaGlsZCgzKSAuYXNzZXQtbmFtZTpiZWZvcmUsLmFzc2V0LWl0ZW06bnRoLWNoaWxkKDQpIC5hc3NldC1uYW1lOmJlZm9yZSwuYXNzZXQtaXRlbTpudGgtY2hpbGQoNSkgLmFzc2V0LW5hbWU6YmVmb3JlLC5hc3NldC1pdGVtOm50aC1jaGlsZCg2KSAuYXNzZXQtbmFtZTpiZWZvcmV7YmFja2dyb3VuZDojODZlZmFjIWltcG9ydGFudH0KICAucHJvbW97YmFja2dyb3VuZDojZjBmZGY0IWltcG9ydGFudDtjb2xvcjojMTY2NTM0IWltcG9ydGFudH0KICAudmlzaWJpbGl0eS1idG4sLnRyYWNrZWQtaWNvbiwudHgtYmFkZ2V7YmFja2dyb3VuZDojZGNmY2U3IWltcG9ydGFudDtjb2xvcjojMTU4MDNkIWltcG9ydGFudH0KICAudHJhY2tlZC1hc3NldHtiYWNrZ3JvdW5kOiNmYmZlZmIhaW1wb3J0YW50O2JvcmRlci1jb2xvcjojZGZlZWUyIWltcG9ydGFudH0KICAudHJhY2tlZC1hc3NldDphY3RpdmV7YmFja2dyb3VuZDojZjBmZGY0IWltcG9ydGFudH0KICAubW9uZXktY2FyZHtiYWNrZ3JvdW5kOmxpbmVhci1ncmFkaWVudCgxNDVkZWcsI2ZmZiAwJSwjZjNmYmY0IDEwMCUpIWltcG9ydGFudH0KICAucGFuZWx7Ym9yZGVyLWNvbG9yOiNlMWVlZTMhaW1wb3J0YW50O2JveC1zaGFkb3c6MCA1cHggMTZweCByZ2JhKDIyLDEwMSw1MiwuMDYpIWltcG9ydGFudDtib3JkZXItcmFkaXVzOjIwcHghaW1wb3J0YW50fQogIC5kYXkgLmFtb3VudC5pbmNvbWUsLm1vbnRoLXN0YXQuaW5jb21lIC5tb250aC1zdGF0LXZhbHVlLC50eC1hbW91bnQuaW5jb21le2NvbG9yOiMxNTgwM2QhaW1wb3J0YW50fQogIC5tb250aC1hcnJvdzphY3RpdmUsLmljb25idG46YWN0aXZle2JhY2tncm91bmQ6I2RjZmNlNyFpbXBvcnRhbnR9CiAgQG1lZGlhKG1heC13aWR0aDo2MDBweCl7LnBhbmVse3BhZGRpbmc6MjBweCAxOHB4IDE4cHghaW1wb3J0YW50fS5icmFuZGJhcnttYXJnaW46NnB4IDAgMThweCFpbXBvcnRhbnR9LmJvdHRvbS1uYXZ7Ym9yZGVyLXJhZGl1czoyNnB4IDI2cHggMCAwIWltcG9ydGFudH19CgoKICAudHgtYmFkZ2UuZXhwZW5zZXtiYWNrZ3JvdW5kOiNkY2ZjZTchaW1wb3J0YW50O2NvbG9yOiMxNTgwM2QhaW1wb3J0YW50fQogIC50eC1hbW91bnQuZXhwZW5zZSwuZGF5IC5hbW91bnQuZXhwZW5zZSwubW9udGgtc3RhdC5leHBlbnNlIC5tb250aC1zdGF0LXZhbHVle2NvbG9yOiMxNTgwM2QhaW1wb3J0YW50fQogIC50eC1kZWxldGV7Y29sb3I6IzE1ODAzZCFpbXBvcnRhbnR9CiAgLmNhbGVuZGFyLWZvb3RlciwuaGlzdG9yeS1wYW5lbHtib3JkZXItY29sb3I6I2RmZWVlMiFpbXBvcnRhbnR9Cgo8L3N0eWxlPgo8L2hlYWQ+Cjxib2R5Pgo8ZGl2IGNsYXNzPSJhcHAiPgogIDxoZWFkZXIgY2xhc3M9ImJyYW5kYmFyIj48ZGl2IGNsYXNzPSJicmFuZCI+PHNwYW4gY2xhc3M9ImJyYW5kbWFyayI+4oKrPC9zcGFuPjxzcGFuPlTDoGkgY2jDrW5oIGPDoSBuaMOibjwvc3Bhbj48L2Rpdj48YnV0dG9uIGNsYXNzPSJ3YWxsZXQiIG9uY2xpY2s9Im9wZW5Nb2RhbCgndHJhbnNhY3Rpb24nKSI+77yLIEdpYW8gZOG7i2NoPC9idXR0b24+PC9oZWFkZXI+CiAgPG1haW4gaWQ9Im1haW5Db250ZW50Ij48L21haW4+CjwvZGl2Pgo8bmF2IGNsYXNzPSJib3R0b20tbmF2IiBhcmlhLWxhYmVsPSLEkGnhu4F1IGjGsOG7m25nIGNow61uaCI+CiAgPGJ1dHRvbiBjbGFzcz0ibmF2LWl0ZW0gYWN0aXZlIiBkYXRhLXRhYj0ib3ZlcnZpZXciIG9uY2xpY2s9InNldFRhYignb3ZlcnZpZXcnKSI+PHNwYW4gY2xhc3M9Im5hdi1pY29uIj7ilqbvvIs8L3NwYW4+PHNwYW4gY2xhc3M9Im5hdi1sYWJlbCI+VOG7lW5nIHF1YW48L3NwYW4+PC9idXR0b24+CiAgPGJ1dHRvbiBjbGFzcz0ibmF2LWl0ZW0iIGRhdGEtdGFiPSJleHBlbnNlIiBvbmNsaWNrPSJzZXRUYWIoJ2V4cGVuc2UnKSI+PHNwYW4gY2xhc3M9Im5hdi1pY29uIj7wn5K4PC9zcGFuPjxzcGFuIGNsYXNzPSJuYXYtbGFiZWwiPlRodSBjaGk8L3NwYW4+PC9idXR0b24+CjwvbmF2PgoKPGRpdiBjbGFzcz0ibW9kYWwtYmFja2Ryb3AiIGlkPSJtb2RhbEJhY2tkcm9wIiBvbmNsaWNrPSJpZihldmVudC50YXJnZXQ9PT10aGlzKWNsb3NlTW9kYWwoKSI+PGRpdiBjbGFzcz0ibW9kYWwiIHJvbGU9ImRpYWxvZyIgYXJpYS1tb2RhbD0idHJ1ZSIgYXJpYS1sYWJlbGxlZGJ5PSJtb2RhbFRpdGxlIj48ZGl2IGNsYXNzPSJtb2RhbC1oZWFkIj48c3BhbiBpZD0ibW9kYWxUaXRsZSI+VOG6oW8gZ2lhbyBk4buLY2g8L3NwYW4+PGJ1dHRvbiBjbGFzcz0ibW9kYWwtY2xvc2UiIG9uY2xpY2s9ImNsb3NlTW9kYWwoKSIgYXJpYS1sYWJlbD0ixJDDs25nIj7DlzwvYnV0dG9uPjwvZGl2Pjxmb3JtIGlkPSJ0cmFuc2FjdGlvbkZvcm0iPjxsYWJlbCBjbGFzcz0iZmllbGQiPlTDqm4gZ2lhbyBk4buLY2g8aW5wdXQgaWQ9InR4TmFtZSIgcGxhY2Vob2xkZXI9IlbDrSBk4bulOiDEgm4gdHLGsGEiIHJlcXVpcmVkIC8+PC9sYWJlbD48bGFiZWwgY2xhc3M9ImZpZWxkIj5T4buRIHRp4buBbiAoVk7EkCk8aW5wdXQgaWQ9InR4QW1vdW50IiB0eXBlPSJudW1iZXIiIG1pbj0iMSIgcGxhY2Vob2xkZXI9IjEwMDAwMCIgcmVxdWlyZWQgLz48L2xhYmVsPjxsYWJlbCBjbGFzcz0iZmllbGQiPk5nw6B5IGdpYW8gZOG7i2NoPGlucHV0IGlkPSJ0eERhdGUiIHR5cGU9ImRhdGUiIHJlcXVpcmVkIC8+PC9sYWJlbD48bGFiZWwgY2xhc3M9ImZpZWxkIj5Mb+G6oWkgZ2lhbyBk4buLY2g8c2VsZWN0IGlkPSJ0eFR5cGUiPjxvcHRpb24gdmFsdWU9ImV4cGVuc2UiPkNoaSB0acOqdTwvb3B0aW9uPjxvcHRpb24gdmFsdWU9InNhdmluZyI+RMOgbmggZOG7pW08L29wdGlvbj48L3NlbGVjdD48L2xhYmVsPjxidXR0b24gY2xhc3M9InN1Ym1pdC1idG4iIHR5cGU9InN1Ym1pdCI+TMawdSBnaWFvIGThu4tjaDwvYnV0dG9uPjwvZm9ybT48L2Rpdj48L2Rpdj4KPHNjcmlwdD4KY29uc3QgU1RPUkFHRV9LRVkgPSAnYmVlcmljaC1wZXJzb25hbC1kYXNoYm9hcmQtdjInOwpjb25zdCBkZWZhdWx0cyA9IHsgY3VycmVudE1vbmV5OiAxNTcwMzQ5LCBzYXZpbmdzOiAwLCBnb2xkOiAxNDg1MDAwMCwgaGlkZUN1cnJlbnRNb25leTogZmFsc2UsIHRyYW5zYWN0aW9uczogW10gfTsKbGV0IGZpbmFuY2VzID0gbG9hZEZpbmFuY2VzKCk7CmxldCBhY3RpdmVUYWIgPSAnb3ZlcnZpZXcnOwpjb25zdCBzdGFydHVwRGF0ZSA9IG5ldyBEYXRlKCk7CmxldCB5ZWFyID0gc3RhcnR1cERhdGUuZ2V0RnVsbFllYXIoKSwgbW9udGggPSBzdGFydHVwRGF0ZS5nZXRNb250aCgpLCBzZWxlY3RlZERheSA9IHN0YXJ0dXBEYXRlLmdldERhdGUoKSwgbW9kYWxLaW5kID0gJ3RyYW5zYWN0aW9uJzsKY29uc3QgbW9udGhOYW1lcyA9IFsnVGjDoW5nIDEnLCdUaMOhbmcgMicsJ1Row6FuZyAzJywnVGjDoW5nIDQnLCdUaMOhbmcgNScsJ1Row6FuZyA2JywnVGjDoW5nIDcnLCdUaMOhbmcgOCcsJ1Row6FuZyA5JywnVGjDoW5nIDEwJywnVGjDoW5nIDExJywnVGjDoW5nIDEyJ107CgpmdW5jdGlvbiBsb2FkRmluYW5jZXMoKXsKICB0cnkgewogICAgY29uc3Qgc2F2ZWQgPSBKU09OLnBhcnNlKGxvY2FsU3RvcmFnZS5nZXRJdGVtKFNUT1JBR0VfS0VZKSB8fCAnbnVsbCcpOwogICAgY29uc3QgZGF0YSA9IHNhdmVkICYmIHR5cGVvZiBzYXZlZCA9PT0gJ29iamVjdCcgPyB7Li4uZGVmYXVsdHMsIC4uLnNhdmVkfSA6IHsuLi5kZWZhdWx0c307CiAgICBkYXRhLmN1cnJlbnRNb25leSA9IE51bWJlcihkYXRhLmN1cnJlbnRNb25leSkgfHwgMDsKICAgIGRhdGEuc2F2aW5ncyA9IE51bWJlcihkYXRhLnNhdmluZ3MpIHx8IDA7CiAgICBkYXRhLmdvbGQgPSBOdW1iZXIoZGF0YS5nb2xkKSB8fCAwOwogICAgZGF0YS5oaWRlQ3VycmVudE1vbmV5ID0gQm9vbGVhbihkYXRhLmhpZGVDdXJyZW50TW9uZXkpOwogICAgaWYgKCFBcnJheS5pc0FycmF5KGRhdGEudHJhbnNhY3Rpb25zKSkgZGF0YS50cmFuc2FjdGlvbnMgPSBbXTsKICAgIGRhdGEudHJhbnNhY3Rpb25zID0gZGF0YS50cmFuc2FjdGlvbnMuZmlsdGVyKHQgPT4gdCAmJiB0eXBlb2YgdCA9PT0gJ29iamVjdCcgJiYgdC5kYXRlICYmIE51bWJlci5pc0Zpbml0ZShOdW1iZXIodC5hbW91bnQpKSAmJiAodC50eXBlID09PSAnaW5jb21lJyB8fCB0LnR5cGUgPT09ICdleHBlbnNlJykpOwogICAgcmV0dXJuIGRhdGE7CiAgfSBjYXRjaChlKSB7IHJldHVybiB7Li4uZGVmYXVsdHMsIHRyYW5zYWN0aW9uczogW119OyB9Cn0KZnVuY3Rpb24gc2VuZEZpbmFuY2VTbmFwc2hvdCgpewogIHRyeSB7CiAgICBpZiAod2luZG93LnBhcmVudCAmJiB3aW5kb3cucGFyZW50ICE9PSB3aW5kb3cpIHsKICAgICAgd2luZG93LnBhcmVudC5wb3N0TWVzc2FnZSh7dHlwZTonS0hBSV9GSU5BTkNFU19VUERBVEVEJywgcGF5bG9hZDp7CiAgICAgICAgY3VycmVudE1vbmV5OiBOdW1iZXIoZmluYW5jZXMuY3VycmVudE1vbmV5KXx8MCwKICAgICAgICBoaWRlQ3VycmVudE1vbmV5OiBCb29sZWFuKGZpbmFuY2VzLmhpZGVDdXJyZW50TW9uZXkpLAogICAgICAgIHNhdmluZ3M6IE51bWJlcihmaW5hbmNlcy5zYXZpbmdzKXx8MCwKICAgICAgICBnb2xkOiBOdW1iZXIoZmluYW5jZXMuZ29sZCl8fDAsCiAgICAgICAgdHJhbnNhY3Rpb25zOiBBcnJheS5pc0FycmF5KGZpbmFuY2VzLnRyYW5zYWN0aW9ucykgPyBmaW5hbmNlcy50cmFuc2FjdGlvbnMgOiBbXQogICAgICB9fSwgJyonKTsKICAgIH0KICB9IGNhdGNoKGUpIHt9Cn0KZnVuY3Rpb24gcGVyc2lzdEZpbmFuY2VzKCl7CiAgdHJ5IHsgbG9jYWxTdG9yYWdlLnNldEl0ZW0oU1RPUkFHRV9LRVksIEpTT04uc3RyaW5naWZ5KGZpbmFuY2VzKSk7IH0gY2F0Y2goZSkgeyAvKiBSdW5zIHdpdGhvdXQgcGVyc2lzdGVuY2UgaWYgYnJvd3NlciBzdG9yYWdlIGlzIGRpc2FibGVkLiAqLyB9CiAgc2VuZEZpbmFuY2VTbmFwc2hvdCgpOwp9CmZ1bmN0aW9uIGZvcm1hdFZORChuKXsgcmV0dXJuIG5ldyBJbnRsLk51bWJlckZvcm1hdCgndmktVk4nLCB7bWF4aW11bUZyYWN0aW9uRGlnaXRzOjB9KS5mb3JtYXQoTnVtYmVyKG4pfHwwKSArICcgxJEnOyB9CmZ1bmN0aW9uIGZvcm1hdENvbXBhY3Qobil7CiAgY29uc3QgdmFsdWUgPSBNYXRoLmFicyhOdW1iZXIobil8fDApOwogIGlmICh2YWx1ZSA+PSAxMDAwMDAwKSByZXR1cm4gKHZhbHVlLzEwMDAwMDApLnRvTG9jYWxlU3RyaW5nKCd2aS1WTicse21heGltdW1GcmFjdGlvbkRpZ2l0czoxfSkrJ3RyJzsKICBpZiAodmFsdWUgPj0gMTAwMCkgcmV0dXJuIE1hdGgucm91bmQodmFsdWUvMTAwMCkudG9Mb2NhbGVTdHJpbmcoJ3ZpLVZOJykrJ0snOwogIHJldHVybiBmb3JtYXRWTkQodmFsdWUpLnJlcGxhY2UoL1xzxJEkLywgJycpOwp9CmZ1bmN0aW9uIHNpZ25lZEFtb3VudCh0eCl7IHJldHVybiBgJHt0eC50eXBlID09PSAnaW5jb21lJyA/ICcrJyA6ICfiiJInfSR7Zm9ybWF0Vk5EKHR4LmFtb3VudCl9YDsgfQpmdW5jdGlvbiBzaWduZWRUb3RhbChuLCBzaWduKXsgcmV0dXJuIChOdW1iZXIobik+MD9zaWduOicnKSArIGZvcm1hdFZORChuKTsgfQpmdW5jdGlvbiBhbW91bnREaXNwbGF5KG4peyByZXR1cm4gZmluYW5jZXMuaGlkZUN1cnJlbnRNb25leSA/ICfigKLigKLigKLigKLigKLigKLigKLigKInIDogZm9ybWF0Vk5EKG4pOyB9CmZ1bmN0aW9uIGRhdGVLZXkoeSwgbSwgZCl7IHJldHVybiBgJHt5fS0ke1N0cmluZyhtKzEpLnBhZFN0YXJ0KDIsJzAnKX0tJHtTdHJpbmcoZCkucGFkU3RhcnQoMiwnMCcpfWA7IH0KZnVuY3Rpb24gcGFyc2VEYXRlS2V5KGtleSl7IGNvbnN0IFt5LG0sZF0gPSBTdHJpbmcoa2V5KS5zcGxpdCgnLScpLm1hcChOdW1iZXIpOyByZXR1cm4gbmV3IERhdGUoeSwgbS0xLCBkKTsgfQpmdW5jdGlvbiBjdXJyZW50TW9udGhUcmFuc2FjdGlvbnMoKXsgY29uc3QgcHJlZml4ID0gYCR7eWVhcn0tJHtTdHJpbmcobW9udGgrMSkucGFkU3RhcnQoMiwnMCcpfS1gOyByZXR1cm4gZmluYW5jZXMudHJhbnNhY3Rpb25zLmZpbHRlcih0ID0+IHQuZGF0ZS5zdGFydHNXaXRoKHByZWZpeCkpOyB9CmZ1bmN0aW9uIHRyYW5zYWN0aW9uc0ZvckRhdGUoa2V5KXsgcmV0dXJuIGZpbmFuY2VzLnRyYW5zYWN0aW9ucy5maWx0ZXIodCA9PiB0LmRhdGUgPT09IGtleSkuc29ydCgoYSxiKT0+KGIuY3JlYXRlZEF0fHwwKS0oYS5jcmVhdGVkQXR8fDApKTsgfQpmdW5jdGlvbiBtb250aFRvdGFscyhpdGVtcz1jdXJyZW50TW9udGhUcmFuc2FjdGlvbnMoKSl7CiAgcmV0dXJuIGl0ZW1zLnJlZHVjZSgodG90LHQpPT57IGlmKHQudHlwZT09PSdpbmNvbWUnKSB0b3QuaW5jb21lICs9IE51bWJlcih0LmFtb3VudCl8fDA7IGVsc2UgdG90LmV4cGVuc2UgKz0gTnVtYmVyKHQuYW1vdW50KXx8MDsgcmV0dXJuIHRvdDsgfSx7aW5jb21lOjAsZXhwZW5zZTowfSk7Cn0KZnVuY3Rpb24gdG9nZ2xlQmFsYW5jZVZpc2liaWxpdHkoKXsKICBmaW5hbmNlcy5oaWRlQ3VycmVudE1vbmV5ID0gIWZpbmFuY2VzLmhpZGVDdXJyZW50TW9uZXk7IHBlcnNpc3RGaW5hbmNlcygpOwogIGNvbnN0IHZhbHVlPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjdXJyZW50TW9uZXlWYWx1ZScpLCBleWU9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2JhbGFuY2VFeWUnKTsKICBpZih2YWx1ZSkgdmFsdWUudGV4dENvbnRlbnQ9YW1vdW50RGlzcGxheShmaW5hbmNlcy5jdXJyZW50TW9uZXkpOwogIGlmKGV5ZSl7IGV5ZS50ZXh0Q29udGVudD1maW5hbmNlcy5oaWRlQ3VycmVudE1vbmV5Pyfil4nMuCc6J+KXiSc7IGV5ZS5zZXRBdHRyaWJ1dGUoJ2FyaWEtbGFiZWwnLGZpbmFuY2VzLmhpZGVDdXJyZW50TW9uZXk/J0hp4buHbiBz4buRIGTGsCc6J+G6qG4gc+G7kSBkxrAnKTsgfQp9CmZ1bmN0aW9uIHNldFRhYih0YWIpewogIGFjdGl2ZVRhYj10YWI7CiAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgnLm5hdi1pdGVtJykuZm9yRWFjaChiPT5iLmNsYXNzTGlzdC50b2dnbGUoJ2FjdGl2ZScsYi5kYXRhc2V0LnRhYj09PXRhYikpOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdtYWluQ29udGVudCcpLmlubmVySFRNTD10YWI9PT0nb3ZlcnZpZXcnP292ZXJ2aWV3SFRNTCgpOmV4cGVuc2VIVE1MKCk7Cn0KZnVuY3Rpb24gb3ZlcnZpZXdIVE1MKCl7CiAgcmV0dXJuIGA8c2VjdGlvbiBjbGFzcz0icGFuZWwgbW9uZXktY2FyZCI+PGRpdiBjbGFzcz0ibW9uZXktaGVhZCI+PHNwYW4+U+G7kSB0aeG7gW4gdMO0aSDEkWFuZyBjw7M8L3NwYW4+PGJ1dHRvbiBjbGFzcz0idmlzaWJpbGl0eS1idG4iIHR5cGU9ImJ1dHRvbiIgb25jbGljaz0idG9nZ2xlQmFsYW5jZVZpc2liaWxpdHkoKSIgYXJpYS1sYWJlbD0i4bqobiBz4buRIGTGsCIgdGl0bGU9IuG6qG4vaGnhu4duIHPhu5EgZMawIj48c3BhbiBpZD0iYmFsYW5jZUV5ZSI+JHtmaW5hbmNlcy5oaWRlQ3VycmVudE1vbmV5Pyfil4nMuCc6J+KXiSd9PC9zcGFuPjwvYnV0dG9uPjwvZGl2PjxkaXYgY2xhc3M9Im1vbmV5LXZhbHVlIiBpZD0iY3VycmVudE1vbmV5VmFsdWUiPiR7YW1vdW50RGlzcGxheShmaW5hbmNlcy5jdXJyZW50TW9uZXkpfTwvZGl2PjxkaXYgY2xhc3M9Im1vbmV5LW5vdGUiPk3hu5dpIGtob+G6o24gdGh1IHPhur0gY+G7mW5nLCBt4buXaSBraG/huqNuIGNoaSBz4bq9IHRy4burIHPhu5EgZMawIG7DoHkuPC9kaXY+PGRpdiBjbGFzcz0ibW9uZXktYWN0aW9ucyI+PGJ1dHRvbiBjbGFzcz0ib3V0bGluZS1idG4iIG9uY2xpY2s9Im9wZW5Nb2RhbCgnYmFsYW5jZScpIj5D4bqtcCBuaOG6rXQgc+G7kSB0aeG7gW48L2J1dHRvbj48YnV0dG9uIGNsYXNzPSJvdXRsaW5lLWJ0biIgb25jbGljaz0ib3Blbk1vZGFsKCd0cmFuc2FjdGlvbicsJ2luY29tZScpIj7vvIsgVGjDqm0ga2hv4bqjbiB0aHU8L2J1dHRvbj48YnV0dG9uIGNsYXNzPSJvdXRsaW5lLWJ0biIgb25jbGljaz0ib3Blbk1vZGFsKCd0cmFuc2FjdGlvbicsJ2V4cGVuc2UnKSI+4oiSIFRow6ptIGtob+G6o24gY2hpPC9idXR0b24+PC9kaXY+PC9zZWN0aW9uPjxzZWN0aW9uIGNsYXNzPSJwYW5lbCBhc3NldHMtY2FyZCI+PGRpdiBjbGFzcz0iYXNzZXRzLWhlYWRpbmciPjxkaXY+PGRpdiBjbGFzcz0iYXNzZXRzLWhlYWRpbmctdGl0bGUiPlTDoGkgc+G6o24gY+G7p2EgdMO0aTwvZGl2PjxkaXYgY2xhc3M9ImFzc2V0cy1oZWFkaW5nLXN1YiI+VGhlbyBkw7VpIHJpw6puZyB0aeG7gW4gdGnhur90IGtp4buHbSB2w6AgdsOgbmc7IGtow7RuZyBj4buZbmcgdsOgbyBz4buRIGTGsCDEkWFuZyBjw7MuPC9kaXY+PC9kaXY+PC9kaXY+PGRpdiBjbGFzcz0idHJhY2tlZC1hc3NldHMiPjxidXR0b24gY2xhc3M9InRyYWNrZWQtYXNzZXQiIHR5cGU9ImJ1dHRvbiIgb25jbGljaz0ib3Blbk1vZGFsKCdzYXZpbmdzJykiPjxzcGFuIGNsYXNzPSJ0cmFja2VkLWljb24iPuKWozwvc3Bhbj48c3BhbiBjbGFzcz0idHJhY2tlZC1sYWJlbCI+VGnhu4FuIHRp4bq/dCBraeG7h20gY+G7p2EgdMO0aTwvc3Bhbj48c3Ryb25nIGNsYXNzPSJ0cmFja2VkLXZhbHVlIj4ke2Zvcm1hdFZORChmaW5hbmNlcy5zYXZpbmdzKX08L3N0cm9uZz48c3BhbiBjbGFzcz0idHJhY2tlZC1oaW50Ij5DaOG6oW0gxJHhu4MgY2jhu4luaCBz4butYeOAgOKAujwvc3Bhbj48L2J1dHRvbj48YnV0dG9uIGNsYXNzPSJ0cmFja2VkLWFzc2V0IiB0eXBlPSJidXR0b24iIG9uY2xpY2s9Im9wZW5Nb2RhbCgnZ29sZCcpIj48c3BhbiBjbGFzcz0idHJhY2tlZC1pY29uIj7il4g8L3NwYW4+PHNwYW4gY2xhc3M9InRyYWNrZWQtbGFiZWwiPlbDoG5nPC9zcGFuPjxzdHJvbmcgY2xhc3M9InRyYWNrZWQtdmFsdWUiPiR7Zm9ybWF0Vk5EKGZpbmFuY2VzLmdvbGQpfTwvc3Ryb25nPjxzcGFuIGNsYXNzPSJ0cmFja2VkLWhpbnQiPkNo4bqhbSDEkeG7gyBjaOG7iW5oIHPhu61h44CA4oC6PC9zcGFuPjwvYnV0dG9uPjwvZGl2Pjwvc2VjdGlvbj48c2VjdGlvbiBjbGFzcz0icGFuZWwgaGlzdG9yeS1wYW5lbCI+PGRpdiBjbGFzcz0iaGlzdG9yeS1oZWFkaW5nIj5HaWFvIGThu4tjaCBn4bqnbiDEkcOieTwvZGl2PiR7cmVjZW50VHJhbnNhY3Rpb25zSFRNTCg1KX08L3NlY3Rpb24+YDsKfQpmdW5jdGlvbiByZWNlbnRUcmFuc2FjdGlvbnNIVE1MKGxpbWl0KXsKICBjb25zdCBpdGVtcz1bLi4uZmluYW5jZXMudHJhbnNhY3Rpb25zXS5zb3J0KChhLGIpPT4oYi5jcmVhdGVkQXR8fDApLShhLmNyZWF0ZWRBdHx8MCkpLnNsaWNlKDAsbGltaXQpOwogIGlmKCFpdGVtcy5sZW5ndGgpIHJldHVybiAnPGRpdiBjbGFzcz0iaGlzdG9yeS1lbXB0eSI+Q2jGsGEgY8OzIGdpYW8gZOG7i2NoIG7DoG8uIEjDo3kgdGjDqm0ga2hv4bqjbiB0aHUgaG/hurdjIGNoaSDEkeG7gyBi4bqvdCDEkeG6p3UgdGhlbyBkw7VpLjwvZGl2Pic7CiAgcmV0dXJuIGl0ZW1zLm1hcCh0PT50cmFuc2FjdGlvblJvd0hUTUwodCkpLmpvaW4oJycpOwp9CmZ1bmN0aW9uIHRyYW5zYWN0aW9uUm93SFRNTCh0KXsKICBjb25zdCBpbmNvbWU9dC50eXBlPT09J2luY29tZSc7CiAgcmV0dXJuIGA8ZGl2IGNsYXNzPSJ0cmFuc2FjdGlvbi1yb3ciPjxzcGFuIGNsYXNzPSJ0eC1iYWRnZSAke2luY29tZT8naW5jb21lJzonZXhwZW5zZSd9Ij4ke2luY29tZT8n77yLJzon4oiSJ308L3NwYW4+PGRpdiBjbGFzcz0idHgtaW5mbyI+PGRpdiBjbGFzcz0idHgtbmFtZSI+JHtlc2NhcGVIVE1MKHQubmFtZSl9PC9kaXY+PGRpdiBjbGFzcz0idHgtZGF0ZSI+JHtmb3JtYXREYXRlKHQuZGF0ZSl9IMK3ICR7aW5jb21lPydLaG/huqNuIHRodSc6J0tob+G6o24gY2hpJ308L2Rpdj48L2Rpdj48ZGl2IGNsYXNzPSJ0eC1zaWRlIj48ZGl2IGNsYXNzPSJ0eC1hbW91bnQgJHtpbmNvbWU/J2luY29tZSc6J2V4cGVuc2UnfSI+JHtpbmNvbWU/JysnOifiiJInfSR7Zm9ybWF0Vk5EKHQuYW1vdW50KX08L2Rpdj48YnV0dG9uIGNsYXNzPSJ0eC1kZWxldGUiIG9uY2xpY2s9ImRlbGV0ZVRyYW5zYWN0aW9uKCcke3QuaWR9JykiPljDs2E8L2J1dHRvbj48L2Rpdj48L2Rpdj5gOwp9CmZ1bmN0aW9uIGVzY2FwZUhUTUwodmFsdWUpeyByZXR1cm4gU3RyaW5nKHZhbHVlPz8nJykucmVwbGFjZSgvWyY8PiInXS9nLCBjPT4oeycmJzonJmFtcDsnLCc8JzonJmx0OycsJz4nOicmZ3Q7JywnIic6JyZxdW90OycsIiciOicmIzM5Oyd9W2NdKSk7IH0KZnVuY3Rpb24gZm9ybWF0RGF0ZShrZXkpeyBjb25zdCBbeSxtLGRdPWtleS5zcGxpdCgnLScpOyByZXR1cm4gYCR7ZH0vJHttfS8ke3l9YDsgfQpmdW5jdGlvbiBleHBlbnNlSFRNTCgpewogIGNvbnN0IGZpcnN0ID0gbmV3IERhdGUoeWVhcixtb250aCwxKS5nZXREYXkoKSwgbW9uZGF5T2Zmc2V0PShmaXJzdCs2KSU3OwogIGNvbnN0IGNvdW50ID0gbmV3IERhdGUoeWVhcixtb250aCsxLDApLmdldERhdGUoKSwgcHJldkNvdW50ID0gbmV3IERhdGUoeWVhcixtb250aCwwKS5nZXREYXRlKCk7CiAgY29uc3QgY2VsbHM9W107CiAgZm9yKGxldCBpPTA7aTxtb25kYXlPZmZzZXQ7aSsrKSBjZWxscy5wdXNoKHtkOnByZXZDb3VudC1tb25kYXlPZmZzZXQrMStpLG9mZnNldDotMX0pOwogIGZvcihsZXQgZD0xO2Q8PWNvdW50O2QrKykgY2VsbHMucHVzaCh7ZCxvZmZzZXQ6MH0pOwogIGxldCBuZXh0PTE7IHdoaWxlKGNlbGxzLmxlbmd0aDw0MikgY2VsbHMucHVzaCh7ZDpuZXh0Kyssb2Zmc2V0OjF9KTsKICBjb25zdCBkYXlOYW1lcz1bJ1Ro4bupIDInLCdUaOG7qSAzJywnVGjhu6kgNCcsJ1Ro4bupIDUnLCdUaOG7qSA2JywnVGjhu6kgNycsJ0NOJ107CiAgY29uc3QgbW9udGhUeD1jdXJyZW50TW9udGhUcmFuc2FjdGlvbnMoKSwgdG90YWxzPW1vbnRoVG90YWxzKG1vbnRoVHgpOwogIGNvbnN0IHNlbGVjdGVkS2V5PXNlbGVjdGVkRGF5P2RhdGVLZXkoeWVhcixtb250aCxzZWxlY3RlZERheSk6bnVsbDsKICBjb25zdCBzZWxlY3RlZFR4PXNlbGVjdGVkS2V5P3RyYW5zYWN0aW9uc0ZvckRhdGUoc2VsZWN0ZWRLZXkpOltdOwogIGNvbnN0IGNlbGxzSFRNTD1jZWxscy5tYXAoYz0+ewogICAgY29uc3QgY3VycmVudD1jLm9mZnNldD09PTAsIGtleT1jdXJyZW50P2RhdGVLZXkoeWVhcixtb250aCxjLmQpOm51bGw7CiAgICBjb25zdCBkYXlUeD1jdXJyZW50P3RyYW5zYWN0aW9uc0ZvckRhdGUoa2V5KTpbXTsgY29uc3QgdD1tb250aFRvdGFscyhkYXlUeCk7CiAgICBjb25zdCBzZWxlY3RlZD1jdXJyZW50JiZjLmQ9PT1zZWxlY3RlZERheTsKICAgIHJldHVybiBgPGJ1dHRvbiBjbGFzcz0iZGF5ICR7Y3VycmVudD8nJzonbXV0ZWQnfSAke3NlbGVjdGVkPyd0b2RheSc6Jyd9IiAke2N1cnJlbnQ/YG9uY2xpY2s9InNlbGVjdERheSgke2MuZH0pImA6ICdkaXNhYmxlZCd9IGFyaWEtbGFiZWw9IiR7Y3VycmVudD9gJHtjLmR9ICR7bW9udGhOYW1lc1ttb250aF19ICR7eWVhcn1gOidOZ8OgeSBuZ2/DoGkgdGjDoW5nIGhp4buHbiB04bqhaSd9Ij48c3BhbiBjbGFzcz0ibnVtYmVyIj4ke2MuZH08L3NwYW4+JHt0LmluY29tZT9gPHNwYW4gY2xhc3M9ImFtb3VudCBpbmNvbWUiPiske2Zvcm1hdENvbXBhY3QodC5pbmNvbWUpfTwvc3Bhbj5gOicnfSR7dC5leHBlbnNlP2A8c3BhbiBjbGFzcz0iYW1vdW50IGV4cGVuc2UiPuKIkiR7Zm9ybWF0Q29tcGFjdCh0LmV4cGVuc2UpfTwvc3Bhbj5gOicnfTwvYnV0dG9uPmA7CiAgfSkuam9pbignJyk7CiAgY29uc3Qgc2VsZWN0ZWRUZXh0PXNlbGVjdGVkS2V5P2BHaWFvIGThu4tjaCBuZ8OgeSAke2Zvcm1hdERhdGUoc2VsZWN0ZWRLZXkpfWA6J0No4buNbiBuZ8OgeSDEkeG7gyB4ZW0gZ2lhbyBk4buLY2gnOwogIGNvbnN0IHNlbGVjdGVkRGV0YWlscz1zZWxlY3RlZEtleT8oc2VsZWN0ZWRUeC5sZW5ndGg/c2VsZWN0ZWRUeC5tYXAodHJhbnNhY3Rpb25Sb3dIVE1MKS5qb2luKCcnKTonPGRpdiBjbGFzcz0iaGlzdG9yeS1lbXB0eSI+Q2jGsGEgY8OzIGdpYW8gZOG7i2NoIHRyb25nIG5nw6B5IG7DoHkuPC9kaXY+Jyk6JzxkaXYgY2xhc3M9Imhpc3RvcnktZW1wdHkiPkNo4bqhbSB2w6BvIG3hu5l0IG5nw6B5IHRyw6puIGzhu4tjaCDEkeG7gyB4ZW0gY8OhYyBraG/huqNuIHRodSB2w6AgY2hpLjwvZGl2Pic7CiAgcmV0dXJuIGA8c2VjdGlvbiBjbGFzcz0icGFuZWwiPjxkaXYgY2xhc3M9InBhbmVsLWhlYWQiPjxkaXYgY2xhc3M9ImV5ZWJyb3ciPkzhu4tjaCB0aHUgY2hpPC9kaXY+PGRpdiBjbGFzcz0ibW9udGgtY29udHJvbCI+PGJ1dHRvbiBjbGFzcz0ibW9udGgtYXJyb3ciIHR5cGU9ImJ1dHRvbiIgb25jbGljaz0iY2hhbmdlTW9udGgoLTEpIiBhcmlhLWxhYmVsPSJUaMOhbmcgdHLGsOG7m2MiPuKAuTwvYnV0dG9uPjxsYWJlbCBjbGFzcz0ibW9udGgtYnRuIj48c3BhbiBjbGFzcz0iY2FsZW5kYXItaWNvbiI+4pamPC9zcGFuPjxzcGFuPiR7bW9udGhOYW1lc1ttb250aF19ICR7eWVhcn08L3NwYW4+PGlucHV0IGNsYXNzPSJtb250aC1waWNrZXItb3ZlcmxheSIgdHlwZT0ibW9udGgiIGFyaWEtbGFiZWw9IkNo4buNbiB0aMOhbmcgdsOgIG7Eg20iIHZhbHVlPSIke3llYXJ9LSR7U3RyaW5nKG1vbnRoKzEpLnBhZFN0YXJ0KDIsJzAnKX0iIG9uY2hhbmdlPSJwaWNrTW9udGgodGhpcy52YWx1ZSkiPjwvbGFiZWw+PGJ1dHRvbiBjbGFzcz0ibW9udGgtYXJyb3ciIHR5cGU9ImJ1dHRvbiIgb25jbGljaz0iY2hhbmdlTW9udGgoMSkiIGFyaWEtbGFiZWw9IlRow6FuZyBzYXUiPuKAujwvYnV0dG9uPjwvZGl2PjwvZGl2PjxkaXYgY2xhc3M9InRvdGFsIj4ke3NpZ25lZFRvdGFsKHRvdGFscy5leHBlbnNlLCfiiJInKX08L2Rpdj48ZGl2IGNsYXNzPSJ0cmVuZCI+PHNwYW4gY2xhc3M9InRyZW5kLWFycm93Ij7ihpc8L3NwYW4+IFThu5VuZyBjaGkgdHJvbmcgJHttb250aE5hbWVzW21vbnRoXS50b0xvd2VyQ2FzZSgpfSAke3llYXJ9PC9kaXY+PGRpdiBjbGFzcz0ibW9udGgtc3RhdHMiPjxkaXYgY2xhc3M9Im1vbnRoLXN0YXQgaW5jb21lIj48ZGl2IGNsYXNzPSJtb250aC1zdGF0LWxhYmVsIj5U4buVbmcgdGh1PC9kaXY+PGRpdiBjbGFzcz0ibW9udGgtc3RhdC12YWx1ZSI+JHtzaWduZWRUb3RhbCh0b3RhbHMuaW5jb21lLCcrJyl9PC9kaXY+PC9kaXY+PGRpdiBjbGFzcz0ibW9udGgtc3RhdCBleHBlbnNlIj48ZGl2IGNsYXNzPSJtb250aC1zdGF0LWxhYmVsIj5U4buVbmcgY2hpPC9kaXY+PGRpdiBjbGFzcz0ibW9udGgtc3RhdC12YWx1ZSI+JHtzaWduZWRUb3RhbCh0b3RhbHMuZXhwZW5zZSwn4oiSJyl9PC9kaXY+PC9kaXY+PC9kaXY+PGRpdiBjbGFzcz0icnVsZSI+PC9kaXY+PGRpdiBjbGFzcz0id2Vla2RheXMiPiR7ZGF5TmFtZXMubWFwKGQ9PmA8ZGl2PiR7ZH08L2Rpdj5gKS5qb2luKCcnKX08L2Rpdj48ZGl2IGNsYXNzPSJkYXlzIj4ke2NlbGxzSFRNTH08L2Rpdj48ZGl2IGNsYXNzPSJjYWxlbmRhci1mb290ZXIiPjxzcGFuIGlkPSJjYWxlbmRhckZvb3RlclRleHQiPiR7c2VsZWN0ZWRLZXk/YMSQYW5nIGNo4buNbiBuZ8OgeSAke3NlbGVjdGVkRGF5fWA6J0No4buNbiBt4buZdCBuZ8OgeSDEkeG7gyB4ZW0gdGh1IGNoaSd9PC9zcGFuPjxidXR0b24gY2xhc3M9Im91dGxpbmUtYnRuIiBvbmNsaWNrPSJvcGVuTW9kYWwoJ3RyYW5zYWN0aW9uJywnZXhwZW5zZScpIj7vvIsgR2lhbyBk4buLY2g8L2J1dHRvbj48L2Rpdj48L3NlY3Rpb24+PHNlY3Rpb24gY2xhc3M9InBhbmVsIGhpc3RvcnktcGFuZWwiPjxkaXYgY2xhc3M9Imhpc3RvcnktaGVhZGluZyI+JHtzZWxlY3RlZFRleHR9PC9kaXY+JHtzZWxlY3RlZERldGFpbHN9PC9zZWN0aW9uPjxzZWN0aW9uIGNsYXNzPSJwYW5lbCBoaXN0b3J5LXBhbmVsIj48ZGl2IGNsYXNzPSJoaXN0b3J5LWhlYWRpbmciPkdpYW8gZOG7i2NoIHRyb25nICR7bW9udGhOYW1lc1ttb250aF0udG9Mb3dlckNhc2UoKX0gJHt5ZWFyfTwvZGl2PiR7bW9udGhUeC5sZW5ndGg/Wy4uLm1vbnRoVHhdLnNvcnQoKGEsYik9PmIuZGF0ZS5sb2NhbGVDb21wYXJlKGEuZGF0ZSl8fChiLmNyZWF0ZWRBdHx8MCktKGEuY3JlYXRlZEF0fHwwKSkubWFwKHRyYW5zYWN0aW9uUm93SFRNTCkuam9pbignJyk6JzxkaXYgY2xhc3M9Imhpc3RvcnktZW1wdHkiPlRow6FuZyBuw6B5IGNoxrBhIGPDsyBnaWFvIGThu4tjaC4gTmjhuqVuIOKAnO+8iyBHaWFvIGThu4tjaOKAnSDEkeG7gyB0aMOqbSBraG/huqNuIHRodSBob+G6t2MgY2hpLjwvZGl2Pid9PC9zZWN0aW9uPmA7Cn0KZnVuY3Rpb24gY2hhbmdlTW9udGgoZGVsdGEpewogIGNvbnN0IGRhdGU9bmV3IERhdGUoeWVhcixtb250aCtkZWx0YSwxKTsgeWVhcj1kYXRlLmdldEZ1bGxZZWFyKCk7IG1vbnRoPWRhdGUuZ2V0TW9udGgoKTsgc2VsZWN0ZWREYXk9bnVsbDsgc2V0VGFiKCdleHBlbnNlJyk7Cn0KZnVuY3Rpb24gcGlja01vbnRoKHZhbHVlKXsgaWYoIXZhbHVlKXJldHVybjsgY29uc3QgW3ksbV09dmFsdWUuc3BsaXQoJy0nKS5tYXAoTnVtYmVyKTsgaWYoIXl8fCFtKXJldHVybjsgeWVhcj15OyBtb250aD1tLTE7IHNlbGVjdGVkRGF5PW51bGw7IHNldFRhYignZXhwZW5zZScpOyB9CmZ1bmN0aW9uIHNlbGVjdERheShkYXkpeyBzZWxlY3RlZERheT1kYXk7IHNldFRhYignZXhwZW5zZScpOyB9CmZ1bmN0aW9uIG9wZW5Nb2RhbChraW5kLCBpbml0aWFsVHlwZT0nZXhwZW5zZScpewogIG1vZGFsS2luZD1raW5kOwogIGNvbnN0IHRpdGxlcz17YmFsYW5jZTonQ+G6rXAgbmjhuq10IHPhu5EgdGnhu4FuIGhp4buHbiBjw7MnLHNhdmluZ3M6J0Phuq1wIG5o4bqtdCB0aeG7gW4gdGnhur90IGtp4buHbScsZ29sZDonQ+G6rXAgbmjhuq10IGdpw6EgdHLhu4sgdsOgbmcnLHRyYW5zYWN0aW9uOmluaXRpYWxUeXBlPT09J2luY29tZSc/J1Row6ptIGtob+G6o24gdGh1JzonVGjDqm0ga2hv4bqjbiBjaGknfTsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbW9kYWxUaXRsZScpLnRleHRDb250ZW50PXRpdGxlc1traW5kXXx8J0Phuq1wIG5o4bqtdCB0aMO0bmcgdGluJzsKICBjb25zdCBmb3JtPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0cmFuc2FjdGlvbkZvcm0nKTsKICBpZihraW5kPT09J2JhbGFuY2UnfHxraW5kPT09J3NhdmluZ3MnfHxraW5kPT09J2dvbGQnKXsKICAgIGNvbnN0IGtleT1raW5kPT09J2JhbGFuY2UnPydjdXJyZW50TW9uZXknOmtpbmQ7CiAgICBmb3JtLmlubmVySFRNTD1gPGxhYmVsIGNsYXNzPSJmaWVsZCI+JHtraW5kPT09J2JhbGFuY2UnPydT4buRIHRp4buBbiBoaeG7h24gY8OzIChWTsSQKSc6a2luZD09PSdzYXZpbmdzJz8nVGnhu4FuIHRp4bq/dCBraeG7h20gKFZOxJApJzonR2nDoSB0cuG7iyB2w6BuZyAoVk7EkCknfTxpbnB1dCBpZD0idHhBbW91bnQiIHR5cGU9Im51bWJlciIgbWluPSIwIiBzdGVwPSIxIiB2YWx1ZT0iJHtOdW1iZXIoZmluYW5jZXNba2V5XSl8fDB9IiByZXF1aXJlZCAvPjwvbGFiZWw+PGJ1dHRvbiBjbGFzcz0ic3VibWl0LWJ0biIgdHlwZT0ic3VibWl0Ij5MxrB1IHRoYXkgxJHhu5VpPC9idXR0b24+YDsKICB9ZWxzZXsKICAgIGNvbnN0IHByZXNldERhdGU9c2VsZWN0ZWREYXk/ZGF0ZUtleSh5ZWFyLG1vbnRoLHNlbGVjdGVkRGF5KTpkYXRlS2V5KHllYXIsbW9udGgsMSk7CiAgICBmb3JtLmlubmVySFRNTD1gPGxhYmVsIGNsYXNzPSJmaWVsZCI+VMOqbiBnaWFvIGThu4tjaDxpbnB1dCBpZD0idHhOYW1lIiBtYXhsZW5ndGg9IjEwMCIgcGxhY2Vob2xkZXI9IlbDrSBk4bulOiBMxrDGoW5nLCDEg24gdHLGsGEsIHRp4buBbiBsw6BtIHRow6ptIiByZXF1aXJlZCAvPjwvbGFiZWw+PGxhYmVsIGNsYXNzPSJmaWVsZCI+U+G7kSB0aeG7gW4gKFZOxJApPGlucHV0IGlkPSJ0eEFtb3VudCIgdHlwZT0ibnVtYmVyIiBtaW49IjEiIHN0ZXA9IjEiIHBsYWNlaG9sZGVyPSIxMDAwMDAiIHJlcXVpcmVkIC8+PC9sYWJlbD48bGFiZWwgY2xhc3M9ImZpZWxkIj5OZ8OgeSBnaWFvIGThu4tjaDxpbnB1dCBpZD0idHhEYXRlIiB0eXBlPSJkYXRlIiB2YWx1ZT0iJHtwcmVzZXREYXRlfSIgcmVxdWlyZWQgLz48L2xhYmVsPjxsYWJlbCBjbGFzcz0iZmllbGQiPkxv4bqhaSBnaWFvIGThu4tjaDxzZWxlY3QgaWQ9InR4VHlwZSI+PG9wdGlvbiB2YWx1ZT0iZXhwZW5zZSIgJHtpbml0aWFsVHlwZT09PSdleHBlbnNlJz8nc2VsZWN0ZWQnOicnfT5DaGkgdGnDqnUg4oCUIHRy4burIHPhu5EgdGnhu4FuPC9vcHRpb24+PG9wdGlvbiB2YWx1ZT0iaW5jb21lIiAke2luaXRpYWxUeXBlPT09J2luY29tZSc/J3NlbGVjdGVkJzonJ30+VGh1IG5o4bqtcCDigJQgY+G7mW5nIHPhu5EgdGnhu4FuPC9vcHRpb24+PC9zZWxlY3Q+PC9sYWJlbD48YnV0dG9uIGNsYXNzPSJzdWJtaXQtYnRuIiB0eXBlPSJzdWJtaXQiPkzGsHUgZ2lhbyBk4buLY2ggdsOgIGPhuq1wIG5o4bqtdCBz4buRIGTGsDwvYnV0dG9uPmA7CiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndHhUeXBlJykuYWRkRXZlbnRMaXN0ZW5lcignY2hhbmdlJyxlPT57ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ21vZGFsVGl0bGUnKS50ZXh0Q29udGVudD1lLnRhcmdldC52YWx1ZT09PSdpbmNvbWUnPydUaMOqbSBraG/huqNuIHRodSc6J1Row6ptIGtob+G6o24gY2hpJzt9KTsKICB9CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ21vZGFsQmFja2Ryb3AnKS5jbGFzc0xpc3QuYWRkKCdzaG93Jyk7IHNldFRpbWVvdXQoKCk9PmZvcm0ucXVlcnlTZWxlY3RvcignaW5wdXQnKT8uZm9jdXMoKSw2MCk7Cn0KZnVuY3Rpb24gY2xvc2VNb2RhbCgpeyBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbW9kYWxCYWNrZHJvcCcpLmNsYXNzTGlzdC5yZW1vdmUoJ3Nob3cnKTsgfQpmdW5jdGlvbiBkZWxldGVUcmFuc2FjdGlvbihpZCl7CiAgY29uc3QgdHg9ZmluYW5jZXMudHJhbnNhY3Rpb25zLmZpbmQodD0+dC5pZD09PWlkKTsgaWYoIXR4KXJldHVybjsKICBpZighY29uZmlybShgWMOzYSBnaWFvIGThu4tjaCDigJwke3R4Lm5hbWV94oCdICgke3NpZ25lZEFtb3VudCh0eCl9KT8gU+G7kSBkxrAgc+G6vSDEkcaw4bujYyBob8OgbiBs4bqhaSB0xrDGoW5nIOG7qW5nLmApKXJldHVybjsKICBpZih0eC5iYWxhbmNlQXBwbGllZCE9PWZhbHNlKXsgZmluYW5jZXMuY3VycmVudE1vbmV5ICs9IHR4LnR5cGU9PT0naW5jb21lJyA/IC1OdW1iZXIodHguYW1vdW50KSA6IE51bWJlcih0eC5hbW91bnQpOyB9CiAgZmluYW5jZXMudHJhbnNhY3Rpb25zPWZpbmFuY2VzLnRyYW5zYWN0aW9ucy5maWx0ZXIodD0+dC5pZCE9PWlkKTsgcGVyc2lzdEZpbmFuY2VzKCk7IHNldFRhYihhY3RpdmVUYWIpOwp9CmRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0cmFuc2FjdGlvbkZvcm0nKS5hZGRFdmVudExpc3RlbmVyKCdzdWJtaXQnLGU9PnsKICBlLnByZXZlbnREZWZhdWx0KCk7CiAgY29uc3QgYW1vdW50PU51bWJlcihkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndHhBbW91bnQnKT8udmFsdWUpOwogIGlmKCFOdW1iZXIuaXNGaW5pdGUoYW1vdW50KXx8YW1vdW50PDApcmV0dXJuOwogIGlmKFsnYmFsYW5jZScsJ3NhdmluZ3MnLCdnb2xkJ10uaW5jbHVkZXMobW9kYWxLaW5kKSl7CiAgICBjb25zdCBrZXk9bW9kYWxLaW5kPT09J2JhbGFuY2UnPydjdXJyZW50TW9uZXknOm1vZGFsS2luZDsgZmluYW5jZXNba2V5XT1hbW91bnQ7IHBlcnNpc3RGaW5hbmNlcygpOyBjbG9zZU1vZGFsKCk7IHNldFRhYignb3ZlcnZpZXcnKTsgcmV0dXJuOwogIH0KICBjb25zdCBuYW1lPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0eE5hbWUnKT8udmFsdWUudHJpbSgpOwogIGNvbnN0IGRhdGU9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3R4RGF0ZScpPy52YWx1ZTsKICBjb25zdCB0eXBlPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0eFR5cGUnKT8udmFsdWU9PT0naW5jb21lJz8naW5jb21lJzonZXhwZW5zZSc7CiAgaWYoIW5hbWV8fCFkYXRlfHxhbW91bnQ8PTApcmV0dXJuOwogIGNvbnN0IHR4PXtpZDood2luZG93LmNyeXB0byYmY3J5cHRvLnJhbmRvbVVVSUQpP2NyeXB0by5yYW5kb21VVUlEKCk6YCR7RGF0ZS5ub3coKX0tJHtNYXRoLnJhbmRvbSgpLnRvU3RyaW5nKDM2KS5zbGljZSgyLDkpfWAsbmFtZSxhbW91bnQsZGF0ZSx0eXBlLGNyZWF0ZWRBdDpEYXRlLm5vdygpLGJhbGFuY2VBcHBsaWVkOnRydWV9OwogIGZpbmFuY2VzLnRyYW5zYWN0aW9ucy5wdXNoKHR4KTsKICBmaW5hbmNlcy5jdXJyZW50TW9uZXkgKz0gdHlwZT09PSdpbmNvbWUnP2Ftb3VudDotYW1vdW50OwogIHBlcnNpc3RGaW5hbmNlcygpOwogIGNvbnN0IFt5LG0sZF09ZGF0ZS5zcGxpdCgnLScpLm1hcChOdW1iZXIpOyB5ZWFyPXk7IG1vbnRoPW0tMTsgc2VsZWN0ZWREYXk9ZDsKICBjbG9zZU1vZGFsKCk7IHNldFRhYihhY3RpdmVUYWI9PT0nb3ZlcnZpZXcnPydvdmVydmlldyc6J2V4cGVuc2UnKTsKfSk7CgpsZXQgbGVnYWN5TWlncmF0aW9uQXR0ZW1wdGVkID0gZmFsc2U7CmZ1bmN0aW9uIGltcG9ydExlZ2FjeUZpbmFuY2UocGF5bG9hZCl7CiAgaWYgKGxlZ2FjeU1pZ3JhdGlvbkF0dGVtcHRlZCkgcmV0dXJuIGZhbHNlOwogIGxlZ2FjeU1pZ3JhdGlvbkF0dGVtcHRlZCA9IHRydWU7CiAgY29uc3QgbW9udGhzID0gcGF5bG9hZCAmJiBwYXlsb2FkLmxlZ2FjeUZpbmFuY2VNb250aHMgJiYgdHlwZW9mIHBheWxvYWQubGVnYWN5RmluYW5jZU1vbnRocyA9PT0gJ29iamVjdCcgPyBwYXlsb2FkLmxlZ2FjeUZpbmFuY2VNb250aHMgOiB7fTsKICBjb25zdCBpbXBvcnRlZCA9IFtdOwogIGNvbnN0IGRhdGVGcm9tID0gKGl0ZW0sIG1vbnRoS2V5KSA9PiB7CiAgICBjb25zdCBzb3VyY2UgPSBpdGVtICYmIChpdGVtLmNyZWF0ZWRBdCB8fCBpdGVtLmRhdGVUaW1lKTsKICAgIGlmIChzb3VyY2UpIHsKICAgICAgY29uc3QgcGFyc2VkID0gbmV3IERhdGUoc291cmNlKTsKICAgICAgaWYgKCFOdW1iZXIuaXNOYU4ocGFyc2VkLmdldFRpbWUoKSkpIHJldHVybiBgJHtwYXJzZWQuZ2V0RnVsbFllYXIoKX0tJHtTdHJpbmcocGFyc2VkLmdldE1vbnRoKCkrMSkucGFkU3RhcnQoMiwnMCcpfS0ke1N0cmluZyhwYXJzZWQuZ2V0RGF0ZSgpKS5wYWRTdGFydCgyLCcwJyl9YDsKICAgIH0KICAgIGNvbnN0IG1hdGNoID0gU3RyaW5nKGl0ZW0gJiYgaXRlbS50aW1lVGV4dCB8fCAnJykubWF0Y2goLyhcZHsyfSlcLyhcZHsyfSlcLyhcZHs0fSkvKTsKICAgIGlmIChtYXRjaCkgcmV0dXJuIGAke21hdGNoWzNdfS0ke21hdGNoWzJdfS0ke21hdGNoWzFdfWA7CiAgICByZXR1cm4gL15cZHs0fS1cZHsyfSQvLnRlc3QobW9udGhLZXkpID8gYCR7bW9udGhLZXl9LTAxYCA6IGRhdGVLZXkobmV3IERhdGUoKS5nZXRGdWxsWWVhcigpLCBuZXcgRGF0ZSgpLmdldE1vbnRoKCksIG5ldyBEYXRlKCkuZ2V0RGF0ZSgpKTsKICB9OwogIE9iamVjdC5lbnRyaWVzKG1vbnRocykuZm9yRWFjaCgoW21vbnRoS2V5LCBtb250aERhdGFdKSA9PiB7CiAgICBjb25zdCBpdGVtcyA9IG1vbnRoRGF0YSAmJiBBcnJheS5pc0FycmF5KG1vbnRoRGF0YS5pdGVtcykgPyBtb250aERhdGEuaXRlbXMgOiBbXTsKICAgIGl0ZW1zLmZvckVhY2goKGl0ZW0sIGluZGV4KSA9PiB7CiAgICAgIGNvbnN0IGFtb3VudCA9IE51bWJlcihpdGVtICYmIGl0ZW0uYW1vdW50KTsKICAgICAgaWYgKCFOdW1iZXIuaXNGaW5pdGUoYW1vdW50KSB8fCBhbW91bnQgPD0gMCkgcmV0dXJuOwogICAgICBjb25zdCBkYXRlID0gZGF0ZUZyb20oaXRlbSwgbW9udGhLZXkpOwogICAgICBjb25zdCBzb3VyY2VUaW1lID0gaXRlbSAmJiAoaXRlbS5jcmVhdGVkQXQgfHwgaXRlbS5kYXRlVGltZSk7CiAgICAgIGNvbnN0IHBhcnNlZFRpbWUgPSBzb3VyY2VUaW1lID8gRGF0ZS5wYXJzZShzb3VyY2VUaW1lKSA6IERhdGUucGFyc2UoYCR7ZGF0ZX1UMTI6MDA6MDBgKTsKICAgICAgaW1wb3J0ZWQucHVzaCh7CiAgICAgICAgaWQ6YGxlZ2FjeS0ke21vbnRoS2V5fS0ke1N0cmluZyhpdGVtICYmIGl0ZW0uaWQgIT0gbnVsbCA/IGl0ZW0uaWQgOiBpbmRleCl9YCwKICAgICAgICBuYW1lOlN0cmluZyhpdGVtICYmIChpdGVtLmRlc2MgfHwgaXRlbS5uYW1lKSB8fCAnS2hv4bqjbiB0aHUvY2hpJykuc2xpY2UoMCwxMDApLAogICAgICAgIGFtb3VudCwKICAgICAgICBkYXRlLAogICAgICAgIHR5cGU6aXRlbSAmJiBpdGVtLnR5cGUgPT09ICdpbmNvbWUnID8gJ2luY29tZScgOiAnZXhwZW5zZScsCiAgICAgICAgY3JlYXRlZEF0Ok51bWJlci5pc0Zpbml0ZShwYXJzZWRUaW1lKSA/IHBhcnNlZFRpbWUgOiBEYXRlLm5vdygpLAogICAgICAgIGJhbGFuY2VBcHBsaWVkOmZhbHNlLAogICAgICAgIGxlZ2FjeUltcG9ydGVkOnRydWUKICAgICAgfSk7CiAgICB9KTsKICB9KTsKICBpZiAoIWltcG9ydGVkLmxlbmd0aCAmJiBBcnJheS5pc0FycmF5KHBheWxvYWQgJiYgcGF5bG9hZC5sZWdhY3lGaW5hbmNlKSkgewogICAgcGF5bG9hZC5sZWdhY3lGaW5hbmNlLmZvckVhY2goKGl0ZW0sIGluZGV4KSA9PiB7CiAgICAgIGNvbnN0IGFtb3VudCA9IE51bWJlcihpdGVtICYmIGl0ZW0uYW1vdW50KTsKICAgICAgaWYgKCFOdW1iZXIuaXNGaW5pdGUoYW1vdW50KSB8fCBhbW91bnQgPD0gMCkgcmV0dXJuOwogICAgICBjb25zdCBkYXRlID0gZGF0ZUZyb20oaXRlbSwgJycpOwogICAgICBjb25zdCBzb3VyY2VUaW1lID0gaXRlbSAmJiAoaXRlbS5jcmVhdGVkQXQgfHwgaXRlbS5kYXRlVGltZSk7CiAgICAgIGNvbnN0IHBhcnNlZFRpbWUgPSBzb3VyY2VUaW1lID8gRGF0ZS5wYXJzZShzb3VyY2VUaW1lKSA6IERhdGUucGFyc2UoYCR7ZGF0ZX1UMTI6MDA6MDBgKTsKICAgICAgaW1wb3J0ZWQucHVzaCh7aWQ6YGxlZ2FjeS0ke1N0cmluZyhpdGVtICYmIGl0ZW0uaWQgIT0gbnVsbCA/IGl0ZW0uaWQgOiBpbmRleCl9YCwgbmFtZTpTdHJpbmcoaXRlbSAmJiAoaXRlbS5kZXNjIHx8IGl0ZW0ubmFtZSkgfHwgJ0tob+G6o24gdGh1L2NoaScpLnNsaWNlKDAsMTAwKSwgYW1vdW50LCBkYXRlLCB0eXBlOml0ZW0gJiYgaXRlbS50eXBlID09PSAnaW5jb21lJyA/ICdpbmNvbWUnIDogJ2V4cGVuc2UnLCBjcmVhdGVkQXQ6TnVtYmVyLmlzRmluaXRlKHBhcnNlZFRpbWUpP3BhcnNlZFRpbWU6RGF0ZS5ub3coKSwgYmFsYW5jZUFwcGxpZWQ6ZmFsc2UsIGxlZ2FjeUltcG9ydGVkOnRydWV9KTsKICAgIH0pOwogIH0KICBjb25zdCBleGlzdGluZyA9IG5ldyBTZXQoZmluYW5jZXMudHJhbnNhY3Rpb25zLm1hcCh0ID0+IFN0cmluZyh0LmlkKSkpOwogIGNvbnN0IGFkZGl0aW9ucyA9IGltcG9ydGVkLmZpbHRlcih0ID0+ICFleGlzdGluZy5oYXMoU3RyaW5nKHQuaWQpKSk7CiAgaWYgKGFkZGl0aW9ucy5sZW5ndGgpIHsKICAgIGZpbmFuY2VzLnRyYW5zYWN0aW9ucy5wdXNoKC4uLmFkZGl0aW9ucyk7CiAgICBwZXJzaXN0RmluYW5jZXMoKTsKICAgIHJldHVybiB0cnVlOwogIH0KICByZXR1cm4gZmFsc2U7Cn0KLy8gQnJpZGdlOiBjb25uZWN0IHRoaXMgYWN0dWFsIEJlZVJpY2ggYXBwIHRvIEtoYWlMaWZlJ3MgbWFpbi1wYWdlIHF1aWNrIGZvcm0uCndpbmRvdy5hZGRFdmVudExpc3RlbmVyKCdtZXNzYWdlJywgZnVuY3Rpb24oZXZlbnQpewogIGNvbnN0IG1zZyA9IGV2ZW50ICYmIGV2ZW50LmRhdGE7CiAgaWYgKCFtc2cgfHwgdHlwZW9mIG1zZyAhPT0gJ29iamVjdCcpIHJldHVybjsKICBpZiAobXNnLnR5cGUgPT09ICdLSEFJX0dFVF9GSU5BTkNFUycpIHsgY29uc3QgaW1wb3J0ZWQgPSBpbXBvcnRMZWdhY3lGaW5hbmNlKG1zZy5wYXlsb2FkIHx8IHt9KTsgaWYgKCFpbXBvcnRlZCkgc2VuZEZpbmFuY2VTbmFwc2hvdCgpOyByZXR1cm47IH0KICBpZiAobXNnLnR5cGUgPT09ICdLSEFJX1RPR0dMRV9CQUxBTkNFX1ZJU0lCSUxJVFknKSB7IHRvZ2dsZUJhbGFuY2VWaXNpYmlsaXR5KCk7IHJldHVybjsgfQogIGlmIChtc2cudHlwZSA9PT0gJ0tIQUlfQUREX1RSQU5TQUNUSU9OJykgewogICAgY29uc3QgcCA9IG1zZy5wYXlsb2FkIHx8IHt9OwogICAgY29uc3QgbmFtZSA9IFN0cmluZyhwLm5hbWUgfHwgJycpLnRyaW0oKTsKICAgIGNvbnN0IGFtb3VudCA9IE51bWJlcihwLmFtb3VudCk7CiAgICBjb25zdCBkYXRlID0gU3RyaW5nKHAuZGF0ZSB8fCAnJyk7CiAgICBjb25zdCB0eXBlID0gcC50eXBlID09PSAnaW5jb21lJyA/ICdpbmNvbWUnIDogJ2V4cGVuc2UnOwogICAgaWYgKCFuYW1lIHx8ICFOdW1iZXIuaXNGaW5pdGUoYW1vdW50KSB8fCBhbW91bnQgPD0gMCB8fCAhL15cZHs0fS1cZHsyfS1cZHsyfSQvLnRlc3QoZGF0ZSkpIHsKICAgICAgd2luZG93LnBhcmVudC5wb3N0TWVzc2FnZSh7dHlwZTonS0hBSV9GSU5BTkNFX1RYX0VSUk9SJywgbWVzc2FnZTonVGjDtG5nIHRpbiBnaWFvIGThu4tjaCBjaMawYSBo4bujcCBs4buHLid9LCAnKicpOwogICAgICByZXR1cm47CiAgICB9CiAgICBjb25zdCB0eCA9IHsKICAgICAgaWQ6KHdpbmRvdy5jcnlwdG8gJiYgY3J5cHRvLnJhbmRvbVVVSUQpID8gY3J5cHRvLnJhbmRvbVVVSUQoKSA6IGAke0RhdGUubm93KCl9LSR7TWF0aC5yYW5kb20oKS50b1N0cmluZygzNikuc2xpY2UoMiw5KX1gLAogICAgICBuYW1lOm5hbWUuc2xpY2UoMCwxMDApLCBhbW91bnQsIGRhdGUsIHR5cGUsIGNyZWF0ZWRBdDpEYXRlLm5vdygpLCBiYWxhbmNlQXBwbGllZDp0cnVlCiAgICB9OwogICAgZmluYW5jZXMudHJhbnNhY3Rpb25zLnB1c2godHgpOwogICAgZmluYW5jZXMuY3VycmVudE1vbmV5ICs9IHR5cGUgPT09ICdpbmNvbWUnID8gYW1vdW50IDogLWFtb3VudDsKICAgIHBlcnNpc3RGaW5hbmNlcygpOwogICAgc2V0VGFiKGFjdGl2ZVRhYik7CiAgICB3aW5kb3cucGFyZW50LnBvc3RNZXNzYWdlKHt0eXBlOidLSEFJX0ZJTkFOQ0VfVFhfQURERUQnLCB0cmFuc2FjdGlvbklkOnR4LmlkfSwgJyonKTsKICB9Cn0pOwoKc2V0VGFiKCdvdmVydmlldycpOwo8L3NjcmlwdD4KPC9ib2R5Pgo8L2h0bWw+Cg==';
-    const bytes=Uint8Array.from(atob(encoded), ch=>ch.charCodeAt(0));
-    financeFrame.srcdoc=new TextDecoder('utf-8').decode(bytes);
-  }
-  const quickForm=document.getElementById('khaiQuickFinForm');
-  if(quickForm) quickForm.addEventListener('submit',function(event){
-    event.preventDefault();
-    const name=document.getElementById('khaiQuickFinDesc').value.trim();
-    const amount=Number(document.getElementById('khaiQuickFinAmount').value);
-    if(!name || !Number.isFinite(amount) || amount<=0){ if(typeof toast==='function') toast('Nhập tên giao dịch và số tiền hợp lệ.'); return; }
-    postToBeeRich({type:'KHAI_ADD_TRANSACTION',payload:{name,amount,date:todayKey(),type:quickFinanceType}});
-    document.getElementById('khaiQuickFinDesc').value='';
-    document.getElementById('khaiQuickFinAmount').value='';
-  });
-  setKhaiQuickFinanceType('expense');
-  renderQuickFinance();
-})();
-</script>
+
 
 </body>
 </html>
