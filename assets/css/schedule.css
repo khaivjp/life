@@ -1,0 +1,234 @@
+.schedule-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.schedule-toolbar strong {
+  font-size: 14px;
+}
+.schedule-filter {
+  margin: 22px 0;
+  gap: 16px;
+  align-items: end;
+}
+.schedule-filter label:first-child {
+  width: 170px;
+}
+.schedule-filter label:last-child {
+  width: 240px;
+}
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 9px;
+}
+.calendar-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  padding: 12px 4px;
+  background: var(--surface);
+  border-radius: 13px;
+  min-height: 106px;
+}
+.calendar-day small {
+  font-size: 10px;
+  font-weight: 500;
+}
+.calendar-day strong {
+  font-size: 22px;
+  font-weight: 550;
+}
+.calendar-day.selected {
+  background: var(--primary);
+  color: var(--surface);
+  border-color: var(--primary);
+}
+.calendar-day.selected small,
+.calendar-day.selected .day-indicator {
+  color: var(--surface);
+}
+.calendar-day.today:not(.selected) {
+  border-color: var(--primary);
+  background: var(--mint);
+}
+.day-indicator {
+  font-size: 9px;
+  color: var(--muted);
+}
+.day-indicator.has-class {
+  color: var(--primary);
+  font-weight: 650;
+}
+.calendar-day.other-month {
+  opacity: 0.35;
+}
+.day-heading {
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+.day-heading h3 {
+  margin: 0;
+  text-transform: capitalize;
+}
+.month-grid {
+  gap: 7px;
+}
+.month-grid .calendar-day {
+  min-height: 80px;
+  padding: 6px;
+  gap: 3px;
+}
+.month-grid .calendar-day strong {
+  font-size: 16px;
+}
+.month-grid .calendar-day small {
+  font-size: 9px;
+}
+.class-card {
+  display: flex;
+  gap: 15px;
+  padding: 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-left: 3px solid #8caf7b;
+  border-radius: 12px;
+  align-items: center;
+}
+.class-icon {
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  width: 42px;
+  height: 45px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.class-body {
+  flex: 1;
+  min-width: 0;
+}
+.class-body h3 {
+  margin: 5px 0;
+  font-size: 15px;
+}
+.class-body p {
+  font-size: 11px;
+  margin: 0;
+}
+.subject-code {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.6px;
+}
+.compact {
+  padding: 14px;
+  border: 0;
+  border-left: 3px solid #89ac7b;
+}
+.compact .class-body h3 {
+  font-size: 13px;
+}
+.compact .class-icon {
+  display: none;
+}
+.import-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  padding: 18px 4px;
+  flex-wrap: wrap;
+}
+.table-scroll {
+  overflow: auto;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+}
+th,
+td {
+  text-align: left;
+  padding: 14px 10px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+th {
+  color: var(--muted);
+  font-size: 10px;
+  background: var(--surface-2);
+}
+@media (max-width: 650px) {
+  .calendar-days {
+    gap: 4px;
+  }
+  .calendar-day {
+    min-height: 94px;
+    border-radius: 10px;
+    padding: 10px 2px;
+  }
+  .calendar-day strong {
+    font-size: 20px;
+  }
+  .calendar-day small {
+    font-size: 9px;
+  }
+  .schedule-filter {
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+  .schedule-filter label:first-child {
+    width: 45%;
+  }
+  .schedule-filter label:last-child {
+    width: 55%;
+  }
+  .schedule-filter input,
+  .schedule-filter select {
+    padding: 10px 6px;
+    font-size: 13px;
+  }
+  .class-card {
+    padding: 12px;
+    gap: 10px;
+  }
+  .class-icon {
+    display: none;
+  }
+  .class-body h3 {
+    font-size: 14px;
+  }
+  .class-body p {
+    font-size: 11px;
+  }
+  .schedule-toolbar > .row {
+    gap: 6px;
+  }
+  .schedule-toolbar strong {
+    font-size: 12px;
+  }
+  .schedule-toolbar .icon-button {
+    width: 33px;
+    height: 33px;
+  }
+  .month-grid .calendar-day {
+    min-height: 75px;
+  }
+  .schedule-toolbar .segmented {
+    width: 100%;
+  }
+  .schedule-toolbar .segmented button {
+    flex: 1;
+  }
+  .import-bar {
+    gap: 10px;
+  }
+}

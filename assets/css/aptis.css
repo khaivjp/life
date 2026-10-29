@@ -1,0 +1,332 @@
+.aptis-resources {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.aptis-resources > a {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 17px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.aptis-resources strong {
+  font-size: 12px;
+  display: block;
+}
+.aptis-resources small {
+  font-size: 9px;
+  display: block;
+  margin-top: 3px;
+}
+.aptis-resources > a > .icon {
+  margin-left: auto;
+  width: 14px;
+  color: var(--muted);
+}
+.aptis-overview {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 26px;
+  padding: 21px 24px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.aptis-overview strong {
+  font-size: 26px;
+  display: block;
+  line-height: 1.2;
+}
+.aptis-overview small {
+  font-size: 10px;
+}
+.aptis-overview > .progress-track {
+  flex: 1;
+}
+.aptis-overview > label {
+  font-size: 9px;
+  width: 145px;
+}
+.aptis-overview input {
+  font-size: 11px;
+  padding: 8px;
+}
+.aptis-layout {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 23px;
+  align-items: start;
+}
+.aptis-weeks {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px 10px;
+  position: sticky;
+  top: 20px;
+  max-height: 80vh;
+  overflow: auto;
+}
+.aptis-weeks > .eyebrow {
+  font-size: 8px;
+  padding-left: 12px;
+  margin: 2px 0 15px;
+}
+.week-list {
+  display: grid;
+  gap: 4px;
+}
+.week-list > button {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 10px;
+  text-align: left;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+}
+.week-list > button.active {
+  background: var(--mint);
+  color: var(--primary);
+}
+.week-list > button > span {
+  font-size: 10px;
+  color: var(--muted);
+  padding-top: 2px;
+}
+.week-list strong {
+  font-size: 11px;
+  line-height: 1.6;
+  display: block;
+  font-weight: 550;
+}
+.week-list small {
+  font-size: 8px;
+  display: block;
+  margin-top: 4px;
+}
+.aptis-content {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.aptis-week-hero {
+  padding: 27px 30px;
+  border-radius: 18px;
+  background: var(--mint);
+}
+.aptis-week-hero h2 {
+  font-size: 25px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+.aptis-week-hero p {
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+.aptis-week-hero .tag {
+  background: var(--surface);
+}
+.aptis-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.aptis-days button {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  padding: 10px 3px;
+}
+.aptis-days button.active {
+  background: var(--primary);
+  color: var(--surface);
+  border-color: var(--primary);
+}
+.aptis-days small {
+  display: block;
+  font-size: 8px;
+}
+.aptis-days .active small {
+  color: inherit;
+}
+.aptis-days strong {
+  font-size: 12px;
+  display: block;
+  margin: 5px 0;
+}
+.aptis-days span {
+  font-size: 9px;
+  opacity: 0.65;
+}
+.study-task {
+  display: flex;
+  gap: 14px;
+  padding: 22px 0;
+  border-top: 1px solid var(--line);
+}
+.study-task > div {
+  flex: 1;
+}
+.study-task h3 {
+  font-size: 13px;
+  margin: 0;
+}
+.study-task p {
+  font-size: 11px;
+  line-height: 1.85;
+  margin: 11px 0 7px;
+}
+.study-task .tag {
+  font-size: 9px;
+}
+.study-task .text-link {
+  font-size: 10px;
+}
+.study-task .text-link > .icon {
+  width: 13px;
+}
+.study-check {
+  padding-top: 1px;
+}
+.study-task.done h3 {
+  color: var(--primary);
+}
+.study-task.done {
+  opacity: 0.65;
+}
+.aptis-content .card-head h2 {
+  font-size: 18px;
+}
+.aptis-content .card-head .eyebrow {
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+.aptis-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+.timer-card {
+  text-align: center;
+}
+.timer-card > .row {
+  justify-content: center;
+}
+#aptis-time {
+  font-size: 41px;
+  letter-spacing: -2px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+#aptis-timer-label {
+  font-size: 11px;
+  margin: 7px 0 17px;
+}
+#study-note {
+  font-size: 12px;
+  margin: 10px 0 5px;
+}
+.aptis-bottom-grid label {
+  font-size: 10px;
+}
+.aptis-bottom-grid .eyebrow {
+  font-size: 8px;
+}
+.week-mobile {
+  display: none;
+}
+@media (max-width: 1150px) {
+  .aptis-layout {
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 15px;
+  }
+  .aptis-resources {
+    grid-template-columns: 1fr;
+  }
+  .aptis-resources small {
+    font-size: 11px;
+  }
+  .aptis-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+  .aptis-week-hero {
+    padding: 23px;
+  }
+  .aptis-overview {
+    gap: 15px;
+  }
+  .aptis-overview > .progress-track {
+    min-width: 35px;
+  }
+}
+@media (max-width: 650px) {
+  .aptis-layout {
+    grid-template-columns: 1fr;
+  }
+  .aptis-weeks {
+    position: static;
+    padding: 16px;
+    max-height: none;
+  }
+  .week-list {
+    display: none;
+  }
+  .week-mobile {
+    display: block;
+    font-size: 11px;
+  }
+  .aptis-weeks > .eyebrow {
+    display: none;
+  }
+  .week-mobile select {
+    font-size: 13px;
+  }
+  .aptis-overview {
+    flex-wrap: wrap;
+    padding: 18px;
+    gap: 17px;
+  }
+  .aptis-overview > .progress-track {
+    flex-basis: 50%;
+  }
+  .aptis-overview label {
+    width: 53%;
+  }
+  .aptis-overview input {
+    font-size: 14px;
+  }
+  .aptis-week-hero h2 {
+    font-size: 23px;
+  }
+  .aptis-days {
+    gap: 4px;
+  }
+  .aptis-days strong {
+    font-size: 11px;
+  }
+  .study-task {
+    gap: 10px;
+  }
+  .study-task > .row {
+    flex-wrap: wrap;
+  }
+  .study-task h3 {
+    font-size: 12px;
+  }
+  .study-task .tag {
+    font-size: 8px;
+  }
+  .study-task p {
+    font-size: 12px;
+  }
+  #study-note {
+    font-size: 16px;
+  }
+}
