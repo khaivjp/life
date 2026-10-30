@@ -13,12 +13,12 @@
     duration: "1–2 phút",
     start(s) {
       const colors = [
-          ["ĐỎ", "#d54b55"],
-          ["XANH LÁ", "#27985b"],
-          ["XANH DƯƠNG", "#3d7ed8"],
-          ["TÍM", "#a763d4"],
-          ["CAM", "#d27920"],
-          ["HỒNG", "#ce5494"],
+          ["ĐỎ", "#d00000"],
+          ["XANH LÁ", "#007a16"],
+          ["XANH DƯƠNG", "#003bce"],
+          ["TÍM", "#7000b8"],
+          ["CAM", "#b84900"],
+          ["HỒNG", "#c00068"],
         ].slice(0, [3, 4, 6][s.level]),
         total = [10, 15, 20][s.level];
       let n = 0,
@@ -32,7 +32,7 @@
               ? ink
               : K.shuffle(colors.map((_, i) => i).filter((i) => i !== ink))[0];
         s.progress(`Lượt ${n + 1} / ${total}`);
-        s.stage.innerHTML = `<div class="stroop-word" style="color:${colors[ink][1]}">${colors[word][0]}</div><div class="game-choices">${K.shuffle(
+        s.stage.innerHTML = `<div class="stroop-word" style="background:white;border-radius:14px;width:100%;font-weight:900;color:${colors[ink][1]}">${colors[word][0]}</div><div class="game-choices">${K.shuffle(
           colors.map((c, i) => ({ c, i })),
         )
           .map(
