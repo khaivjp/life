@@ -2,7 +2,7 @@
   "app": "KhaiLife",
   "data": {
     "version": 3,
-    "updatedAt": 1793329295332,
+    "updatedAt": 1793329297222,
     "tasks": [
       {
         "id": 1792691913536,
@@ -205,7 +205,9 @@
         "1-1-writing": true,
         "1-2-writing": true,
         "1-2-speaking": true,
-        "1-2-reading": true
+        "1-2-reading": true,
+        "1-2-grammar": true,
+        "1-2-vocab": true
       },
       "notes": {}
     },
