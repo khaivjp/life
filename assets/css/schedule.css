@@ -57,7 +57,7 @@
   background: var(--mint);
 }
 .day-indicator {
-  font-size: 9px;
+  font-size: 12px;
   color: var(--muted);
 }
 .day-indicator.has-class {
@@ -230,5 +230,63 @@ th {
   }
   .import-bar {
     gap: 10px;
+  }
+}
+
+/* Thẻ chi tiết môn học trong thời khóa biểu. */
+#schedule-body {
+  --class-bg: #edf5ff;
+  --class-border: #c8ddf5;
+  --class-accent: #2864a5;
+  --class-muted: #52677f;
+}
+:root[data-theme="dark"] #schedule-body {
+  --class-bg: #1c3046;
+  --class-border: #365572;
+  --class-accent: #9ccaff;
+  --class-muted: #bdcde0;
+}
+#schedule-body .class-card {
+  padding: 24px;
+  gap: 18px;
+  background: var(--class-bg);
+  border-color: var(--class-border);
+  border-left: 4px solid var(--class-accent);
+  border-radius: 16px;
+}
+#schedule-body .class-icon {
+  width: 52px;
+  height: 56px;
+  color: var(--class-accent);
+}
+#schedule-body .class-icon .icon {
+  width: 26px;
+  height: 26px;
+}
+#schedule-body .class-body h3 {
+  margin: 7px 0;
+  font-size: 20px;
+  overflow-wrap: anywhere;
+}
+#schedule-body .class-body p,
+#schedule-body .class-body .small-note {
+  font-size: 14px;
+  color: var(--class-muted);
+}
+#schedule-body .subject-code {
+  font-size: 12px;
+  color: var(--class-accent);
+}
+@media (max-width: 650px) {
+  #schedule-body .class-card {
+    padding: 18px 14px;
+    gap: 12px;
+  }
+  #schedule-body .class-body h3 {
+    font-size: 18px;
+  }
+  #schedule-body .class-body p,
+  #schedule-body .class-body .small-note {
+    font-size: 13px;
   }
 }
