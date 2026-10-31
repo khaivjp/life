@@ -20,6 +20,103 @@
   };
   const old =
     read("lifesync_minimal_v4") || read("khailife_saved_user_backup_v1")?.state;
+  // Các môn theo ảnh, không đưa điểm cá nhân vào mã nguồn công khai.
+  const freshGpa = () => {
+    "version": 1,
+    "semesters": [
+      {
+        "id": "hvu-2026-2",
+        "year": "2026-2027",
+        "term": 2,
+        "courses": [
+          {
+            "id": "hvu-2-0",
+            "code": "INT304",
+            "group": "03",
+            "name": "Cơ sở dữ liệu",
+            "credits": 3,
+            "process": "",
+            "exam": "",
+            "weightProcess": 50,
+            "weightExam": 50
+          },
+          {
+            "id": "hvu-2-1",
+            "code": "INT342",
+            "group": "03",
+            "name": "Lập trình cơ bản",
+            "credits": 3,
+            "process": "",
+            "exam": "",
+            "weightProcess": 50,
+            "weightExam": 50
+          },
+          {
+            "id": "hvu-2-2",
+            "code": "INT349",
+            "group": "03",
+            "name": "Toán rời rạc",
+            "credits": 3,
+            "process": "",
+            "exam": "",
+            "weightProcess": 50,
+            "weightExam": 50
+          },
+          {
+            "id": "hvu-2-3",
+            "code": "INT358",
+            "group": "04",
+            "name": "Đồ họa ứng dụng 1",
+            "credits": 3,
+            "process": "",
+            "exam": "",
+            "weightProcess": 50,
+            "weightExam": 50
+          }
+        ]
+      },
+      {
+        "id": "hvu-2026-1",
+        "year": "2026-2027",
+        "term": 1,
+        "courses": [
+          {
+            "id": "hvu-1-0",
+            "code": "INT343",
+            "group": "03",
+            "name": "Quản lý hệ thống máy tính",
+            "credits": 3,
+            "process": "",
+            "exam": "",
+            "weightProcess": 50,
+            "weightExam": 50
+          },
+          {
+            "id": "hvu-1-1",
+            "code": "LAW207",
+            "group": "12",
+            "name": "Pháp luật đại cương",
+            "credits": 2,
+            "process": "",
+            "exam": "",
+            "weightProcess": 50,
+            "weightExam": 50
+          },
+          {
+            "id": "hvu-1-2",
+            "code": "MAT356",
+            "group": "03",
+            "name": "Toán cho công nghệ thông tin",
+            "credits": 3,
+            "process": "",
+            "exam": "",
+            "weightProcess": 50,
+            "weightExam": 50
+          }
+        ]
+      }
+    ]
+  };
   const fresh = () => ({
     version: 3,
     updatedAt: 0,
@@ -31,6 +128,7 @@
       progress: read("aptis16-progress", {}),
       notes: {},
     },
+    gpa: freshGpa(),
     brain: {
       history: [],
       legacy: {
@@ -108,6 +206,8 @@
     )
       v.preferences.logo = "";
     v.aptis.notes = object(v.aptis.notes) ? v.aptis.notes : {};
+    // Bản sao lưu cũ vẫn nhập được và được bổ sung mục GPA mới.
+    v.gpa = object(v.gpa) && Array.isArray(v.gpa.semesters) ? v.gpa : freshGpa();
     return v;
   }
   let state;
