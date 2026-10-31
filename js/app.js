@@ -10,6 +10,7 @@
         module: K.schedule,
       },
       aptis: { name: "Aptis 16 tuần", icon: "book", module: K.aptis },
+      gpa: { name: "Bảng điểm & GPA", icon: "trophy", module: K.gpa },
       brain: { name: "Brain Gym", icon: "brain", module: K.brain },
       settings: {
         name: "Cài đặt & dữ liệu",
@@ -48,10 +49,10 @@
         `<a href="#${key}">${K.icon(r.icon)}<span>${r.name}</span></a>`,
     )
     .join("");
-  K.$("#bottom-nav").innerHTML = ["home", "schedule", "aptis", "brain"]
+  K.$("#bottom-nav").innerHTML = ["home", "schedule", "aptis", "gpa", "brain"]
     .map(
       (key) =>
-        `<a href="#${key}">${K.icon(routes[key].icon)}<span>${key === "home" ? "Tổng quan" : key === "schedule" ? "Lịch học" : key === "aptis" ? "Aptis" : "Brain Gym"}</span></a>`,
+        `<a href="#${key}">${K.icon(routes[key].icon)}<span>${key === "home" ? "Tổng quan" : key === "schedule" ? "Lịch học" : key === "aptis" ? "Aptis" : key === "gpa" ? "GPA" : "Brain Gym"}</span></a>`,
     )
     .join("");
   K.$$("[data-icon]").forEach((n) => (n.innerHTML = K.icon(n.dataset.icon)));
