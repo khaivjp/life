@@ -2,7 +2,7 @@
   "app": "KhaiLife",
   "data": {
     "version": 3,
-    "updatedAt": 1793345365673,
+    "updatedAt": 1793455598761,
     "tasks": [
       {
         "id": 1792691913536,
@@ -7963,6 +7963,102 @@
         },
         "savedAt": "23:02 16/10"
       }
+    },
+    "gpa": {
+      "version": 1,
+      "semesters": [
+        {
+          "id": "hvu-2026-2",
+          "year": "2026-2027",
+          "term": 2,
+          "courses": [
+            {
+              "id": "hvu-2-0",
+              "code": "INT304",
+              "group": "03",
+              "name": "Cơ sở dữ liệu",
+              "credits": 3,
+              "process": "",
+              "exam": "",
+              "weightProcess": 50,
+              "weightExam": 50
+            },
+            {
+              "id": "hvu-2-1",
+              "code": "INT342",
+              "group": "03",
+              "name": "Lập trình cơ bản",
+              "credits": 3,
+              "process": "",
+              "exam": "",
+              "weightProcess": 50,
+              "weightExam": 50
+            },
+            {
+              "id": "hvu-2-2",
+              "code": "INT349",
+              "group": "03",
+              "name": "Toán rời rạc",
+              "credits": 3,
+              "process": "",
+              "exam": "",
+              "weightProcess": 50,
+              "weightExam": 50
+            },
+            {
+              "id": "hvu-2-3",
+              "code": "INT358",
+              "group": "04",
+              "name": "Đồ họa ứng dụng 1",
+              "credits": 3,
+              "process": "",
+              "exam": "",
+              "weightProcess": 50,
+              "weightExam": 50
+            }
+          ]
+        },
+        {
+          "id": "hvu-2026-1",
+          "year": "2026-2027",
+          "term": 1,
+          "courses": [
+            {
+              "id": "hvu-1-0",
+              "code": "INT343",
+              "group": "03",
+              "name": "Quản lý hệ thống máy tính",
+              "credits": 3,
+              "process": "",
+              "exam": "",
+              "weightProcess": 50,
+              "weightExam": 50
+            },
+            {
+              "id": "hvu-1-1",
+              "code": "LAW207",
+              "group": "12",
+              "name": "Pháp luật đại cương",
+              "credits": 2,
+              "process": "",
+              "exam": "",
+              "weightProcess": 50,
+              "weightExam": 50
+            },
+            {
+              "id": "hvu-1-2",
+              "code": "MAT356",
+              "group": "03",
+              "name": "Toán cho công nghệ thông tin",
+              "credits": 3,
+              "process": "",
+              "exam": "",
+              "weightProcess": 50,
+              "weightExam": 50
+            }
+          ]
+        }
+      ]
     }
   }
 }
