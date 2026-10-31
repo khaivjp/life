@@ -1,8 +1,9 @@
-/* Đồng bộ GitHub có kiểm tra SHA; token ở phiên hiện tại, không vào bản sao lưu. */
+/* Đồng bộ GitHub có kiểm tra SHA; token lưu riêng trên trình duyệt, không vào bản sao lưu. */
 (() => {
   const K = KhaiLife,
     CONFIG = "khailife_git_v3",
-    TOKEN = "khailife_git_token_session";
+    TOKEN = "khailife_git_token_session",
+    SAVED_TOKEN = "khailife_git_token_device";
   let busy = false,
     pending = null,
     queued = false,
@@ -19,12 +20,17 @@
         autoSync: false,
       };
     })();
+  const remembered = () => {
+    try { return Boolean(localStorage.getItem(SAVED_TOKEN)); }
+    catch { return false; }
+  };
   const getToken = () => {
     try {
-      return sessionStorage.getItem(TOKEN) || "";
-    } catch {
-      return "";
-    }
+      const saved = localStorage.getItem(SAVED_TOKEN);
+      if (saved) return saved;
+    } catch {}
+    try { return sessionStorage.getItem(TOKEN) || ""; }
+    catch { return ""; }
   };
   const setStatus = (text) => {
     status = text;
@@ -185,7 +191,8 @@
     config: () => cfg,
     status: () => status,
     connected: configured,
-    save(newCfg, token) {
+    remembered,
+    save(newCfg, token, remember = false) {
       if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(newCfg.repo))
         throw new Error("Repository cần có dạng tên-tài-khoản/tên-repo.");
       if (
@@ -195,23 +202,31 @@
       )
         throw new Error("Đường dẫn file không hợp lệ.");
       if (!token && !getToken())
-        throw new Error("Nhập token GitHub cho phiên này.");
+        throw new Error("Nhập token GitHub.");
       if (
         cfg.repo !== newCfg.repo ||
         cfg.path !== newCfg.path ||
         cfg.branch !== newCfg.branch
       )
         baseSha = null;
+      const nextToken = token || getToken();
+      localStorage.setItem(CONFIG, JSON.stringify(newCfg));
+      if (remember) {
+        localStorage.setItem(SAVED_TOKEN, nextToken);
+        sessionStorage.removeItem(TOKEN);
+      } else {
+        sessionStorage.setItem(TOKEN, nextToken);
+        localStorage.removeItem(SAVED_TOKEN);
+      }
       cfg = newCfg;
-      localStorage.setItem(CONFIG, JSON.stringify(cfg));
-      if (token) sessionStorage.setItem(TOKEN, token);
       setStatus("Đã lưu cấu hình. Chọn tải về hoặc đẩy lên.");
     },
     disconnect() {
       clearTimeout(pending);
+      localStorage.removeItem(SAVED_TOKEN);
       sessionStorage.removeItem(TOKEN);
       baseSha = null;
-      setStatus("Đã ngắt kết nối trong phiên này.");
+      setStatus("Đã ngắt kết nối và xóa token đã ghi nhớ.");
     },
     push,
     pull,
