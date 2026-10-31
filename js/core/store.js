@@ -216,20 +216,65 @@
   } catch {
     state = fresh();
   }
-  let saveError = false;
+  let saveError = false, pending = 0, previous = read("khailife_before_restore");
+  let db = null, queue = Promise.resolve();
+  const channel = typeof BroadcastChannel === "function" ? new BroadcastChannel("khailife-storage") : null;
+  if (channel) channel.onmessage = () => K.toast("Một tab khác vừa thay đổi dữ liệu. Xuất sao lưu nếu có thay đổi chưa lưu, rồi tải lại để dùng bản mới nhất.");
+  const transaction = (mode, run) => new Promise((resolve, reject) => {
+    const tx = db.transaction("data", mode);
+    let result;
+    tx.oncomplete = () => resolve(result);
+    tx.onabort = () => reject(tx.error || new Error("Không lưu được dữ liệu."));
+    tx.onerror = () => {};
+    run(tx.objectStore("data"), value => { result = value; });
+  });
+  const ready = new Promise((resolve, reject) => {
+    const request = indexedDB.open("khailife", 1);
+    request.onupgradeneeded = () => request.result.createObjectStore("data");
+    request.onerror = () => reject(request.error);
+    request.onblocked = () => reject(new Error("Hãy đóng tab KhaiLife khác rồi thử lại."));
+    request.onsuccess = () => { db = request.result; resolve(); };
+  }).then(async () => {
+    const saved = await transaction("readonly", (store, done) => {
+      const req = store.get(KEY); req.onsuccess = () => done(req.result);
+    });
+    if (saved) state = validate(saved);
+    else {
+      // Chỉ chuyển bản cũ sau khi giao dịch mới đã lưu thành công.
+      await transaction("readwrite", store => {
+        store.put(clone(state), KEY);
+        if (previous) store.put(clone(previous), "before_restore");
+      });
+    }
+    previous = await transaction("readonly", (store, done) => {
+      const req = store.get("before_restore"); req.onsuccess = () => done(req.result);
+    }) || previous;
+  });
+  function enqueue(work) {
+    const task = queue.then(() => ready).then(work);
+    queue = task.catch(() => {});
+    return task;
+  }
+  function notify() { window.dispatchEvent(new CustomEvent("khailife:storage")); }
   function persist(emit = true) {
     state.updatedAt = Date.now();
-    try {
-      localStorage.setItem(KEY, JSON.stringify(state));
-      saveError = false;
-    } catch {
-      saveError = true;
-      K.toast(
-        "Không lưu được trên thiết bị. Hãy xuất bản sao lưu để giữ dữ liệu.",
-      );
-    }
+    const snapshot = clone(state);
+    pending++; notify();
+    const task = enqueue(() => transaction("readwrite", store => store.put(snapshot, KEY)))
+      .then(() => { saveError = false; channel?.postMessage("saved"); return true; })
+      .catch(() => {
+        saveError = true;
+        K.toast("Chưa lưu được dữ liệu. Hãy xuất bản sao lưu trước khi đóng trang.");
+        return false;
+      }).finally(() => { pending--; notify(); });
     if (emit) window.dispatchEvent(new CustomEvent("khailife:change"));
+    return task;
   }
+  // Tránh cảnh báo Promise chưa xử lý trước khi app chờ ready.
+  ready.catch(() => { saveError = true; });
+  window.addEventListener("beforeunload", e => {
+    if (pending || saveError) { e.preventDefault(); e.returnValue = ""; }
+  });
   const normalize = (payload) => {
     if (payload?.version === 3) return validate(clone(payload));
     if (payload?.data?.version === 3) return validate(clone(payload.data));
@@ -251,6 +296,9 @@
     throw new Error("File này không phải bản sao lưu KhaiLife.");
   };
   K.store = {
+    ready,
+    previous: () => previous,
+    status: () => pending ? "Đang lưu…" : saveError ? "Chưa lưu được — hãy xuất sao lưu" : "Đã lưu trên thiết bị",
     get: () => state,
     read,
     text,
@@ -274,18 +322,25 @@
           2,
         ),
       ),
-    replace: (payload) => {
+    replace: async (payload) => {
       const next = normalize(payload);
+      next.updatedAt = Date.now();
+      pending++; notify();
       try {
-        localStorage.setItem("khailife_before_restore", JSON.stringify(state));
-        localStorage.setItem(KEY, JSON.stringify(next));
+        await enqueue(() => {
+          const before = clone(state);
+          return transaction("readwrite", store => {
+            store.put(before, "before_restore");
+            store.put(next, KEY);
+          }).then(() => { previous = before; state = next; });
+        });
+        saveError = false;
+        channel?.postMessage("saved");
+        window.dispatchEvent(new CustomEvent("khailife:change"));
       } catch {
-        throw new Error(
-          "Không đủ dung lượng lưu dữ liệu. Hãy xuất sao lưu trước.",
-        );
-      }
-      state = next;
-      persist();
+        saveError = true;
+        throw new Error("Không nhập được dữ liệu. Bản hiện tại vẫn được giữ; hãy xuất sao lưu.");
+      } finally { pending--; notify(); }
     },
     storageOkay: () => !saveError,
   };

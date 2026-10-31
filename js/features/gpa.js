@@ -40,7 +40,7 @@
   const all=()=>K.store.get().gpa.semesters;
   const makeCourse=()=>({id:K.uid(),code:"",group:"",name:"",credits:3,process:"",exam:"",weightProcess:50,weightExam:50});
   function persist() {
-    try {K.store.persist(false); return true;} catch {K.toast("Không lưu được điểm.");return false;}
+    return K.store.persist(false);
   }
   function csv() {
     const rows=[["Học kỳ","Năm học","Mã môn","Nhóm","Tên môn","Tín chỉ","Đánh giá bộ phận","Điểm thi","Trọng số bộ phận %","Trọng số thi %","Điểm TK (10)","Điểm TK (4)","Điểm chữ"]];
@@ -62,7 +62,7 @@
     root=container;
     const ss=all(); chosen=Math.max(0,Math.min(chosen,ss.length-1));
     const s=ss[chosen], total=summary(ss.flatMap(x=>x.courses));
-    root.innerHTML='<div class="page-heading"><div><span class="eyebrow">KẾT QUẢ HỌC TẬP</span><h1>Bảng điểm & GPA</h1><p>Theo học kỳ, hệ 10, điểm chữ và hệ 4 theo bảng quy đổi đã cung cấp.</p></div><button class="btn" id="gpa-export">'+K.icon("download")+' Xuất CSV</button></div>'+
+    root.innerHTML='<div class="page-heading"><div><span class="eyebrow">KẾT QUẢ HỌC TẬP</span><h1>Bảng điểm & GPA</h1><p data-storage-status role="status"></p><p>Theo học kỳ, hệ 10, điểm chữ và hệ 4 theo bảng quy đổi đã cung cấp.</p></div><button class="btn" id="gpa-export">'+K.icon("download")+' Xuất CSV</button></div>'+
       '<div class="gpa-stats"><div class="card"><small>GPA tích lũy hệ 4</small><strong>'+f(total.four,2)+'</strong></div><div class="card"><small>Điểm tích lũy hệ 10</small><strong>'+f(total.ten,2)+'</strong></div><div class="card"><small>Tín chỉ đạt / đã tính</small><strong>'+total.passed+' / '+total.n+'</strong></div></div>'+
       '<section class="card gpa-panel"><div class="gpa-heading"><label>Học kỳ<select id="gpa-semester">'+ss.map((v,i)=>'<option value="'+i+'" '+(i===chosen?"selected":"")+'>Học kỳ '+E(v.term)+' · '+E(v.year)+'</option>').join("")+'</select></label><button class="btn small" id="gpa-add-term">+ Học kỳ</button><button class="btn small danger" id="gpa-remove-term">Xóa học kỳ</button></div>'+
       '<div class="gpa-term-meta"><label>Năm học<input id="gpa-year" value="'+E(s.year)+'" placeholder="2026-2027"></label><label>Học kỳ<input id="gpa-term" type="number" min="1" max="3" value="'+E(s.term)+'"></label></div>'+
@@ -76,6 +76,7 @@
       }).join("")+'</div><button class="btn primary" id="gpa-add-course">+ Thêm môn học</button>'+
       '<div class="gpa-term-summary" id="gpa-term-summary"></div></section>'+
       '<section class="card gpa-help"><h2>Trọng số tính điểm</h2><p>Mặc định 50% đánh giá bộ phận và 50% điểm thi. Bạn có thể thay đổi riêng cho từng môn.</p><div class="gpa-weights">'+s.courses.map(c=>'<div class="gpa-weight-row"><strong>'+E(c.code||c.name||"Môn chưa đặt tên")+'</strong><label>Bộ phận (%)'+cell(c,"weightProcess","Trọng số bộ phận","","number")+'</label><label>Thi (%)'+cell(c,"weightExam","Trọng số thi","","number")+'</label></div>').join("")+'</div><p>Điểm tổng kết hệ 10 làm tròn một chữ số thập phân trước khi quy đổi: A ≥ 8,5 (4); B ≥ 7,0 (3); C ≥ 5,5 (2); D ≥ 4,0 (1); F dưới 4,0 (0). Chỉ tính GPA cho môn đủ điểm và số tín chỉ hợp lệ. Đây là công cụ theo dõi, không thay thế điểm chính thức của trường.</p></section>';
+    root.querySelector("[data-storage-status]").textContent = K.store.status();
     const one=summary(s.courses);
     K.$("#gpa-term-summary").textContent='Học kỳ '+s.term+' · '+s.year+' — GPA hệ 4: '+f(one.four,2)+' · hệ 10: '+f(one.ten,2)+' · Tín chỉ đạt: '+one.passed+'/'+one.n;
     K.$("#gpa-export").onclick=csv;
@@ -105,5 +106,9 @@
       persist();render(root);
     };
   }
+  window.addEventListener("khailife:storage", () => {
+    const status = document.querySelector("[data-storage-status]");
+    if (status) status.textContent = K.store.status();
+  });
   K.gpa={render,calc,classify,summary};
 })();
