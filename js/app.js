@@ -12,6 +12,7 @@
       aptis: { name: "Aptis 16 tuần", icon: "book", module: K.aptis },
       gpa: { name: "Bảng điểm & GPA", icon: "trophy", module: K.gpa },
       brain: { name: "Brain Gym", icon: "brain", module: K.brain },
+      shopeefood: { name: "Giao hàng ShopeeFood", icon: "list", module: K.shopeefood },
       settings: {
         name: "Cài đặt & dữ liệu",
         icon: "settings",
