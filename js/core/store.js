@@ -21,7 +21,7 @@
   const old =
     read("lifesync_minimal_v4") || read("khailife_saved_user_backup_v1")?.state;
   // Các môn theo ảnh, không đưa điểm cá nhân vào mã nguồn công khai.
-  const freshGpa = () => {
+  const freshGpa = () => ({
     "version": 1,
     "semesters": [
       {
@@ -116,7 +116,7 @@
         ]
       }
     ]
-  };
+  });
   const fresh = () => ({
     version: 3,
     updatedAt: 0,
