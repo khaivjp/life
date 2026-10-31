@@ -155,10 +155,10 @@
         `<p>Bản này có <b>${next.tasks.length} nhiệm vụ</b>, <b>${next.schedule.length} dòng lịch</b> và <b>${next.brain.history.length} lượt Brain Gym</b>.</p><p>Dữ liệu hiện tại sẽ được thay thế. Một bản trước khi khôi phục được giữ trên thiết bị.</p><div class="form-actions"><button class="btn" data-backup>Xuất bản hiện tại</button><button class="btn primary" data-confirm>Dùng bản GitHub</button></div>`,
         (dlg) => {
           dlg.querySelector("[data-backup]").onclick = () => K.store.backup();
-          dlg.querySelector("[data-confirm]").onclick = () => {
+          dlg.querySelector("[data-confirm]").onclick = async () => {
             try {
+              await K.store.replace(next);
               baseSha = r.sha;
-              K.store.replace(next);
               dlg.close();
               K.theme.apply();
               setStatus("Đã tải bản dữ liệu từ GitHub.");

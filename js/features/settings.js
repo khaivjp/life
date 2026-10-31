@@ -13,9 +13,9 @@
         `<p>Bản sao lưu có ${next.tasks.length} việc nên làm, ${next.schedule.length} dòng lịch và ${next.brain.history.length} lượt Brain Gym.</p><p>Dữ liệu trên thiết bị sẽ được thay bằng bản này. Bản hiện tại được giữ để khôi phục lại.</p><div class="form-actions"><button class="btn" data-backup>Xuất bản hiện tại</button><button class="btn primary" data-confirm>Nhập dữ liệu</button></div>`,
         (dlg) => {
           dlg.querySelector("[data-backup]").onclick = K.store.backup;
-          dlg.querySelector("[data-confirm]").onclick = () => {
+          dlg.querySelector("[data-confirm]").onclick = async () => {
             try {
-              K.store.replace(next);
+              await K.store.replace(next);
               K.theme.apply();
               dlg.close();
               K.toast("Đã nhập bản sao lưu.");
@@ -89,7 +89,7 @@
       K.$("#backup-export").onclick = K.store.backup;
       K.$("#backup-import").onchange = (e) => importBackup(e.target.files[0]);
       K.$("#restore-previous").onclick = () => {
-        const data = K.store.read("khailife_before_restore");
+        const data = K.store.previous();
         if (!data) {
           K.toast("Chưa có bản trước lần nhập.");
           return;
@@ -98,9 +98,9 @@
           "Khôi phục bản trước lần nhập?",
           `<p>Ứng dụng sẽ chuyển về dữ liệu trước lần nhập gần nhất.</p><div class="form-actions"><button class="btn primary" data-restore>Khôi phục</button></div>`,
           (dlg) => {
-            dlg.querySelector("[data-restore]").onclick = () => {
+            dlg.querySelector("[data-restore]").onclick = async () => {
               try {
-                K.store.replace(data);
+                await K.store.replace(data);
                 K.theme.apply();
                 dlg.close();
                 K.toast("Đã khôi phục bản trước.");

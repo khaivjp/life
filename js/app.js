@@ -1,5 +1,13 @@
 /* Điều hướng và khởi tạo; mỗi chức năng tự quản lý giao diện của nó. */
-(() => {
+(async () => {
+  try { await KhaiLife.store.ready; } catch {
+    document.querySelector("#content").textContent = "Không mở được bộ nhớ dữ liệu. Đừng xóa dữ liệu trang. Đóng các tab KhaiLife khác và thử lại; nếu vẫn lỗi, hãy sao lưu dữ liệu cũ bằng nút bên dưới.";
+    const backup = document.createElement("button");
+    backup.className = "btn"; backup.textContent = "Xuất dữ liệu đang đọc được";
+    backup.onclick = KhaiLife.store.backup;
+    document.querySelector("#content").append(backup);
+    return;
+  }
   const K = KhaiLife,
     routes = {
       home: { name: "Tổng quan", icon: "home", module: K.dashboard },
