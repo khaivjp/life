@@ -1,21 +1,24 @@
 import XCTest
 
 final class LaunchTests: XCTestCase {
+    override func setUpWithError() throws {
+        continueAfterFailure = false
+    }
     func testBothBundledSectionsLoadAndKeepTheirViews() {
         let app = XCUIApplication()
         app.launch()
         let life = app.webViews["webview-life"]
-        XCTAssertTrue(life.waitForExistence(timeout: 15))
+        XCTAssertTrue(life.waitForExistence(timeout: 60))
         let ready = NSPredicate(format: "value == %@", "ready")
         expectation(for: ready, evaluatedWith: life)
-        waitForExpectations(timeout: 15)
+        waitForExpectations(timeout: 60)
         // The app creates navigation only after its IndexedDB initialization succeeds.
-        XCTAssertTrue(life.links["GPA"].waitForExistence(timeout: 15))
+        XCTAssertTrue(life.links["GPA"].waitForExistence(timeout: 60))
         app.tabBars.buttons["tab-thuchi"].tap()
         let finance = app.webViews["webview-thuchi"]
-        XCTAssertTrue(finance.waitForExistence(timeout: 15))
+        XCTAssertTrue(finance.waitForExistence(timeout: 60))
         expectation(for: ready, evaluatedWith: finance)
-        waitForExpectations(timeout: 15)
+        waitForExpectations(timeout: 60)
         app.tabBars.buttons["tab-life"].tap()
         XCTAssertTrue(life.exists)
         XCTAssertEqual(life.value as? String, "ready")
@@ -25,7 +28,7 @@ final class LaunchTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
         var life = app.webViews["webview-life"]
-        XCTAssertTrue(life.links["GPA"].waitForExistence(timeout: 15))
+        XCTAssertTrue(life.links["GPA"].waitForExistence(timeout: 60))
         life.links["GPA"].tap()
         var grade = life.textFields["Điểm bộ phận"].firstMatch
         XCTAssertTrue(grade.waitForExistence(timeout: 10))
@@ -42,7 +45,9 @@ final class LaunchTests: XCTestCase {
         app.terminate()
         app.launch()
         life = app.webViews["webview-life"]
-        XCTAssertTrue(life.links["GPA"].waitForExistence(timeout: 15))
+        // A cold WebKit process on hosted macOS may take over 15 seconds.
+        // Keep the persisted-value assertion below; allow startup to finish.
+        XCTAssertTrue(life.links["GPA"].waitForExistence(timeout: 60))
         life.links["GPA"].tap()
         grade = life.textFields["Điểm bộ phận"].firstMatch
         XCTAssertTrue(grade.waitForExistence(timeout: 10))
